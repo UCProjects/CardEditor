@@ -3,7 +3,7 @@ import { effects, specials } from './effects.js';
 import resize from './resize.js';
 
 const underlineRegex = new RegExp(`(${effects.join('|')})(?![^{]*})|_([^_]+)_`, 'g');
-const specialRegex = new RegExp(`\\b(${specials.join('|')})(?![\\w}])`, 'g');
+const specialRegex = new RegExp(`(?<!{|>|\\w)(${specials.join('|')})(?![\\w}])`, 'g');
 const colorRegex = /\{([^;|}]*)[^}]*[;|]([^}]+)}/g; ///\{color:([^}]+)}(.*){\/color}/g;
 const highlightRegex = /\{([^}]+)}/g;
 
