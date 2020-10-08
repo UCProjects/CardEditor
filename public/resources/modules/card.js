@@ -168,6 +168,13 @@ function getClass(keyword) {
     case 'KR': return 'poison';
     case 'G': return 'gold';
     case 'cost': return 'COST';
+    case 'DT':
+    case 'LEGENDARY':
+    case 'EPIC':
+    case 'RARE':
+    case 'COMMON':
+    case 'BASE':
+    case 'GENERATED': return keyword;
   }
 }
 

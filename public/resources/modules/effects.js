@@ -8,7 +8,7 @@ export const effects = [
   // Other
   `Gerson's Artifact`, 'Genocide', 'Outbreak',
 ];
-export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G'];
+export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'GENERATED', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
 const div = document.querySelector('#descriptionTip div');
 function addType(type) {
