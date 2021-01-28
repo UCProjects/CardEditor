@@ -1,7 +1,6 @@
 {
   "projects": {
     "master": "undercard-509ba",
-    "test": "undercardtest",
-    "default": "undercardtest"
+    "default": "undercard-509ba"
   }
 }
