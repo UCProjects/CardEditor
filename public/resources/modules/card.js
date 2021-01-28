@@ -23,7 +23,7 @@ export default function card(monster = true) {
   wrapper.innerHTML = `
     <table class="cardBoard ${monster?'monster':'spell'}">
       <tr>
-        <td class="name" colspan="3"><span></span><input type="text" maxlength="18" placeholder="Name"></td>
+        <td class="name" colspan="3"><span></span><input type="text" placeholder="Name"></td>
         <td class="cost edit"><span>0</span></td>
       </tr>
       <tr>
