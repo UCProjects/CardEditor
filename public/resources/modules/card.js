@@ -174,6 +174,7 @@ function getClass(keyword) {
     case 'RARE':
     case 'COMMON':
     case 'BASE':
+    case 'TOKEN':
     case 'GENERATED': return keyword;
   }
 }
