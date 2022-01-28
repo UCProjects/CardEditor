@@ -40,6 +40,9 @@
     <script defer src="./resources/simpletoast.js"></script>
     <script type="module" src="./resources/modules/index.js"></script>
     <script defer nomodule src="./resources/script.js"></script>
+    <script>
+      window.onbeforeunload = () => 'Are you sure?';
+    </script>
   </head>
   <body>
     <div id="loading">
