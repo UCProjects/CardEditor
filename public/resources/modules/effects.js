@@ -4,7 +4,7 @@ export const effects = [
   'Synergy', 'Shock', 'Delay', 'Need', 'Generated',
   // Tribes
   'Amalgamates?', 'Bombs?', 'Dogs?', 'Froggits?', 'G Followers?', 'Lost Souls?', 'Molds?', 'Plants?', 'Royal Guards?', 'Snails?', 'Spiders?', 'Temmies?', 'Chaos Weapons?',
-  'Arachnids?', 'Pieces?', 'Royal Inventions?',
+  'Arachnids?', 'Pieces?', 'Royal Inventions?', 'Bargains?',
   // Other
   `Gerson's Artifact`, 'Genocide', 'Outbreak',
 ];
