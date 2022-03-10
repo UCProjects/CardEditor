@@ -1,7 +1,7 @@
 export const effects = [
   // Keywords
   'Armor', 'Candy', 'Charge', 'Disarmed', 'Dodge', 'Dust', 'Fatigue', 'Future', 'Haste', 'Invulnerable', 'Magic', 'Paralyze', 'Ranged', 'Silence', 'Support', 'Taunt', 'Transparency', 'Turbo', 'Turn end', 'Turn start', 'Thorns',
-  'Synergy', 'Shock', 'Delay', 'Need', 'Generated',
+  'Synergy', 'Shock', 'Delay', 'Need', 'Generated', 'Loop', 'Program',
   // Tribes
   'Amalgamates?', 'Bombs?', 'Dogs?', 'Froggits?', 'G Followers?', 'Lost Souls?', 'Molds?', 'Plants?', 'Royal Guards?', 'Snails?', 'Spiders?', 'Temmies?', 'Chaos Weapons?',
   'Arachnids?', 'Pieces?', 'Royal Inventions?', 'Bargains?',
