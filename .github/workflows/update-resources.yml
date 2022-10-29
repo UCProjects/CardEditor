@@ -22,5 +22,5 @@ jobs:
       - name: Commit and push
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Update new resources (${{ github.run_id }})'
+          message: 'Update new resources (${{ github.run_number }})'
           pathspec_error_handling: ignore
