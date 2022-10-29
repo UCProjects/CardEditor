@@ -1,8 +1,10 @@
 import serviceWorker from './sw.register.js';
 import newGroup from './group.js';
+import { ready as effects } from './effects.js';
 
 const preloads = [
   serviceWorker(),
+  effects,
 ];
 
 function ready() {

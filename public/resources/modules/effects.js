@@ -1,13 +1,4 @@
-export const effects = [
-  // Keywords
-  'Armor', 'Candy', 'Charge', 'Disarmed', 'Dodge', 'Dust', 'Fatigue', 'Future', 'Haste', 'Invulnerable', 'Magic', 'Paralyze', 'Ranged', 'Silence', 'Support', 'Taunt', 'Transparency', 'Turbo', 'Turn end', 'Turn start', 'Thorns',
-  'Synergy', 'Shock', 'Delay', 'Need', 'Generated', 'Loop', 'Program', 'Switch',
-  // Tribes
-  'Amalgamates?', 'Bombs?', 'Dogs?', 'Froggits?', 'G Followers?', 'Lost Souls?', 'Molds?', 'Plants?', 'Royal Guards?', 'Snails?', 'Spiders?', 'Temmies?', 'Chaos Weapons?',
-  'Arachnids?', 'Pieces?', 'Royal Inventions?', 'Bargains?', 'Plugs?',
-  // Other
-  `Gerson's Artifact`, 'Genocide', 'Outbreak',
-];
+export const effects = [];
 export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'TOKEN', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
 const div = document.querySelector('#descriptionTip div');
@@ -16,5 +7,40 @@ function addType(type) {
     el.innerText = type.replace('s?', '');
     div.append(el, ' ');
 }
-effects.forEach(addType);
-specials.forEach(addType);
+
+function load(resource) {
+  return fetch(`/resources/data/${resource}.json`)
+    .then(res => res.json());
+}
+
+function addTribes() {
+  const container = document.createElement('div');
+  container.innerHTML = document.querySelector('#selectTribe').innerHTML;
+  const last = container.querySelector('img:last-child');
+  effects.forEach(effect => {
+    if (!effect.endsWith('?')) return;
+    last.before(getTribe(effect.substring(0, effect.length - 2)));
+  })
+  document.querySelector('#selectTribe').innerHTML = container.innerHTML;
+}
+
+function getTribe(name) {
+  const container = document.createElement('div');
+  container.innerHTML = document.querySelector('#selectTribeImg').innerHTML;
+  const img = container.querySelector('img');
+  img.src = `/resources/tribes/${name.toUpperCase().replace(' ', '_')}.png`;
+  img.title = name;
+  return img;
+}
+
+const resources = ['effects', 'extra'];
+
+export const ready = Promise.all(resources.map(load))
+  .then((res) => {
+    // Populate effects array
+    res.forEach(data => effects.push(...data));
+
+    effects.forEach(addType);
+    specials.forEach(addType);
+  })
+  .then(addTribes);

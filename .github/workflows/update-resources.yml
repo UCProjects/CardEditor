@@ -1,0 +1,21 @@
+name: Update resources
+on:
+  workflow_dispatch: 
+  schedule:
+    - cron: 5 4 2,16 * *
+jobs:
+  build:
+    name: Update resources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Download resources
+        run: node scripts/downloadResources.js
+      - name: Commit and push
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Update new resources'
+          pathspec_error_handling: ignore

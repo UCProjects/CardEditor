@@ -1,8 +1,9 @@
 import cardMenu from './menu.js';
 import { effects, specials } from './effects.js';
 import resize from './resize.js';
+import Builder from './utils/builder.js';
 
-const underlineRegex = new RegExp(`(${effects.join('|')})(?![^{]*})|_([^_]+)_`, 'g');
+const underlineRegex = new Builder(() => new RegExp(`(${effects.join('|')})(?![^{]*})|_([^_]+)_`, 'g'));
 const specialRegex = new RegExp(`(?<!{|>|\\w)(${specials.join('|')})(?![\\w}])`, 'g');
 const colorRegex = /\{([^;|}]*)[^}]*[;|]([^}]+)}/g; ///\{color:([^}]+)}(.*){\/color}/g;
 const highlightRegex = /\{([^}]+)}/g;
@@ -152,7 +153,7 @@ function renderDescription(span, e = {}) {
     editEvent('description');
   }
   span.innerHTML = this.value
-    .replace(underlineRegex, (match, $1, $2) => `<span class="underline">${$2||$1}</span>`)
+    .replace(underlineRegex.value, (match, $1, $2) => `<span class="underline">${$2||$1}</span>`)
     .replace(colorRegex, (match, $1, $2) => `<span style="color:${$1}">${$2}</span>`)
     .replace(specialRegex, (match, $1) => `<span class="${getClass($1)}">${$1}</span>`)
     .replace(highlightRegex, (match, $1) => `<span class="cardName">${$1}</span>`);
