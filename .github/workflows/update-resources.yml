@@ -31,4 +31,3 @@ jobs:
     needs: build
     if: needs.build.outputs.pushed == 'true'
     uses: ./.github/workflows/firebase-hosting-merge.yml
-
