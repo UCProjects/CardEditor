@@ -3,9 +3,12 @@
 
 name: Deploy to Firebase Hosting on merge
 'on':
+  workflow_call:
   push:
     branches:
       - master
+    paths:
+      - 'public/**'
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
