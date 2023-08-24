@@ -8,9 +8,7 @@ const preloads = [
 ];
 
 function ready() {
-  document.querySelectorAll('[legacy], #loading').forEach((el) => {
-    el.remove();
-  });
+  document.querySelectorAll('[legacy], #loading').forEach((el) => el.remove());
   document.querySelector('#draggable-live-region').remove();
 
   newGroup();
