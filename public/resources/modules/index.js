@@ -16,5 +16,5 @@ function ready() {
 
 Promise.all(preloads)
   .then(ready)
+  // eslint-disable-next-line no-console
   .catch(console.error);
-

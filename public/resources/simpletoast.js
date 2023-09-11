@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * SimpleToast - A small library for toasts
  */

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const effects = [
     'Magic', 'Future', 'Dodge', 'Dust', 'Taunt', 'Paralyze', 'paralyzed', 'Start of turn', 'End of turn', 'Haste', 'Armor', `Can't attack`, 'Candy', 'Transparency', 'Charge',
     'Fatigue', 'Turbo', 'Ranged', 'Support',

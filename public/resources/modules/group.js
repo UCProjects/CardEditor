@@ -1,3 +1,4 @@
+/* global gtag */
 import card from './card.js';
 import draggable from './draggable.js';
 import tip from './tippy.js';
@@ -24,7 +25,7 @@ export default function newGroup() {
 }
 
 function generate(monster, container) {
-  gtag('event', `create_${monster ? 'monster':'spell'}`,);
+  gtag('event', `create_${monster ? 'monster' : 'spell'}`);
   const wrapper = card(monster);
   container.querySelector('.cards').append(wrapper);
 
@@ -42,8 +43,9 @@ function setupName(container) {
   input.onblur = () => {
     name.style.display = '';
     const text = input.value.trim();
-    if (text)
+    if (text) {
       name.textContent = text;
+    }
   };
   if (id > 0) {
     name.textContent = `Group ${id}`;

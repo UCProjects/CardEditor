@@ -1,3 +1,5 @@
+/* eslint-env serviceworker */
+/* global workbox */
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
 
 workbox.core.setCacheNameDetails({
@@ -9,7 +11,6 @@ workbox.routing.registerRoute(
   /index\.html$|\/$/,
   new workbox.strategies.NetworkFirst(),
 );
-
 
 // Cache js/css files
 workbox.routing.registerRoute(
@@ -37,9 +38,8 @@ workbox.routing.registerRoute(
   }),
 );
 
-
 // Offline analytics
-workbox.googleAnalytics.initialize(); 
+workbox.googleAnalytics.initialize();
 
 // Cache the Google Fonts stylesheets with a stale while revalidate strategy.
 workbox.routing.registerRoute(
@@ -63,7 +63,7 @@ workbox.routing.registerRoute(
       }),
     ],
   }),
-); 
+);
 
 workbox.routing.registerRoute(
   /.otf$/,

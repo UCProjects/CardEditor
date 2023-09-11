@@ -1,8 +1,8 @@
 import saveCard from './save.js';
 
 export default function cardMenu(e) {
-  if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) return;
-  if (e.target === this.querySelector('.description textarea')) return;
+  if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) return undefined;
+  if (e.target === this.querySelector('.description textarea')) return undefined;
   e.stopPropagation();
   const context = document.querySelector('.context');
   context.style.display = 'unset';
@@ -22,7 +22,9 @@ export default function cardMenu(e) {
 }
 
 const context = document.querySelector('.context');
-const close = () => context.style.display = '';
+function close() {
+  context.style.display = '';
+}
 context.querySelector('.close').onclick = close;
 window.addEventListener('contextmenu', close);
 window.addEventListener('click', close);

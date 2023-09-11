@@ -5,7 +5,7 @@ import Builder from './utils/builder.js';
 
 const underlineRegex = new Builder(() => new RegExp(`(?<!\\\\)(${effects.join('|')})(?![^{]*})|_([^_]+)_`, 'g'));
 const specialRegex = new RegExp(`(?<!{|>|\\w|\\\\)(${specials.join('|')})(?![\\w}])`, 'g');
-const colorRegex = /\{([^;|}]*)[^}]*[;|]([^}]+)}/g; ///\{color:([^}]+)}(.*){\/color}/g;
+const colorRegex = /\{([^;|}]*)[^}]*[;|]([^}]+)}/g; // /\{color:([^}]+)}(.*){\/color}/g;
 const highlightRegex = /\{([^}]+)}/g;
 
 let id = 1;
@@ -22,7 +22,7 @@ export default function card(monster = true) {
   const wrapper = cardWrapper();
   wrapper.id = `card${id++}`;
   wrapper.innerHTML = `
-    <table class="cardBoard ${monster?'monster':'spell'}">
+    <table class="cardBoard ${monster ? 'monster' : 'spell'}">
       <tr>
         <td class="name" colspan="3"><span></span><input type="text" placeholder="Name"></td>
         <td class="cost edit"><span>0</span></td>
@@ -38,16 +38,16 @@ export default function card(monster = true) {
         <td class="description" colspan="4"><div></div><textarea></textarea></td>
       </tr>
       <tr>
-        ${monster?'<td class="attack edit"><span>0</span></td>':''}
-        <td class="rarity" colspan="${monster?2:4}"><img src="rarity/COMMON.png"></td>
-        ${monster?'<td class="health edit"><span>0</span></td>':''}
+        ${monster ? '<td class="attack edit"><span>0</span></td>' : ''}
+        <td class="rarity" colspan="${monster ? 2 : 4}"><img src="rarity/COMMON.png"></td>
+        ${monster ? '<td class="health edit"><span>0</span></td>' : ''}
       </tr>
     </table>
     <span class="footer">undercard.feildmaster.com</span>`;
 
   // Menu
-  const card = wrapper.querySelector('.cardBoard');
-  card.oncontextmenu = cardMenu;
+  const element = wrapper.querySelector('.cardBoard');
+  element.oncontextmenu = cardMenu;
 
   // Name
   const nameCell = wrapper.querySelector('.name');
@@ -109,7 +109,7 @@ function finalizeName(e = {}) {
   }
   span.textContent = input.value;
   span.style.display = '';
-  resize(span.parentElement, {height: false});
+  resize(span.parentElement, { height: false });
 }
 
 function edit(input) {
@@ -153,7 +153,7 @@ function renderDescription(span, e = {}) {
     editEvent('description');
   }
   span.innerHTML = this.value
-    .replace(underlineRegex.value, (_, $1, $2) => `<span class="underline">${$2||$1}</span>`)
+    .replace(underlineRegex.value, (_, $1, $2) => `<span class="underline">${$2 || $1}</span>`)
     .replace(colorRegex, (_, $1, $2) => `<span style="color:${$1}">${$2}</span>`)
     .replace(specialRegex, (_, $1) => `<span class="${getClass($1)}">${$1}</span>`)
     .replace(highlightRegex, (_, $1) => `<span class="cardName">${$1}</span>`)
@@ -178,6 +178,7 @@ function getClass(keyword) {
     case 'BASE':
     case 'TOKEN':
     case 'GENERATED': return keyword;
+    default: throw new Error(`Unknown Keyword: ${keyword}`);
   }
 }
 
@@ -185,7 +186,7 @@ function readImage(image) {
   if (!(this.files && this.files[0])) return;
   editEvent('image');
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = (e) => {
     image.src = e.target.result;
   };
   reader.readAsDataURL(this.files[0]);

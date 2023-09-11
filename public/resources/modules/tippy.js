@@ -1,5 +1,5 @@
 import tippy from './3rdparty/tippy.js';
-import {isDragging} from './draggable.js';
+import { isDragging } from './draggable.js';
 import extras from './extras.js';
 
 let active;
@@ -115,7 +115,8 @@ function modifySoul(nameCell, popper) {
   if (this === activeSoul) {
     input.focus();
     return;
-  } else if (activeSoul) {
+  }
+  if (activeSoul) {
     activeSoul.classList.remove('active');
     nameCell.classList.remove(activeSoul.textContent);
   }
@@ -127,15 +128,19 @@ function modifySoul(nameCell, popper) {
 }
 
 tippy.setDefaults({
-  onShown, onShow, onHide,
+  onShown,
+  onShow,
+  onHide,
   placement: 'right-end',
   a11y: false,
   arrow: false,
   trigger: 'manual',
   duration: 0,
   hideOnClick: false,
-  //performance: true,
-  shouldPopperHideOnBlur() { return false },
+  // performance: true,
+  shouldPopperHideOnBlur() {
+    return false;
+  },
   interactive: true,
   ignoreAttributes: true,
   animateFill: false,
