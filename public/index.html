@@ -23,7 +23,7 @@
       gtag('config', 'G-9RQNLPJ49W', {
         'anonymize_ip': true,
       });
-      
+
       function editEvent(type) {
         gtag('event', `edit_${type}`);
       }
@@ -35,7 +35,7 @@
     <!--<script defer src="/__/firebase/6.0.2/firebase-firestore.js"></script>-->
     <!-- initialize the SDK after all desired features are loaded -->
     <!--<script defer src="/__/firebase/init.js"></script>-->
-    
+
     <script defer src="https://unpkg.com/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
     <script defer src="./resources/simpletoast.js"></script>
     <script type="module" src="./resources/modules/index.js"></script>
@@ -56,7 +56,7 @@
       <div>Loading...</div>
     </div>
     <footer class="transparent">
-      <a href="https://undercards.net/SignUp?ref=63068" title="Undercards" target="_blank">Undercards</a> Template Editor 
+      <a href="https://undercards.net/SignUp?ref=63068" title="Undercards" target="_blank">Undercards</a> Template Editor
       &bullet;
       <a href="https://discord.gg/xgT3X9j" title="Discord" target="_blank">
         <img src="./resources/social/discord.png" class="social">
@@ -100,8 +100,11 @@
       <div>
         <img class="selectable" src="./rarity/BASE.png">
         <img class="selectable extra" src="./rarity/BASE_DR.png">
-        <img class="selectable" src="./rarity/GENERATED.png">
-        <img class="selectable" src="./rarity/GENERATED_DR.png">
+        <img class="selectable extra" src="./rarity/BASE_UTY.png">
+        <br class="extra">
+        <img class="selectable" src="./rarity/TOKEN.png">
+        <img class="selectable" src="./rarity/TOKEN_DR.png">
+        <img class="selectable" src="./rarity/TOKEN_UTY.png">
       </div>
       <div>
         <img class="selectable active" src="./rarity/COMMON.png">
@@ -116,6 +119,13 @@
         <img class="selectable" src="./rarity/EPIC_DR.png">
         <img class="selectable" src="./rarity/LEGENDARY_DR.png">
         <img class="selectable" src="./rarity/DETERMINATION_DR.png">
+      </div>
+      <div>
+        <img class="selectable" src="./rarity/COMMON_UTY.png">
+        <img class="selectable" src="./rarity/RARE_UTY.png">
+        <img class="selectable" src="./rarity/EPIC_UTY.png">
+        <img class="selectable" src="./rarity/LEGENDARY_UTY.png">
+        <img class="selectable" src="./rarity/DETERMINATION_UTY.png">
       </div>
     </template>
     <template id="selectTribe">
