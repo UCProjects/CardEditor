@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Update resources
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       pushed: ${{ steps.push.outputs.pushed }}
     steps:
