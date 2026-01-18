@@ -5,6 +5,9 @@ on:
       FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA:
         description: 'Firebase Service Account'
         required: true
+      GITHUB_TOKEN:
+        description: 'Github Token'
+        required: true
   push:
     branches:
       - master
