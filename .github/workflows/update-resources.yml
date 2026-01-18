@@ -29,5 +29,8 @@ jobs:
   deploy:
     name: Trigger deploy
     needs: build
-    if: needs.build.outputs.pushed == 'true'
+    if: needs.build.outputs.pushed == 'true' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/firebase-hosting-merge.yml
+    secrets:
+      FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA: ${{secrets.FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA}}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
