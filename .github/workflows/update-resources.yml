@@ -33,4 +33,3 @@ jobs:
     uses: ./.github/workflows/firebase-hosting-merge.yml
     secrets:
       FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA: ${{secrets.FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA}}
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
