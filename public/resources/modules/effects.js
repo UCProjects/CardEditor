@@ -1,6 +1,8 @@
 export const effects = [];
 export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'TOKEN', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
+const tribeBlacklist = ['tem', 'frog']
+
 const div = document.querySelector('#descriptionTip div');
 function addType(type) {
   const el = document.createElement('span');
@@ -19,7 +21,9 @@ function addTribes() {
   const last = container.querySelector('img:last-child');
   effects.forEach((effect) => {
     if (!effect.endsWith('?')) return;
-    last.before(getTribe(effect.substring(0, effect.length - 2)));
+    const name = effect.substring(0, effect.length - 2);
+    if (tribeBlacklist.includes(name)) return;
+    last.before(getTribe(name));
   });
   document.querySelector('#selectTribe').innerHTML = container.innerHTML;
 }
