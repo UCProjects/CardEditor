@@ -1,7 +1,7 @@
 export const effects = [];
 export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'TOKEN', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
-const tribeBlacklist = ['tem', 'frog']
+const tribeBlacklist = ['Tem', 'Frog']
 
 const div = document.querySelector('#descriptionTip div');
 function addType(type) {
