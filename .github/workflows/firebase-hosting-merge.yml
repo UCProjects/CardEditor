@@ -1,6 +1,10 @@
 name: Deploy to Firebase Hosting on merge
 on:
   workflow_call:
+    secrets:
+      FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA:
+        description: 'Firebase Service Account'
+        required: true
   push:
     branches:
       - master
