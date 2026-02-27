@@ -1,21 +1,49 @@
-import BaseElement from './base';
+import BaseElement from './base.js';
+import { Elements } from './types.js';
 
 export default class Card extends BaseElement {
-  #health;
-  #attack;
-  #soul;
-  #tribes;
-  #image;
-
-  constructor(data = {}) {
-    super(data);
-    const {
-      health = -1,
-      attack = -1,
-      soul = '',
-      tribes = [''],
+  constructor({
+      attack,
+      health,
       image = '',
-    } = data;
-    this.#health = health;
+      soul = '',
+      status = [''],
+      tribes = [''],
+    ...rest
+  } = {}) {
+    super({
+      ...rest,
+      type: Elements.Card,
+    });
+    this.attack = attack;
+    this.health = health;
+    this.image = image;
+    this.soul = soul;
+    this.status = status.filter((_) => _);
+    this.tribes = tribes.filter((_) => _);
+  }
+
+  get isMonster() {
+    return this.health !== undefined;
+  }
+
+  toJSON() {
+    const {
+      attack,
+      health,
+      image,
+      soul,
+      status,
+      tribes,
+    } = this;
+    return {
+      ...super.toJSON(),
+      attack,
+      health,
+      image,
+      soul,
+      status,
+      tribes,
+    };
   }
 }
