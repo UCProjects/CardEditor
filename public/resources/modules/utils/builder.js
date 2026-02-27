@@ -1,12 +1,13 @@
 export default class Builder {
+  #func;
+  #res;
+
   constructor(func) {
-    this.func = func;
+    this.#func = func;
   }
 
   get value() {
-    if (!this.res) {
-      this.res = this.func();
-    }
-    return this.res;
+    this.#res ||= this.#func();
+    return this.#res;
   }
 }
