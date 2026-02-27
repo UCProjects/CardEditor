@@ -4,7 +4,7 @@ import resize from './resize.js';
 import Builder from './utils/builder.js';
 
 const underlineRegex = new Builder(() => new RegExp(`(?<!\\\\)(${effects.join('|')})(?![^{]*})|_([^_]+)_`, 'g'));
-const specialRegex = new RegExp(`(?<!{|>|\\w|\\\\)(${specials.join('|')})(?![\\w}])`, 'g');
+const specialRegex = new Builder(() => new RegExp(`(?<!{|>|\\w|\\\\)(${specials.join('|')})(?![\\w}])`, 'g'));
 const colorRegex = /\{([^;|}]*)[^}]*[;|]([^}]+)}/g; // /\{color:([^}]+)}(.*){\/color}/g;
 const highlightRegex = /\{([^}]+)}/g;
 
@@ -155,7 +155,7 @@ function renderDescription(span, e = {}) {
   span.innerHTML = this.value
     .replace(underlineRegex.value, (_, $1, $2) => `<span class="underline">${$2 || $1}</span>`)
     .replace(colorRegex, (_, $1, $2) => `<span style="color:${$1}">${$2}</span>`)
-    .replace(specialRegex, (_, $1) => `<span class="${getClass($1)}">${$1}</span>`)
+    .replace(specialRegex.value, (_, $1) => `<span class="${getClass($1)}">${$1}</span>`)
     .replace(highlightRegex, (_, $1) => `<span class="cardName">${$1}</span>`)
     .replace(/\\/g, '');
   span.style.display = '';
