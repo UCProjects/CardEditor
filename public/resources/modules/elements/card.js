@@ -24,7 +24,7 @@ export default class Card extends BaseElement {
   }
 
   get isMonster() {
-    return this.health !== undefined;
+    return typeof this.health === 'number';
   }
 
   toJSON() {
