@@ -24,6 +24,7 @@ export default function newGroup() {
   return container;
 }
 
+/** @param {HTMLElement} container */
 function generate(monster, container) {
   gtag('event', `create_${monster ? 'monster' : 'spell'}`);
   const wrapper = card(monster);
@@ -32,6 +33,7 @@ function generate(monster, container) {
   tip(wrapper); // must be done after adding to document
 }
 
+/** @param {HTMLElement} container */
 function setupName(container) {
   const name = container.querySelector('.group-name');
   const input = container.querySelector('.group-name + input');
@@ -47,15 +49,17 @@ function setupName(container) {
       name.textContent = text;
     }
   };
-  if (id > 0) {
+  if (id) {
     name.textContent = `Group ${id}`;
   }
   input.placeholder = name.textContent;
 }
 
+/** @param {HTMLElement} container */
 function setupButtons(container) {
   container.querySelector('.save').parentElement.onclick = () => save(container, container.querySelector('.group-name').textContent);
   container.querySelector('.book').parentElement.onclick = newGroup.bind(container);
   container.querySelector('.monster').parentElement.onclick = () => generate(true, container);
   container.querySelector('.spell').parentElement.onclick = () => generate(false, container);
+  container.querySelector('.text').parentElement.remove();
 }
