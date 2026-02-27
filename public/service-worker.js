@@ -18,7 +18,7 @@ workbox.routing.registerRoute(
   new workbox.strategies.StaleWhileRevalidate(),
 );
 
-//
+// Cache 3rd party files
 workbox.routing.registerRoute(
   /https:\/\/(?:unpkg|cdnjs\.cloudflare)\.com\/.*\.(?:js)$/,
   new workbox.strategies.StaleWhileRevalidate(),
