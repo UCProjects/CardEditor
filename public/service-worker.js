@@ -12,7 +12,7 @@ workbox.routing.registerRoute(
   new workbox.strategies.NetworkFirst(),
 );
 
-// Cache js/css files
+// Cache local js/css files
 workbox.routing.registerRoute(
   /\.(?:js|css)$/,
   new workbox.strategies.StaleWhileRevalidate(),
@@ -20,8 +20,14 @@ workbox.routing.registerRoute(
 
 // Cache 3rd party files
 workbox.routing.registerRoute(
-  /https:\/\/(?:unpkg|cdnjs\.cloudflare)\.com\/.*\.(?:js)$/,
-  new workbox.strategies.StaleWhileRevalidate(),
+  ({ url }) => [
+    'unpkg.com',
+    'cdnjs.cloudflare.com',
+    'jspm.dev',
+  ].includes(url.host),
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'external',
+  }),
 );
 
 // Cache images
