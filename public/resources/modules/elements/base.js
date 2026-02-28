@@ -1,4 +1,4 @@
-import { v4 } from 'https://jspm.dev/npm:uuid@9.0.0';
+import { v4 } from 'https://ga.jspm.io/npm:uuid@9.0.0';
 
 export default class Base {
   #id;
@@ -12,7 +12,6 @@ export default class Base {
     this.#id = id;
     this.#type = type;
   }
-
 
   get id() {
     return this.#id;

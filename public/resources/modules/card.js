@@ -1,3 +1,4 @@
+/* global editEvent */
 import cardMenu from './menu.js';
 import { effects, specials } from './effects.js';
 import resize from './resize.js';
@@ -182,6 +183,7 @@ function getClass(keyword) {
   }
 }
 
+// TODO: https://ga.jspm.io/npm:browser-image-compression@2.0.2
 function readImage(image) {
   if (!(this.files && this.files[0])) return;
   editEvent('image');

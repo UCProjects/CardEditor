@@ -23,7 +23,7 @@ workbox.routing.registerRoute(
   ({ url }) => [
     'unpkg.com',
     'cdnjs.cloudflare.com',
-    'jspm.dev',
+    'ga.jspm.io',
   ].includes(url.host),
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: 'external',
