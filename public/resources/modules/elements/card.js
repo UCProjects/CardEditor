@@ -1,16 +1,16 @@
+import style from './card.css' assert { type: 'css' };
 import BaseElement from './base.js';
 import { Elements } from './types.js';
+
+document.adoptedStyleSheets.push(style);
 
 export default class Card extends BaseElement {
   constructor({
     attack,
     cost = 0,
-    description = '',
     effects = [''],
     health,
     image = '',
-    name = '',
-    pack = '',
     rarity = '',
     soul = '',
     tribes = [''],
@@ -22,31 +22,31 @@ export default class Card extends BaseElement {
     });
     this.attack = attack;
     this.cost = cost;
-    this.description = description;
     this.effects = effects.filter((_) => _);
     this.health = health;
     this.image = image;
-    this.name = name;
-    this.pack = pack;
     this.rarity = rarity;
     this.soul = soul;
     this.tribes = tribes.filter((_) => _);
   }
 
-  get isMonster() {
-    return typeof this.health === 'number';
+  setMonster() {
+    if (this.health !== undefined) return;
+    this.health = 0;
+    this.attack = 0;
+  }
+
+  get isSpell() {
+    return this.health === undefined;
   }
 
   toJSON() {
     const {
       attack,
       cost,
-      description,
       effects,
       health,
       image,
-      name,
-      pack,
       rarity,
       soul,
       tribes,
@@ -55,12 +55,9 @@ export default class Card extends BaseElement {
       ...super.toJSON(),
       attack,
       cost,
-      description,
       effects,
       health,
       image,
-      name,
-      pack,
       rarity,
       soul,
       tribes,

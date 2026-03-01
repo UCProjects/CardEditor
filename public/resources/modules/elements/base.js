@@ -1,16 +1,20 @@
 import { v4 } from 'https://ga.jspm.io/npm:uuid@9.0.0';
 
 export default class Base {
+  name = '';
   #id;
+  description = '';
   #type;
 
   constructor({
     id = v4(),
     type,
+    ...props
   }) {
     if (!type) throw new Error('Element requires type');
     this.#id = id;
     this.#type = type;
+    Object.assign(this, props)
   }
 
   get id() {
@@ -37,6 +41,7 @@ export default class Base {
       type,
     } = this;
     return {
+      ...this,
       id,
       type,
     };
