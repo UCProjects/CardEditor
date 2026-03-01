@@ -5,62 +5,73 @@ import { Elements } from './types.js';
 document.adoptedStyleSheets.push(style);
 
 export default class Card extends BaseElement {
+  /** @type {number | undefined} */
+  #attack;
+  cost = 0;
+  /** @type {string[]} */
+  effects = [];
+  /** @type {number | undefined} */
+  #health;
+  image = '';
+  rarity = '';
+  soul = '';
+  /** @type {string[]} */
+  tribes = [];
+
   constructor({
     attack,
-    cost = 0,
-    effects = [''],
     health,
-    image = '',
-    rarity = '',
-    soul = '',
-    tribes = [''],
+    // soul = '',
     ...rest
   } = {}) {
     super({
       ...rest,
       type: Elements.Card,
     });
-    this.attack = attack;
-    this.cost = cost;
-    this.effects = effects.filter((_) => _);
-    this.health = health;
-    this.image = image;
-    this.rarity = rarity;
-    this.soul = soul;
-    this.tribes = tribes.filter((_) => _);
+    this.#attack = attack;
+    this.#health = health;
+    // this.#soul = soul;
+  }
+
+  get attack() {
+    return this.#attack;
+  }
+
+  set attack(value = 0) {
+    if (this.isSpell) throw new Error('Adding attack to spell');
+    if (value < 0) throw new Error('Invalid attack value');
+    this.#attack = value;
+  }
+
+  get health() {
+    return this.#health;
+  }
+
+  set health(value = 0) {
+    if (this.isSpell) throw new Error('Adding health to spell');
+    if (value < 0) throw new Error('Invalid health value');
+    this.#health = value;
   }
 
   setMonster() {
-    if (this.health !== undefined) return;
-    this.health = 0;
-    this.attack = 0;
+    if (this.#health !== undefined) return;
+    this.#health = 0;
+    this.#attack = 0;
   }
 
   get isSpell() {
-    return this.health === undefined;
+    return this.#health === undefined;
   }
 
   toJSON() {
     const {
       attack,
-      cost,
-      effects,
       health,
-      image,
-      rarity,
-      soul,
-      tribes,
     } = this;
     return {
       ...super.toJSON(),
       attack,
-      cost,
-      effects,
       health,
-      image,
-      rarity,
-      soul,
-      tribes,
     };
   }
 }
