@@ -84,6 +84,11 @@
         <span>\bypass</span>
       </div>
     </div>
+    <dialog id="editor">
+      <div class="helper"></div>
+      <div class="preview"></div>
+      <div class="input"></div>
+    </dialog>
     <template id="selectSoul">
       <h2>Change Soul</h2>
       <span class="selectable active">NONE</span>
@@ -154,5 +159,35 @@
       </header>
       <div class="cards"></div>
     </template>
+    <template id="menu">
+      <div class="menu" popover="auto" onclick="this.hidePopover();">
+        <button class="menu-button material-icons" commandfor="editor" command="show-modal">edit_square</button>
+        <button class="menu-button material-icons">save_alt</button>
+        <button class="menu-button material-icons">delete</button>
+      </div>
+    </template>
+    <template id="card">
+      <div class="card">
+        <div class="top row">
+          <div class="name center-v"></div>
+          <div class="cost center-v center-h"></div>
+        </div>
+        <div class="image">
+          <img class="avatar" src="" />
+          <div class="status"></div>
+          <div class="tribes"></div>
+        </div>
+        <div class="description center-v center-h"></div>
+        <div class="bottom row">
+          <div class="attack center-v center-h"></div>
+          <div class="rarity center-v center-h">
+            <img>
+          </div>
+          <div class="health center-v center-h"></div>
+        </div>
+      </div>
+    </template>
+    <template id="text"></template>
+    <template id="effects"></template>
   </body>
 </html>

@@ -8,6 +8,16 @@ input, textarea {
     user-select: text;
 }
 
+.center-v {
+    display: flex;
+    align-items: center;
+}
+
+.center-h {
+    display: flex;
+    justify-content: center;
+}
+
 body > footer {
     position: fixed;
     bottom: 10px;
