@@ -1,6 +1,8 @@
-/* eslint-env serviceworker */
-/* global workbox */
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
+
+workbox.setConfig({
+  debug: new URLSearchParams(location.search).has('debug'),
+});
 
 workbox.core.setCacheNameDetails({
   prefix: 'undercard-editor',
@@ -18,13 +20,10 @@ workbox.routing.registerRoute(
   }),
 );
 
-// Cache local js/css files
+// Cache local files
 workbox.routing.registerRoute(
   /\.(?:js|css|json)$/,
-  new workbox.strategies.NetworkFirst({
-    networkTimeoutSeconds: 10,
-    fetchOptions: { cache: 'no-store' },
-  }),
+  new workbox.strategies.StaleWhileRevalidate(),
 );
 
 // Cache 3rd party files
@@ -41,12 +40,11 @@ workbox.routing.registerRoute(
 
 // Cache images
 workbox.routing.registerRoute(
-  /\.(?:png|gif|jpg|jpeg|svg)$/,
+  ({ request }) => request.destination === 'image',
   new workbox.strategies.CacheFirst({
     cacheName: 'images',
     plugins: [
       new workbox.expiration.Plugin({
-        maxEntries: 60,
         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
       }),
     ],
@@ -75,6 +73,7 @@ workbox.routing.registerRoute(
       }),
       new workbox.expiration.Plugin({
         maxAgeSeconds: 60 * 60 * 24 * 365,
+        purgeOnQuotaError: true,
       }),
     ],
   }),

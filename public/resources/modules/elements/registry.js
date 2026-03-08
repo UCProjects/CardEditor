@@ -1,0 +1,69 @@
+import { uuidValidateV4 } from '../3rdparty/uuid.js';
+import Card from './card.js';
+import Group from './group.js';
+import Text from './text.js';
+import { Elements } from './types.js';
+
+/**
+ * @type {Map<string, import('./base.js').default>}
+ */
+const data = new Map();
+
+export function load(id) {
+  if (!id) throw new Error('Must provide ID');
+  if (!uuidValidateV4(id)) throw new Error(`Invalid ID: ${id}`);
+  const item = localStorage.getItem(id);
+  if (!item) throw new Error(`Invalid Item: ${id}`);
+  data.set(id, init({
+    ...JSON.parse(item),
+    id,
+  }));
+}
+
+export function save(key) {
+  if (key) {
+    const element = data.get(key);
+    if (element) {
+      const {
+        id,
+        ...rest
+      } = element.toJSON();
+
+      localStorage.setItem(id, JSON.stringify(rest, (_, value) => {
+        if (Array.isArray(value)) {
+          if (!value.length) return undefined;
+        } else if (typeof value === 'string') {
+          return value.trim() || undefined;
+        }
+        return value;
+      }));
+    }
+  } else {
+    [...data.keys()].forEach(save);
+  }
+}
+
+export function getAll() {
+  return [...data.values()];
+}
+
+export function remove(key) {
+  return data.delete(key);
+}
+
+/** @param {Group | Card | Text} element  */
+export function clone(element) {
+  return init(element.toJSON());
+}
+
+function init(props) {
+  switch (props.type) {
+    case Elements.Card: return new Card(props);
+    case Elements.Group: return new Group(props);
+    case Elements.Text: return new Text(props);
+    default: {
+      console.dir(props);
+      throw new Error(`Unknown Entity: [${props.id}, ${props.type}]`);
+    }
+  }
+}

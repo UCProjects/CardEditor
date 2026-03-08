@@ -1,20 +1,25 @@
-import { v4 } from 'https://ga.jspm.io/npm:uuid@9.0.0';
+import { uuidV4 } from '../3rdparty/uuid.js';
+import EventEmitter from '../eventManager.js';
 
-export default class Base {
+/** @typedef {typeof import('./types.js').default} Elements */
+
+export default class BaseElement extends EventEmitter {
   name = '';
   #id;
   description = '';
+  /** @type {Elements[keyof Elements]} */
   #type;
 
   constructor({
-    id = v4(),
+    id = uuidV4(),
     type,
     ...props
   }) {
     if (!type) throw new Error('Element requires type');
+    super();
     this.#id = id;
     this.#type = type;
-    Object.assign(this, props)
+    Object.assign(this, props);
   }
 
   get id() {
@@ -29,10 +34,14 @@ export default class Base {
     const template = document.querySelector(id);
     if (!template) throw new Error(`Failed to find template '${id}'`);
     const container = document.createElement('div');
-    container.id = this.id;
+    container.id = `${this.type}-${this.id}`;
     container.innerHTML = template.innerHTML;
     container.classList.add('element', this.type);
     return container;
+  }
+
+  clone() {
+    return new this.constructor(this.toJSON());
   }
 
   toJSON() {
@@ -40,10 +49,17 @@ export default class Base {
       id,
       type,
     } = this;
-    return {
+    const ret = {
       ...this,
+      // TODO: ...getProps(this).reduce((acc, key) => acc[key] = this[key], {}),
       id,
       type,
     };
+    Object.entries(ret).forEach(([key, value]) => {
+      if (Array.isArray(value)) { // Clone arrays
+        ret[key] = [...value];
+      }
+    });
+    return ret;
   }
 }

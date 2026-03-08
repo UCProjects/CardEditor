@@ -1,0 +1,114 @@
+:root {
+  --attack: rgb(255, 0, 0);
+  --border: rgb(255, 255, 255);
+  --cost: rgb(52, 185, 254);
+  --font: rgb(255, 255, 255);
+  --health: rgb(107, 204, 0);
+}
+
+.card {
+  border: 2px solid var(--border);
+  color: var(--font);
+  width: 162px;
+  overflow: hidden;
+  box-sizing: border-box;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.card * {
+  margin: 0;
+}
+
+.top,
+.bottom {
+  height: 30px;
+}
+
+.card .name {
+  flex-grow: 2;
+  padding-left: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.card .cost {
+  width: 40px;
+  border-left: 2px solid var(--border);
+  font-size: 1.2rem;
+  margin-top: -4px;
+  color: var(--cost);
+}
+
+.card .image {
+  position: relative;
+  height: 88px;
+}
+
+.card .description {
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 2px 1px;
+  height: 80px;
+}
+
+.card .image,
+.card .description,
+.card .bottom > * {
+  border-top: 2px solid var(--border);
+}
+
+.card .attack {
+  width: 40px;
+  border-right: 2px solid var(--border);
+  color: var(--attack);
+  font-size: 20px;
+}
+
+.card .rarity {
+  flex-grow: 2;
+  padding: 5px 0;
+}
+
+.card .health {
+  width: 40px;
+  border-left: 2px solid var(--border);
+  color: var(--health);
+  font-size: 20px;
+}
+
+.card .status,
+.card .tribes {
+  position: absolute;
+  right: 2px;
+}
+
+.card .status {
+  top: 4px;
+}
+
+.card .tribes {
+  bottom: 0px;
+}
+
+.card .status > img,
+.card .tribes > img,
+.card .status > span {
+  margin-left: 2px;
+}
+
+.card .status img,
+.card .tribes img {
+  width: 16px;
+}
+
+.card .avatar {
+  width: 100%;
+  height: 100%;
+}
+
+.card.spell .health,
+.card.spell .attack {
+  display: none;
+}
