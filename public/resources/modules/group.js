@@ -61,5 +61,5 @@ function setupButtons(container) {
   container.querySelector('.book').parentElement.onclick = newGroup.bind(container);
   container.querySelector('.monster').parentElement.onclick = () => generate(true, container);
   container.querySelector('.spell').parentElement.onclick = () => generate(false, container);
-  container.querySelector('.text').parentElement.remove();
+  // container.querySelector('.text').parentElement.remove();
 }
