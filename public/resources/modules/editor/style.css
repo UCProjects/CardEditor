@@ -1,0 +1,72 @@
+:root {
+  --background-alt: rgb(255, 255, 255);
+  --spacing: 10px;
+  --text-alt: rgb(0, 0, 0);
+}
+
+#editor {
+  background-color: var(--background);
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  padding: 0;
+  color: var(--text);
+}
+
+#editor::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+.editor-wrapper {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 150px;
+}
+
+.editor-wrapper > header {
+  color: var(--text-alt);
+  background-color: var(--background-alt);
+  padding: 5px var(--spacing);
+  grid-column: 1 / -1;
+}
+
+.editor-wrapper > .helper {
+  border-left: 2px solid var(--border);
+  padding: var(--spacing);
+  text-align: center;
+}
+
+.editor-wrapper > .preview {
+  margin: var(--spacing);
+}
+
+.editor-wrapper > .input {
+  border-top: 2px solid var(--border);
+  grid-column: 1 / -1;
+  padding: var(--spacing);
+}
+
+#editor [data-editable] {
+  min-height: 16px;
+  min-width: 16px;
+}
+
+/* TODO: Change effects/tribes to placeholder image */
+#editor [data-editable="effects"]:empty,
+#editor [data-editable="tribes"]:empty,
+#editor [data-editable]:hover,
+.editable {
+  border: 1px solid red;
+}
+
+#editor [data-editing],
+#editor [data-type] {
+  display: none;
+}
+
+#editor .active {
+  display: block;
+}
+
+#editor span.active {
+  display: inline;
+}

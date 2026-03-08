@@ -1,0 +1,27 @@
+/* TODO make a wrapping container */
+body {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.menu {
+  inset: unset;
+  bottom: anchor(top);
+  right: anchor(right);
+  margin: 0;
+  border: 1px solid white;
+  border-bottom: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.menu button {
+  background-color: transparent;
+}
+
+.menu button:hover {
+  border: 0;
+  margin: 0;
+  background-color: rgb(243, 65, 33);
+  cursor: pointer;
+}
