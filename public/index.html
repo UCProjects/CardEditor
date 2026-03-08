@@ -40,7 +40,7 @@
     <script defer src="./resources/simpletoast.js"></script>
     <script type="module" src="./resources/modules/index.js"></script>
     <script defer nomodule src="./resources/script.js"></script>
-    <script>
+    <script nomodule>
       window.onbeforeunload = () => 'Are you sure?';
     </script>
   </head>
@@ -59,7 +59,7 @@
       <a href="https://undercards.net/SignUp?ref=63068" title="Undercards" target="_blank">Undercards</a> Template Editor
       &bullet;
       <a href="https://discord.gg/xgT3X9j" title="Discord" target="_blank">
-        <img src="./resources/social/discord.png" class="social">
+        <img src="./resources/social/discord.png" class="social" title="Discord" alt="Discord">
       </a>
     </footer>
     <div id="buttons" class="template" legacy>
@@ -84,10 +84,55 @@
         <span>\bypass</span>
       </div>
     </div>
-    <dialog id="editor">
-      <div class="helper"></div>
-      <div class="preview"></div>
-      <div class="input"></div>
+    <article id="app"></article>
+    <!-- Editor -->
+    <dialog id="editor" closedby="any">
+      <section class="editor-wrapper">
+        <header class="full">
+          Editing <span data-type="group">Group</span><span data-type="card">Card</span><span data-type="text">Artifact</span>
+          <!-- Save -->
+          <!-- Cancel -->
+        </header>
+        <div class="preview"></div>
+        <div class="helper">
+          <div data-editing="none">
+            Click on an <span class="editable">area</span> to get started.
+          </div>
+          <div data-editing="name">
+            <input type="text" name="name" />
+            <div data-type="card">Soul:</div>
+          </div>
+          <div data-editing="description" data-template="descriptionTip"></div>
+          <div data-editing="number">
+            <input type="number" name="number" />
+          </div>
+          <div data-editing="avatar">
+            <!-- Built-in -->
+            <!-- Stored -->
+            <!-- New URL -->
+            <!-- New Upload -->
+          </div>
+          <div data-editing="effects">
+            <!--  -->
+          </div>
+          <div data-editing="tribes" data-template="selectTribe">
+            <!-- None -->
+            <!-- All -->
+            <!-- Multi-select Tribe -->
+          </div>
+          <div data-editing="rarity" data-template="selectRarity"></div>
+        </div>
+        <div class="full">
+          <div data-editing="description">
+            <textarea name="description"></textarea>
+          </div>
+          <div data-editing="image">
+            <!-- Stored -->
+            <!-- New URL -->
+            <!-- New Upload -->
+          </div>
+        </div>
+      </section>
     </dialog>
     <template id="selectSoul">
       <h2>Change Soul</h2>
@@ -134,9 +179,9 @@
       </div>
     </template>
     <template id="selectTribe">
-      <!-- <h2>Select Tribe</h2> -->
-      <img class="selectable smallerIcon active" src="./resources/tribes/MONSTER.png">
-      <img class="selectable smallIcon"  title="All" src="./resources/tribes/ALL.png">
+      <h2>Select Tribe</h2>
+      <img class="selectable smallerIcon active" title="None" alt="none" data-tribe="none" src="./resources/tribes/MONSTER.png">
+      <img class="selectable smallIcon"  title="All" alt="all" data-tribe="all" src="./resources/tribes/ALL.png">
     </template>
     <template id="selectTribeImg">
       <img class="selectable smallIcon" src="">
@@ -145,49 +190,86 @@
       <button>Monster</button>
       <button>Spell</button>
     </template>
-    <template id="group">
-      <header>
-        <span class="group-name">Default Group</span><input>
-        <span class="sidebar no-save">
-          <span><img class="monster" src="./resources/tribes/MONSTER.png"></span>
-          <span><img class="spell" src="./resources/images/SPELL.png"></span>
-          <span><img class="book" src="./resources/images/GROUP.png"></span>
-          <span><img class="text" src="./resources/images/TEXT.png"></span>
-          <span><i class="sort material-icons">import_export</i></span>
-          <span><i class="save material-icons">save_alt</i></span>
-        </span>
-      </header>
-      <div class="cards"></div>
-    </template>
     <template id="menu">
       <div class="menu" popover="auto" onclick="this.hidePopover();">
-        <button class="menu-button material-icons" commandfor="editor" command="show-modal">edit_square</button>
-        <button class="menu-button material-icons">save_alt</button>
-        <button class="menu-button material-icons">delete</button>
+        <button class="menu-button material-icons" commandfor="editor" command="show-modal" data-tip="Edit">edit_square</button>
+        <button class="menu-button material-icons" data-tip="Save">save_alt</button>
+        <button class="menu-button material-icons" data-tip="Delete">delete</button>
+      </div>
+    </template>
+    <template id="group">
+      <div class="group">
+        <header>
+          <span class="name group-name" data-editable="name">Default Group</span><input>
+          <span class="sidebar no-save">
+            <span><img class="monster" src="./resources/tribes/MONSTER.png" alt="Monster" data-tip="Monster"></span>
+            <span><img class="spell" src="./resources/images/SPELL.png" alt="Spell" data-tip="Spell"></span>
+            <span><img class="text" src="./resources/images/TEXT.png" alt="Artifact" data-tip="Artifact"></span>
+            <span><img class="book" src="./resources/images/GROUP.png" alt="Group" data-tip="Group"></span>
+            <span><i class="sort material-icons">import_export</i></span>
+            <span><i class="save material-icons">save_alt</i></span>
+          </span>
+        </header>
+        <div class="description" data-editable="description"></div>
+        <div class="content cards"></div>
       </div>
     </template>
     <template id="card">
-      <div class="card">
+      <div class="element card">
         <div class="top row">
-          <div class="name center-v"></div>
-          <div class="cost center-v center-h"></div>
+          <div class="name center-v" data-editable="name"></div>
+          <div class="cost center-v center-h" data-editable="number" data-editable-for="cost"></div>
         </div>
-        <div class="image">
+        <div class="image" data-editable="avatar" data-editable-for="image">
           <img class="avatar" src="" />
-          <div class="status"></div>
-          <div class="tribes"></div>
+          <div class="status" data-editable="effects"></div>
+          <div class="tribes" data-editable="tribes"></div>
         </div>
-        <div class="description center-v center-h"></div>
+        <div class="description center-v center-h" data-editable="description"></div>
         <div class="bottom row">
-          <div class="attack center-v center-h"></div>
-          <div class="rarity center-v center-h">
-            <img>
+          <div class="attack center-v center-h" data-editable="number" data-editable-for="attack"></div>
+          <div class="rarity center-v center-h" data-editable="rarity">
+            <img src="">
           </div>
-          <div class="health center-v center-h"></div>
+          <div class="health center-v center-h" data-editable="number" data-editable-for="health"></div>
         </div>
       </div>
     </template>
-    <template id="text"></template>
-    <template id="effects"></template>
+    <template id="text">
+      <div class="element artifact">
+        <header>
+          <span class="name" data-editable="name">New Artifact</span>
+        </header>
+        <div class="image" data-editable="image">
+          <img src="" />
+        </div>
+        <span class="description" data-editable="description"></span>
+      </div>
+    </template>
+    <template id="editor-name">
+      <input />
+    </template>
+    <template id="editor-description">
+      <textarea></textarea>
+    </template>
+    <template id="editor-number">
+      <input />
+    </template>
+    <template id="editor-card-name">
+      <label>Soul: <!-- Select Soul --></label>
+      <label>Name: <input /></label>
+    </template>
+    <template id="editor-avatar">
+      <!-- Dropdown select, allow custom -->
+    </template>
+    <template id="editor-effects">
+      <!-- List, allow custom? -->
+    </template>
+    <template id="editor-tribes">
+      <!-- List, allow custom? -->
+    </template>
+    <template id="editor-rarity">
+      <!-- List, allow custom? -->
+    </template>
   </body>
 </html>

@@ -1,8 +1,5 @@
-import style from './card.css' assert { type: 'css' };
-import BaseElement from './base.js';
+import BaseElement from './image.js';
 import { Elements } from './types.js';
-
-document.adoptedStyleSheets.push(style);
 
 export default class Card extends BaseElement {
   /** @type {number | undefined} */
@@ -12,7 +9,6 @@ export default class Card extends BaseElement {
   effects = [];
   /** @type {number | undefined} */
   #health;
-  image = '';
   rarity = '';
   soul = '';
   /** @type {string[]} */
@@ -38,7 +34,7 @@ export default class Card extends BaseElement {
   }
 
   set attack(value = 0) {
-    if (this.isSpell) throw new Error('Adding attack to spell');
+    if (this.isSpell()) throw new Error('Adding attack to spell');
     if (value < 0) throw new Error('Invalid attack value');
     this.#attack = value;
   }
@@ -48,7 +44,7 @@ export default class Card extends BaseElement {
   }
 
   set health(value = 0) {
-    if (this.isSpell) throw new Error('Adding health to spell');
+    if (this.isSpell()) throw new Error('Adding health to spell');
     if (value < 0) throw new Error('Invalid health value');
     this.#health = value;
   }
@@ -59,8 +55,14 @@ export default class Card extends BaseElement {
     this.#attack = 0;
   }
 
-  get isSpell() {
+  isSpell() {
     return this.#health === undefined;
+  }
+
+  getElement() {
+    const element = super.getElement();
+    element.classList.toggle('spell', this.isSpell());
+    return element;
   }
 
   toJSON() {

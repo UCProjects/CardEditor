@@ -3,3 +3,5 @@ export const Elements = Object.freeze({
   Group: 'group',
   Text: 'text',
 });
+
+export default Elements;
