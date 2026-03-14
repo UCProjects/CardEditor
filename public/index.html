@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="./resources/undercards.css" rel="stylesheet"/>
     <link href="./resources/description.css" rel="stylesheet"/>
-    <link href="./resources/style.css" rel="stylesheet"/>
     <link href="./resources/legacy.css" rel="stylesheet"/>
     <link href="./resources/loading.css" rel="stylesheet"/>
 
@@ -74,22 +73,28 @@
       <li class="delete">Delete Card</li>
     </div>
     <div id="descriptionTip" class="template">
-      <h2>Keywords</h2>
-      <div></div>
-      <h2>Custom Keywords</h2>
-      <div>
-        <span>_Words to underline_</span>
-        <span>{Card name}</span>
-        <span>{color|Text}</span>
-        <span>\bypass</span>
-      </div>
+      <fieldset>
+        <legend>Keywords</legend>
+        <div></div>
+      </fieldset>
+      <fieldset>
+        <legend>Custom</legend>
+        <div>
+          <span>_Words to underline_</span>
+          <span>{Card name}</span>
+          <span>{color|Text}</span>
+          <span>\bypass</span>
+        </div>
+      </fieldset>
     </div>
     <article id="app"></article>
     <!-- Editor -->
     <dialog id="editor" closedby="any">
       <section class="editor-wrapper">
-        <header class="full">
-          Editing <span data-type="group">Group</span><span data-type="card">Card</span><span data-type="text">Artifact</span>
+        <header>
+          <span>
+            Editing <span data-type="group">Group</span><span data-type="card">Card</span><span data-type="text">Artifact</span>
+          </span>
           <!-- Save -->
           <!-- Cancel -->
         </header>
@@ -99,34 +104,68 @@
             Click on an <span class="editable">area</span> to get started.
           </div>
           <div data-editing="name">
-            <input type="text" name="name" />
-            <div data-type="card">Soul:</div>
+            <fieldset>
+              <legend>Name</legend>
+              <input type="text" name="name" />
+            </fieldset>
+            <fieldset class="soul">
+              <legend>Soul</legend>
+              <div data-template="selectSoul"></div>
+            </fieldset>
           </div>
           <div data-editing="description" data-template="descriptionTip"></div>
           <div data-editing="number">
-            <input type="number" name="number" />
+            <fieldset>
+              <legend>Cost</legend>
+              <input type="number" name="cost" min="0" max="999" />
+            </fieldset>
+            <fieldset class="monster">
+              <legend>Attack</legend>
+              <input type="number" name="attack" min="0" max="999" />
+            </fieldset>
+            <fieldset class="monster">
+              <legend>Health</legend>
+              <input type="number" name="health" min="0" max="999" />
+            </fieldset>
           </div>
           <div data-editing="avatar">
+            <fieldset>
+              <legend>Avatar</legend>
+            </fieldset>
             <!-- Built-in -->
             <!-- Stored -->
             <!-- New URL -->
             <!-- New Upload -->
           </div>
           <div data-editing="effects">
-            <!--  -->
+            <fieldset>
+              <legend>Effects</legend>
+            </fieldset>
           </div>
-          <div data-editing="tribes" data-template="selectTribe">
-            <!-- None -->
-            <!-- All -->
-            <!-- Multi-select Tribe -->
+          <div data-editing="tribes">
+            <fieldset>
+              <legend>Tribes</legend>
+              <div data-template="selectTribe"></div>
+            </fieldset>
           </div>
-          <div data-editing="rarity" data-template="selectRarity"></div>
+          <div data-editing="rarity">
+            <fieldset>
+              <legend>Rarity</legend>
+              <div data-template="selectRarity"></div>
+            </fieldset>
+          </div>
         </div>
-        <div class="full">
+        <div class="extended">
           <div data-editing="description">
-            <textarea name="description"></textarea>
+            <fieldset>
+              <legend>Description</legend>
+              <textarea name="description"></textarea>
+            </fieldset>
           </div>
           <div data-editing="image">
+            <fieldset>
+              <legend>Image</legend>
+            </fieldset>
             <!-- Stored -->
             <!-- New URL -->
             <!-- New Upload -->
@@ -134,8 +173,8 @@
         </div>
       </section>
     </dialog>
+    <div id="breadbox"></div>
     <template id="selectSoul">
-      <h2>Change Soul</h2>
       <span class="selectable active">NONE</span>
       <span class="selectable KINDNESS">KINDNESS</span>
       <span class="selectable INTEGRITY">INTEGRITY</span>
@@ -146,7 +185,6 @@
       <span class="selectable DETERMINATION">DETERMINATION</span>
     </template>
     <template id="selectRarity">
-      <h2>Select Rarity</h2>
       <div>
         <img class="selectable" src="./rarity/BASE.png">
         <img class="selectable extra" src="./rarity/BASE_DR.png">
@@ -179,7 +217,6 @@
       </div>
     </template>
     <template id="selectTribe">
-      <h2>Select Tribe</h2>
       <img class="selectable smallerIcon active" title="None" alt="none" data-tribe="none" src="./resources/tribes/MONSTER.png">
       <img class="selectable smallIcon"  title="All" alt="all" data-tribe="all" src="./resources/tribes/ALL.png">
     </template>
@@ -187,12 +224,14 @@
       <img class="selectable smallIcon" src="">
     </template>
     <template id="groupButtons">
-      <button>Monster</button>
-      <button>Spell</button>
+      <button class="monster"><img src="./resources/tribes/MONSTER.png" alt="Monster" data-tip="Monster"> Monster</button>
+      <button class="spell"><img src="./resources/images/SPELL.png" alt="Spell" data-tip="Spell"> Spell</button>
+      <button class="text"><img src="./resources/images/TEXT.png" alt="Artifact" data-tip="Artifact"> Artifact</button>
     </template>
     <template id="menu">
-      <div class="menu" popover="auto" onclick="this.hidePopover();">
-        <button class="menu-button material-icons" commandfor="editor" command="show-modal" data-tip="Edit">edit_square</button>
+      <div class="menu" popover="auto" onclick="this.hidePopover();" onmouseleave="this.hidePopover();">
+        <button class="menu-button" data-type="group" data-tip="Group"><img class="book" src="./resources/images/GROUP.png" alt="Group"></button>
+        <button class="menu-button material-icons" commandfor="editor" data-tip="Edit">edit_square</button>
         <button class="menu-button material-icons" data-tip="Save">save_alt</button>
         <button class="menu-button material-icons" data-tip="Delete">delete</button>
       </div>
@@ -200,76 +239,51 @@
     <template id="group">
       <div class="group">
         <header>
-          <span class="name group-name" data-editable="name">Default Group</span><input>
-          <span class="sidebar no-save">
-            <span><img class="monster" src="./resources/tribes/MONSTER.png" alt="Monster" data-tip="Monster"></span>
-            <span><img class="spell" src="./resources/images/SPELL.png" alt="Spell" data-tip="Spell"></span>
-            <span><img class="text" src="./resources/images/TEXT.png" alt="Artifact" data-tip="Artifact"></span>
-            <span><img class="book" src="./resources/images/GROUP.png" alt="Group" data-tip="Group"></span>
-            <span><i class="sort material-icons">import_export</i></span>
-            <span><i class="save material-icons">save_alt</i></span>
-          </span>
+          <span class="handle material-icons no-save">drag_handle</span>
+          <span class="name" data-editable="name"></span>
         </header>
-        <div class="description" data-editable="description"></div>
-        <div class="content cards"></div>
+        <div class="description" data-editable="description">Test</div>
+        <div class="content"></div>
       </div>
     </template>
     <template id="card">
-      <div class="element card">
+      <div class="card">
         <div class="top row">
-          <div class="name center-v" data-editable="name"></div>
-          <div class="cost center-v center-h" data-editable="number" data-editable-for="cost"></div>
+          <div class="name middle" data-editable="name"></div>
+          <div class="cost center" data-editable="number" data-editable-for="cost"></div>
         </div>
         <div class="image" data-editable="avatar" data-editable-for="image">
           <img class="avatar" src="" />
           <div class="status" data-editable="effects"></div>
           <div class="tribes" data-editable="tribes"></div>
         </div>
-        <div class="description center-v center-h" data-editable="description"></div>
+        <div class="description center" data-editable="description"></div>
         <div class="bottom row">
-          <div class="attack center-v center-h" data-editable="number" data-editable-for="attack"></div>
-          <div class="rarity center-v center-h" data-editable="rarity">
+          <div class="attack center" data-editable="number" data-editable-for="attack"></div>
+          <div class="rarity center" data-editable="rarity">
             <img src="">
           </div>
-          <div class="health center-v center-h" data-editable="number" data-editable-for="health"></div>
+          <div class="health center" data-editable="number" data-editable-for="health"></div>
         </div>
       </div>
     </template>
     <template id="text">
-      <div class="element artifact">
+      <div class="artifact">
         <header>
           <span class="name" data-editable="name">New Artifact</span>
         </header>
-        <div class="image" data-editable="image">
-          <img src="" />
+        <div class="content">
+          <div class="image" data-editable="image">
+            <img src="" />
+          </div>
+          <div class="description" data-editable="description"></div>
         </div>
-        <span class="description" data-editable="description"></span>
       </div>
     </template>
-    <template id="editor-name">
-      <input />
-    </template>
-    <template id="editor-description">
-      <textarea></textarea>
-    </template>
-    <template id="editor-number">
-      <input />
-    </template>
-    <template id="editor-card-name">
-      <label>Soul: <!-- Select Soul --></label>
-      <label>Name: <input /></label>
-    </template>
-    <template id="editor-avatar">
-      <!-- Dropdown select, allow custom -->
-    </template>
-    <template id="editor-effects">
-      <!-- List, allow custom? -->
-    </template>
-    <template id="editor-tribes">
-      <!-- List, allow custom? -->
-    </template>
-    <template id="editor-rarity">
-      <!-- List, allow custom? -->
+    <template id="toast">
+      <header></header>
+      <div></div>
+      <footer></footer>
     </template>
   </body>
 </html>

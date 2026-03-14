@@ -1,7 +1,7 @@
 export const effects = [];
 export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'TOKEN', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
-const tribeBlacklist = ['Tem', 'Frog']
+const tribeBlacklist = ['Tem', 'Frog'];
 
 const div = document.querySelector('#descriptionTip div');
 function addType(type) {
@@ -23,7 +23,7 @@ function addTribes() {
     if (!effect.endsWith('?')) return;
     const name = effect.substring(0, effect.length - 2);
     if (tribeBlacklist.includes(name)) return;
-    last.before(getTribe(name));
+    last.after(getTribe(name));
   });
   document.querySelector('#selectTribe').innerHTML = container.innerHTML;
 }

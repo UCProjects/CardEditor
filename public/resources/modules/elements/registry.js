@@ -1,7 +1,7 @@
 import { uuidValidateV4 } from '../3rdparty/uuid.js';
+import Text from './text.js';
 import Card from './card.js';
 import Group from './group.js';
-import Text from './text.js';
 import { Elements } from './types.js';
 
 /**
@@ -43,6 +43,10 @@ export function save(key) {
   }
 }
 
+export function get(id) {
+  return data.get(id);
+}
+
 export function getAll() {
   return [...data.values()];
 }
@@ -52,11 +56,11 @@ export function remove(key) {
 }
 
 /** @param {Group | Card | Text} element  */
-export function clone(element) {
-  return init(element.toJSON());
+export function register(element) {
+  data.set(element.id, element);
 }
 
-function init(props) {
+export function init(props) {
   switch (props.type) {
     case Elements.Card: return new Card(props);
     case Elements.Group: return new Group(props);

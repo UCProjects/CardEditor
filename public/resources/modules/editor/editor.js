@@ -1,10 +1,8 @@
-import newRenderer from '../render/index.js';
 import style from './style.css' with { type: 'css' };
 import EventEmitter from '../eventManager.js';
 import CardModule from './modules/card.js';
 import TextModule from './modules/text.js';
 import GroupModule from './modules/group.js';
-import { sortedMatch } from '../utils/array.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -55,16 +53,7 @@ class Editor extends EventEmitter {
       this.emit('close', reason);
     });
 
-    this.on('save', () => {
-      const original = this.#original;
-      const { element } = original;
-      Object.entries(this.element.toJSON())
-        .forEach(([k, v]) => {
-          const val = element[k];
-          const update = Array.isArray(v) ? sortedMatch(v, val) : val !== v;
-          if (update) original.update(v, k);
-        });
-    });
+    this.on('save', () => this.#original.emit('update', this.element.toJSON()));
 
     this.on('close', () => {
       this.#module[this.#renderer.element.type].unload();
@@ -75,7 +64,7 @@ class Editor extends EventEmitter {
   }
 
   get container() {
-    return this.#renderer.container;
+    return editor;
   }
 
   get element() {
@@ -88,15 +77,16 @@ class Editor extends EventEmitter {
 
   /** @param {Renderer} renderer */
   open(renderer) {
-    this.#original = renderer;
     const element = renderer.element;
+    const module = this.#module[element.type];
 
     setType(element.type);
     setActive('none');
 
-    this.#renderer = newRenderer(element.clone());
+    this.#original = renderer;
+    this.#renderer = element.clone().renderer();
 
-    editor.querySelector('.preview').replaceChildren(this.container);
+    editor.querySelector('.preview').replaceChildren(this.#renderer.container);
 
     editor.querySelectorAll('[data-editable]').forEach((el) => {
       const { editable, editableFor = editable } = el.dataset;
@@ -105,10 +95,11 @@ class Editor extends EventEmitter {
         this.#prop = editableFor;
 
         setActive(editable);
+        module.emit('click', editableFor);
       });
     });
 
-    this.#module[element.type].init();
+    module.init();
 
     editor.returnValue = undefined;
     editor.showModal();
