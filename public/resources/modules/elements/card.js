@@ -1,23 +1,27 @@
 import BaseElement from './image.js';
 import { Elements } from './types.js';
 
-export default class Card extends BaseElement {
+export default class CardElement extends BaseElement {
   /** @type {number | undefined} */
   #attack;
-  cost = 0;
+  cost;
   /** @type {string[]} */
   effects = [];
   /** @type {number | undefined} */
   #health;
-  rarity = '';
-  soul = '';
+  rarity;
+  soul;
   /** @type {string[]} */
   tribes = [];
 
   constructor({
     attack,
+    cost = 0,
+    effects = [],
     health,
-    // soul = '',
+    rarity = '',
+    soul = '',
+    tribes = [],
     ...rest
   } = {}) {
     super({
@@ -25,8 +29,12 @@ export default class Card extends BaseElement {
       type: Elements.Card,
     });
     this.#attack = attack;
+    this.cost = cost;
+    this.effects.push(...effects);
     this.#health = health;
-    // this.#soul = soul;
+    this.rarity = rarity;
+    this.soul = soul;
+    this.tribes.push(...tribes);
   }
 
   get attack() {
@@ -57,12 +65,6 @@ export default class Card extends BaseElement {
 
   isSpell() {
     return this.#health === undefined;
-  }
-
-  getElement() {
-    const element = super.getElement();
-    element.classList.toggle('spell', this.isSpell());
-    return element;
   }
 
   toJSON() {

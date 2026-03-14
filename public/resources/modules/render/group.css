@@ -1,7 +1,95 @@
-img[src=""] {
-    display: none;
+.group {
+  margin-bottom: 40px;
 }
 
-.group header {
-  /* TODO */
+.group > header {
+  position: sticky;
+  top: 0px;
+  border: 2px solid #fff;
+  padding: 0 10px;
+  z-index: 50;
+  background-color: black;
+  flex-wrap: nowrap;
+  display: flex;
+  align-items: center;
+  line-height: 2;
+}
+
+.group .handle {
+  cursor: n-resize;
+  margin-right: 10px;
+}
+
+.group header .name {
+  flex: 1;
+}
+
+.group .sidebar > * {
+  position: relative;
+  cursor: pointer;
+  min-width: 30px;
+  text-align: center;
+  border-radius: 15px;
+  font-size: 26px;
+  display: inline-block;
+}
+
+.group .sidebar > *:hover > * {
+  filter: drop-shadow(0px 3px 2px orange);
+  -webkit-filter: drop-shadow(0px 3px 2px orange);
+}
+
+.group .buttons img,
+.group .menu img,
+.group .sidebar img {
+  max-width: 18px;
+}
+
+.group .sidebar .material-icons {
+  font-size: 18px;
+}
+
+.group > .content {
+  display: grid;
+  min-height: 50px;
+  grid-template-columns: repeat(auto-fill, 170px);
+  justify-content: space-between;
+}
+
+.group .content > .text {
+  grid-column: span 4;
+  justify-self: stretch;
+}
+
+.group .content .buttons {
+  max-width: 180px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+}
+
+.group .content .buttons button {
+  padding: 10px;
+  margin: 10px;
+  background: none;
+  border: 2px solid white;
+  border-radius: 8px;
+  color: white;
+  font-size: 20px;
+}
+
+.group .element {
+  margin: 5px 0;
+  justify-self: center;
+}
+
+.group .content .buttons button:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+@media only screen and (max-width: 640px) {
+  .group .content {
+    justify-content: space-around;
+  }
 }

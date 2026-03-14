@@ -126,7 +126,6 @@ function generate(monster = true) {
     });
     const tribe = wrapper.querySelector('.tribe');
     tribe.onclick = (e) => {
-        console.log('click');
         e.stopPropagation();
     };
     tippy(tribe, {
