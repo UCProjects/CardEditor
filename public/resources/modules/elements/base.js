@@ -1,25 +1,32 @@
 import { uuidV4 } from '../3rdparty/uuid.js';
 import EventEmitter from '../eventManager.js';
+import CardRenderer from '../render/card.js';
+import GroupRenderer from '../render/group.js';
+import TextRenderer from '../render/text.js';
+import { Elements } from './types.js';
 
 /** @typedef {typeof import('./types.js').default} Elements */
 
 export default class BaseElement extends EventEmitter {
-  name = '';
+  description;
+  /** @type {string} */
   #id;
-  description = '';
+  name;
   /** @type {Elements[keyof Elements]} */
   #type;
 
   constructor({
+    description = '',
     id = uuidV4(),
+    name = '',
     type,
-    ...props
   }) {
     if (!type) throw new Error('Element requires type');
     super();
+    this.description = description;
     this.#id = id;
+    this.name = name;
     this.#type = type;
-    Object.assign(this, props);
   }
 
   get id() {
@@ -30,18 +37,20 @@ export default class BaseElement extends EventEmitter {
     return this.#type;
   }
 
-  getElement(id = `template#${this.type}`) {
-    const template = document.querySelector(id);
-    if (!template) throw new Error(`Failed to find template '${id}'`);
-    const container = document.createElement('div');
-    container.id = `${this.type}-${this.id}`;
-    container.innerHTML = template.innerHTML;
-    container.classList.add('element', this.type);
-    return container;
+  /** @returns {this} */
+  clone() {
+    const Element = Reflect.getPrototypeOf(this).constructor;
+    return new Element(this.toJSON());
   }
 
-  clone() {
-    return new this.constructor(this.toJSON());
+  /** @returns {import('../render/base.js').default} */
+  renderer() {
+    switch (this.type) {
+      case Elements.Card: return new CardRenderer(this);
+      case Elements.Group: return new GroupRenderer(this);
+      case Elements.Text: return new TextRenderer(this);
+      default: throw new Error(`Unknown element: ${this.id} [${this.type}]`);
+    }
   }
 
   toJSON() {
@@ -49,17 +58,11 @@ export default class BaseElement extends EventEmitter {
       id,
       type,
     } = this;
-    const ret = {
+    return {
       ...this,
       // TODO: ...getProps(this).reduce((acc, key) => acc[key] = this[key], {}),
       id,
       type,
     };
-    Object.entries(ret).forEach(([key, value]) => {
-      if (Array.isArray(value)) { // Clone arrays
-        ret[key] = [...value];
-      }
-    });
-    return ret;
   }
 }

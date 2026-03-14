@@ -1,0 +1,23 @@
+.group.saving {
+  margin: 0;
+  background-color: #000;
+}
+
+.group.saving .cards {
+  justify-content: initial;
+  min-height: initial;
+}
+
+.saving .no-save {
+  display: none;
+}
+
+.cardWrapper.saving .footer {
+  display: table-footer-group;
+}
+
+@media only screen and (min-width: 640px) {
+  .group.saving, .group.saving .cards {
+    width: fit-content;
+  }
+}

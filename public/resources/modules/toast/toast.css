@@ -1,0 +1,36 @@
+#breadbox {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  position: fixed;
+  white-space: pre-wrap;
+  bottom: 0;
+  right: 0;
+  z-index: 100;
+}
+
+#breadbox .toast {
+  background-color: rgba(0,5,20,0.6);
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  max-width: 300px;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+#breadbox .toast.error {
+  background-color: rgba(200,0,0,0.6);
+}
+
+#breadbox .toast:popover-open {
+  display: block;
+}
+
+
+#breadbox .toast header {}
+
+#breadbox .toast div {}
+
+#breadbox .toast footer {}

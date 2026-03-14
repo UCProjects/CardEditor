@@ -31,11 +31,28 @@ export default class Module extends EventEmitter {
     const { instance, signal } = this;
     const { container, element } = instance;
 
-    // Bind the events
-    const nameInput = container.querySelector('input[name="name"]');
-    nameInput.value = element.name;
-    nameInput.addEventListener('input', (event) => {
-      this.#editor.update(event.currentTarget.value, 'name');
+    // Bind generic events
+    container.querySelectorAll('input[name]').forEach((input) => {
+      const key = input.name;
+      input.value = element[key];
+      input.addEventListener('input', () => {
+        instance.update(input.value, key);
+      }, { signal });
+    });
+
+    const descriptionInput = container.querySelector('textarea[name="description"]');
+    descriptionInput.value = element.description;
+    descriptionInput.addEventListener('input', (event) => {
+      // TODO strip open ended brackets from value
+      instance.update(event.currentTarget.value, 'description');
+    }, { signal });
+
+    // Generic hide soul
+    container.querySelector('fieldset.soul').style.display = 'none';
+
+
+    this.on('click', (key) => {
+      container.querySelector(`input[name="${key}"], textarea[name="${key}"]`)?.focus();
     }, { signal });
   }
 

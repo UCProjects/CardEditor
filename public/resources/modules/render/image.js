@@ -1,3 +1,4 @@
+import { getURL } from '../imageBank.js';
 import Renderer from './base.js';
 
 export default class ImageRenderer extends Renderer {
@@ -8,7 +9,8 @@ export default class ImageRenderer extends Renderer {
 
   image() {
     // TODO Get from imageBank
-    this.container.querySelector('img.image, .image img').src = this.element.image;
+    const image = getURL(this.element.image) || '';
+    this.container.querySelector('img.image, .image img').src = image;
   }
 
   /** @override */

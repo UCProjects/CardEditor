@@ -2,13 +2,12 @@
   --attack: rgb(255, 0, 0);
   --border: rgb(255, 255, 255);
   --cost: rgb(52, 185, 254);
-  --font: rgb(255, 255, 255);
   --health: rgb(107, 204, 0);
 }
 
-.card {
+.element > .card {
   border: 2px solid var(--border);
-  color: var(--font);
+  color: var(--text);
   width: 162px;
   overflow: hidden;
   box-sizing: border-box;
@@ -23,6 +22,7 @@
 
 .top,
 .bottom {
+  display: flex;
   height: 30px;
 }
 
@@ -31,6 +31,7 @@
   padding-left: 3px;
   white-space: nowrap;
   overflow: hidden;
+  align-self: center;
 }
 
 .card .cost {
@@ -89,7 +90,7 @@
 }
 
 .card .tribes {
-  bottom: 0px;
+  bottom: 4px;
 }
 
 .card .status > img,

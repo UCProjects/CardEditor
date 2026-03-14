@@ -24,7 +24,7 @@ export default class CardRenderer extends Renderer {
   }
 
   effects() {
-    this.query('.effects [data-effect="none"]').classList.toggle('active', !this.element.effects.length);
+    this.query('.effects [data-effect="none"]')?.classList.toggle('active', !this.element.effects.length);
 
     this.queryAll('.effects [data-effect]').forEach((el) => {
       const effect = el.dataset.effect;
@@ -44,7 +44,8 @@ export default class CardRenderer extends Renderer {
   }
 
   rarity() {
-    this.query('rarity img').src = `/rarity/${this.element.rarity}.png`;
+    const { rarity } = this.element;
+    this.query('.rarity img').src = rarity ? `/rarity/${rarity}.png` : '';
 
     // TODO Allow custom
   }
@@ -74,5 +75,11 @@ export default class CardRenderer extends Renderer {
     this.rarity();
     this.soul();
     this.tribes();
+  }
+
+  getElement() {
+    const element = super.getElement();
+    element.classList.toggle('spell', this.element.isSpell());
+    return element;
   }
 }

@@ -88,27 +88,6 @@ export default function registerTips(wrapper) {
   });
 }
 
-/*
-export function registerGroup(group) {
-  tippy(group.querySelector('.new'), {
-    content: document.getElementById('groupButtons').innerHTML,
-    placement: 'bottom-end',
-    trigger: 'click',
-    theme: 'button',
-    distance: 0,
-    hideOnClick: true,
-    onMount(e) {
-      e.popper.querySelectorAll('button').forEach((button) => {
-        const monster = button.textContent === 'Monster';
-        if (monster || button.textContent === 'Spell') {
-          button.onclick = () => generate(monster, group);
-        }
-      });
-    },
-  });
-}
-// */
-
 function modifySoul(nameCell, popper) {
   const activeSoul = popper.querySelector('span.selectable.active');
   const input = nameCell.querySelector('input');
