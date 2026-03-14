@@ -10,9 +10,12 @@ const preloads = [
 
 function ready() {
   document.querySelectorAll('[legacy], #loading').forEach((el) => el.remove());
-  document.querySelector('#draggable-live-region').remove();
+  document.querySelector('#draggable-live-region')?.remove(); // This is from draggable
 
-  // TODO Load templates
+  document.querySelectorAll('[data-template]').forEach((el) => {
+    const template = el.dataset.template;
+    el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load ${template}`;
+  });
 
   app.init();
 }

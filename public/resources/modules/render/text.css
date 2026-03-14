@@ -1,0 +1,17 @@
+.artifact {
+  border: 2px solid white;
+  height: stretch;
+}
+
+.artifact > header {
+  background-color: #428bca;
+  padding: 15px;
+}
+
+.artifact .content {
+  padding: 15px;
+}
+
+.artifact .image {
+  float: left;
+}

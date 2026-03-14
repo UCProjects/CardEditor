@@ -38,7 +38,6 @@ fetch('https://undercards.net/translation/en.json')
     downloadTribes(),
     saveData(),
   ]))
-  // eslint-disable-next-line no-console
   .catch(console.error);
 
 function downloadTribes() {

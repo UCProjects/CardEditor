@@ -1,10 +1,14 @@
 :root {
-  --background-alt: rgb(255, 255, 255);
   --spacing: 10px;
-  --text-alt: rgb(0, 0, 0);
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 #editor {
+  font-family: 'DTM-Mono';
   background-color: var(--background);
   border: 2px solid var(--border);
   border-radius: 15px;
@@ -16,10 +20,15 @@
   backdrop-filter: blur(3px);
 }
 
+#editor input,
+#editor textarea {
+  width: stretch;
+}
+
 .editor-wrapper {
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr 150px;
+  grid-template-columns: 1fr fit-content(700px);
 }
 
 .editor-wrapper > header {
@@ -39,15 +48,42 @@
   margin: var(--spacing);
 }
 
-.editor-wrapper > .input {
+#editor:not([data-type="card"]) .editor-wrapper > .helper,
+.editor-wrapper > .extended {
+  border: 0;
   border-top: 2px solid var(--border);
   grid-column: 1 / -1;
   padding: var(--spacing);
 }
 
+#editor[data-type="group"] .preview,
+#editor[data-type="text"] .preview,
+.editor-wrapper > .extended {
+  grid-column: 1 / -1;
+}
+
+.editor-wrapper > .extended {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--background);
+}
+
+#editor .group {
+  margin-bottom: unset;
+}
+
 #editor [data-editable] {
   min-height: 16px;
   min-width: 16px;
+}
+
+#editor .artifact .image {
+  height: 40px;
+  width: 40px;
+}
+
+#editor .description {
+  min-height: 40px;
 }
 
 /* TODO: Change effects/tribes to placeholder image */
@@ -58,15 +94,33 @@
   border: 1px solid red;
 }
 
+#editor[data-type="group"] .content,
 #editor [data-editing],
+#editor fieldset.soul,
 #editor [data-type] {
   display: none;
 }
 
-#editor .active {
-  display: block;
+#editor[data-type="group"] .group {
+  margin-bottom: unset;
 }
 
-#editor span.active {
+#editor .active {
   display: inline;
+}
+
+.extra {
+  display: none;
+}
+
+.show-extra .extra {
+  display: unset;
+}
+
+#editor legend {
+  text-transform: uppercase;
+}
+
+.helper [data-editing="tribes"] div:first-of-type {
+  display: flex;
 }

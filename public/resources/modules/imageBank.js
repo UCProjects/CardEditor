@@ -93,5 +93,9 @@ export function save(id) {
 }
 
 async function fetchAvatars() {
-  // TODO Load avatars
+  const raw = await fetch(`/resources/data/avatars.json`);
+  const data = await raw.json();
+  Object.entries(data).forEach(([key, value]) => {
+    avatars.set(key, value);
+  });
 }
