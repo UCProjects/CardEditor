@@ -1,0 +1,15 @@
+[popover="hint"].tooltip {
+  inset: unset;
+  position: absolute;
+  bottom: calc(anchor(top) + 5px);
+  justify-self: anchor-center;
+  margin: 0;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+}
+
+[popover="hint"].tooltip.flip {
+  inset: unset;
+  top: calc(anchor(bottom) + 5px);
+}

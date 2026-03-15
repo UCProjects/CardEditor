@@ -23,8 +23,8 @@ td, th {
 }
 
 .cardBoard .name {
-    width: 120px !important; 
-    height: 20px !important;  
+    width: 120px !important;
+    height: 20px !important;
     background-color: #000;
     padding-left: 5px;
     overflow: hidden;

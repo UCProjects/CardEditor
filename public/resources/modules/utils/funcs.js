@@ -17,7 +17,6 @@ export function getFunctions(obj, ...ignore) {
     .filter((prop) => !ignore.includes(prop) && typeof obj[prop] === 'function');
 }
 
-// TODO: This can replace most `toJSON` overrides
 export function getProps(obj, ...ignore) {
   ignore.push('__proto__');
   return Object.entries(Object.getOwnPropertyDescriptors(Reflect.getPrototypeOf(obj)))
@@ -27,4 +26,13 @@ export function getProps(obj, ...ignore) {
 
 export function isBase64(string) {
   return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(string);
+}
+
+/** @param {HTMLElement} el  */
+export function isElementInViewport(el) {
+  var rect = el.getBoundingClientRect();
+  return rect.y > rect.height && rect.x > rect.width && // Below top of viewport
+    rect.top >= 0 && rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 }

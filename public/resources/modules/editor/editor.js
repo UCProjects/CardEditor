@@ -1,4 +1,4 @@
-import style from './style.css' with { type: 'css' };
+import style from '../../styles/editor.css' with { type: 'css' };
 import EventEmitter from '../eventManager.js';
 import CardModule from './modules/card.js';
 import TextModule from './modules/text.js';

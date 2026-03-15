@@ -6,7 +6,7 @@
     <title>Undercards Template Editor - by feildmaster</title>
 
     <link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" crossorigin="anonymous">
     <link href="./resources/undercards.css" rel="stylesheet"/>
     <link href="./resources/description.css" rel="stylesheet"/>
     <link href="./resources/legacy.css" rel="stylesheet"/>
@@ -35,8 +35,6 @@
     <!-- initialize the SDK after all desired features are loaded -->
     <!--<script defer src="/__/firebase/init.js"></script>-->
 
-    <script defer src="https://unpkg.com/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
-    <script defer src="./resources/simpletoast.js"></script>
     <script type="module" src="./resources/modules/index.js"></script>
     <script defer nomodule src="./resources/script.js"></script>
     <script nomodule>
@@ -55,11 +53,11 @@
       <div>Loading...</div>
     </div>
     <footer class="transparent">
-      <a href="https://undercards.net/SignUp?ref=63068" title="Undercards" target="_blank">Undercards</a> Template Editor
+      <a href="https://undercards.net" title="Undercards" target="_blank">Undercards</a> Template Editor
       &bullet;
-      <a href="https://discord.gg/xgT3X9j" title="Discord" target="_blank">
-        <img src="./resources/social/discord.png" class="social" title="Discord" alt="Discord">
-      </a>
+      <a href="https://discord.gg/xgT3X9j" title="Discord" target="_blank"><img src="./resources/social/discord.png" class="social" title="Discord" alt="Discord" data-tip="Discord"></a>
+      &bullet;
+      <a href="https://github.com/UCProjects/CardEditor" title="Source" target="_blank"><img src="./resources/social/github.svg" class="social" title="Source" alt="Source" data-tip="View Source"></a>
     </footer>
     <div id="buttons" class="template" legacy>
       <span class="add">+</span>
@@ -137,6 +135,14 @@
             <!-- New URL -->
             <!-- New Upload -->
           </div>
+          <div data-editing="image">
+            <fieldset>
+              <legend>Image</legend>
+            </fieldset>
+            <!-- Stored -->
+            <!-- New URL -->
+            <!-- New Upload -->
+          </div>
           <div data-editing="effects">
             <fieldset>
               <legend>Effects</legend>
@@ -155,21 +161,11 @@
             </fieldset>
           </div>
         </div>
-        <div class="extended">
-          <div data-editing="description">
-            <fieldset>
-              <legend>Description</legend>
-              <textarea name="description"></textarea>
-            </fieldset>
-          </div>
-          <div data-editing="image">
-            <fieldset>
-              <legend>Image</legend>
-            </fieldset>
-            <!-- Stored -->
-            <!-- New URL -->
-            <!-- New Upload -->
-          </div>
+        <div class="extended" data-editing="description">
+          <fieldset>
+            <legend>Description</legend>
+            <textarea name="description"></textarea>
+          </fieldset>
         </div>
       </section>
     </dialog>
@@ -217,23 +213,20 @@
       </div>
     </template>
     <template id="selectTribe">
-      <img class="selectable smallerIcon active" title="None" alt="none" data-tribe="none" src="./resources/tribes/MONSTER.png">
-      <img class="selectable smallIcon"  title="All" alt="all" data-tribe="all" src="./resources/tribes/ALL.png">
-    </template>
-    <template id="selectTribeImg">
-      <img class="selectable smallIcon" src="">
+      <img class="selectable smallerIcon active" alt="none" data-tribe="none" data-tip="None" src="./resources/tribes/MONSTER.png">
+      <img class="selectable smallIcon" alt="all" data-tribe="all" data-tip="All" src="./resources/tribes/ALL.png">
     </template>
     <template id="groupButtons">
-      <button class="monster"><img src="./resources/tribes/MONSTER.png" alt="Monster" data-tip="Monster"> Monster</button>
-      <button class="spell"><img src="./resources/images/SPELL.png" alt="Spell" data-tip="Spell"> Spell</button>
-      <button class="text"><img src="./resources/images/TEXT.png" alt="Artifact" data-tip="Artifact"> Artifact</button>
+      <button class="monster"><img src="./resources/tribes/MONSTER.png" alt="Monster"> Monster</button>
+      <button class="spell"><img src="./resources/images/SPELL.png" alt="Spell"> Spell</button>
+      <button class="text"><img src="./resources/images/TEXT.png" alt="Artifact"> Artifact</button>
     </template>
     <template id="menu">
-      <div class="menu" popover="auto" onclick="this.hidePopover();" onmouseleave="this.hidePopover();">
+      <div class="menu no-save" popover="auto" onclick="this.hidePopover();" onmouseleave="this.hidePopover();">
         <button class="menu-button" data-type="group" data-tip="Group"><img class="book" src="./resources/images/GROUP.png" alt="Group"></button>
         <button class="menu-button material-icons" commandfor="editor" data-tip="Edit">edit_square</button>
-        <button class="menu-button material-icons" data-tip="Save">save_alt</button>
-        <button class="menu-button material-icons" data-tip="Delete">delete</button>
+        <button class="menu-button material-icons" data-tip="Download">save_alt</button>
+        <button class="menu-button material-icons" data-tip="Archive">archive</button>
       </div>
     </template>
     <template id="group">
@@ -252,12 +245,16 @@
           <div class="name middle" data-editable="name"></div>
           <div class="cost center" data-editable="number" data-editable-for="cost"></div>
         </div>
-        <div class="image" data-editable="avatar" data-editable-for="image">
-          <img class="avatar" src="" />
+        <div class="middle">
+          <div class="image" data-editable="avatar" data-editable-for="image">
+            <img class="avatar" src="" />
+          </div>
           <div class="status" data-editable="effects"></div>
-          <div class="tribes" data-editable="tribes"></div>
+          <div class="tribes" data-editable="tribes" data-template="selectTribe"></div>
         </div>
-        <div class="description center" data-editable="description"></div>
+        <div class="description center" data-editable="description">
+          <div></div>
+        </div>
         <div class="bottom row">
           <div class="attack center" data-editable="number" data-editable-for="attack"></div>
           <div class="rarity center" data-editable="rarity">
@@ -266,6 +263,7 @@
           <div class="health center" data-editable="number" data-editable-for="health"></div>
         </div>
       </div>
+      <footer>undercard.feildmaster.com</footer>
     </template>
     <template id="text">
       <div class="artifact">
