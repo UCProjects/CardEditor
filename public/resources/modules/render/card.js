@@ -1,4 +1,4 @@
-import style from './card.css' with { type: 'css' };
+import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './image.js';
 import { filter } from '../utils/array.js';
 
@@ -45,7 +45,7 @@ export default class CardRenderer extends Renderer {
 
   rarity() {
     const { rarity } = this.element;
-    this.query('.rarity img').src = rarity ? `/rarity/${rarity}.png` : '';
+    this.query('.rarity img').src = `/rarity/${rarity || 'COMMON'}.png`;
 
     // TODO Allow custom
   }
@@ -54,19 +54,26 @@ export default class CardRenderer extends Renderer {
     const list = this.query('.name').classList;
     list.remove(...filter(list, 'name'));
     const { soul } = this.element;
-    if (!soul) return;
-    list.add(soul);
+    if (soul) list.add(soul);
   }
 
   tribes() {
-    this.queryAll('.effects [data-tribe]').forEach((el) => {
+    // TODO render elements rather than load from template
+    this.queryAll('.tribes [data-tribe]').forEach((el) => {
       const tribe = el.dataset.tribe;
-      el.classList.toggle('active', this.element.tribes.includes(tribe));
+      el.classList.remove('selectable');
+      const { tribes } = this.element;
+      el.classList.toggle('hidden', !tribes.includes(tribe));
     });
     // TODO Allow custom
   }
 
   render() {
+    // TODO remove this
+    this.queryAll('[data-template]').forEach((el) => {
+      const template = el.dataset.template;
+      el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load ${template}`;
+    });
     super.render();
     this.attack();
     this.cost();

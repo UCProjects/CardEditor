@@ -13,4 +13,3 @@
 
 .selectable { cursor: pointer; }
 .selectable.active { font-weight: bold; text-decoration: underline; }
-img.selectable.active { }
