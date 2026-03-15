@@ -1,6 +1,7 @@
 import app, { loadStorage } from './UndercardEditor.js';
 import serviceWorker from './sw.register.js';
 import { ready as effects } from './effects.js';
+import { error as errorToast } from './toast/index.js';
 
 const preloads = [
   serviceWorker(),
@@ -22,4 +23,7 @@ function ready() {
 
 Promise.all(preloads)
   .then(ready)
-  .catch(console.error);
+  .catch((err) => {
+    console.error(err);
+    errorToast('Failed to load Editor');
+  });

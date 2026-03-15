@@ -54,6 +54,7 @@
   min-height: 50px;
   grid-template-columns: repeat(auto-fill, 170px);
   justify-content: space-between;
+  padding: 7px 0;
 }
 
 .group .content > .text {
@@ -79,7 +80,6 @@
 }
 
 .group .element {
-  margin: 5px 0;
   justify-self: center;
 }
 

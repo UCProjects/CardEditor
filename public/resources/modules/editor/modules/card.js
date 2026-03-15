@@ -25,6 +25,7 @@ export default class CardModule extends Module {
       }, { signal });
     });
 
+    // TODO extras override
     const showSoul = element.isSpell();
     container.querySelector('fieldset.soul').style.display = showSoul ? 'block' : 'none';
 
@@ -46,7 +47,44 @@ export default class CardModule extends Module {
         updateSoul(active, el);
         const soul = el.textContent;
         editor.update(soul === 'NONE' ? '' : soul, 'soul');
+      }, { signal });
+    });
+
+    function refreshTribes(...elements) {
+      elements.forEach((el) => {
+        const { tribe } = el.dataset;
+        const { tribes } = element;
+        el.classList.toggle('active', tribes.length ?
+          tribes.includes(tribe) :
+          tribe === 'none'
+        );
       });
+    }
+
+    container.querySelectorAll('[data-tribe].selectable').forEach((el) => {
+      refreshTribes(el);
+
+      el.addEventListener('click', () => {
+        const { tribe } = el.dataset;
+        const { tribes } = element;
+        const index = tribes.indexOf(tribe);
+        if (!~index) { // Doesn't exist
+          if (tribe === 'all' || tribe === 'none') {
+            tribes.splice(0, tribes.length);
+          }
+          if (tribe !== 'none') {
+            if (tribe !== 'all' && tribes.includes('all')) {
+              tribes.splice(tribes.indexOf('all'), 1);
+            }
+            tribes.push(tribe);
+          }
+        } else {
+          tribes.splice(index, 1);
+        }
+        refreshTribes(...container.querySelectorAll('[data-tribe].selectable'));
+        refreshTribes(container.querySelector('.tribes [data-tribe="none"]'));
+        editor.update(tribes, 'tribes');
+      }, { signal });
     });
   }
 }
