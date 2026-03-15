@@ -1,8 +1,9 @@
-import style from './group.css' with { type: 'css' };
+import style from '../../styles/group.css' with { type: 'css' };
 import Renderer from './base.js';
 import { get, init } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
 import editor from '../editor/editor.js';
+import { tryOrError } from '../toast/index.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -22,15 +23,15 @@ export default class GroupRenderer extends Renderer {
     this.addButtons();
     this.#addEvents();
     const elements = this.element.content.map((id) => {
-      try {
-        const render = get(id).renderer();
-        render.addMenu();
-        // Add Events
-        return render.container;
-      } catch {
-        // TODO toast failed to load element
-      }
-      return undefined;
+      return tryOrError(
+        () => {
+          const render = get(id).renderer();
+          render.addMenu();
+          // Add Events
+          return render.container;
+        },
+        `Failed to load ${id}`,
+      );
     }).filter(_ => _);
     this.query('.buttons').before(...elements);
     return this.container;

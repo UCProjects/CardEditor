@@ -123,4 +123,27 @@ input, textarea {
 
 .helper [data-editing="tribes"] div:first-of-type {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 250px;
+  justify-content: space-between;
+}
+
+.helper [data-editing="tribes"] [data-tribe] {
+  opacity: 0.4;
+}
+
+.helper [data-editing="tribes"] [data-tribe].active {
+  opacity: 1;
+  filter: var(--shadow-filter);
+}
+
+fieldset.soul {
+  width: min-content;
+  justify-self: center;
+}
+
+#editor .element.group,
+#editor .element.text {
+  max-width: stretch;
 }

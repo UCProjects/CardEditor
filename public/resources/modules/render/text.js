@@ -1,4 +1,4 @@
-import style from './text.css' with { type: 'css' };
+import style from '../../styles/text.css' with { type: 'css' };
 import Renderer from './image.js';
 
 document.adoptedStyleSheets.push(style);

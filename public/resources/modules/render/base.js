@@ -4,6 +4,7 @@ import EventEmitter from '../eventManager.js';
 import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
 import { sortedMatch } from '../utils/array.js';
+import saveImage from '../save.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -42,6 +43,9 @@ function bindMenu(renderer, menu) {
   });
 
   // Save
+  menu.querySelector('[data-tip="Download"]').addEventListener('click', () => {
+    saveImage(renderer.container, renderer.element.name || type);
+  });
 
   // Delete
 }
@@ -87,7 +91,8 @@ export default class Renderer extends EventEmitter {
   }
 
   description() {
-    this.query('.description').innerHTML = getHTMLDescription(this.element.description);
+    const container = this.query('.description div') || this.query('.description');
+    container.innerHTML = getHTMLDescription(this.element.description);
   }
 
   name() {

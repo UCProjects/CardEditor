@@ -3,6 +3,10 @@ export function allStrings(...data) {
   return data.every((value) => typeof value === 'string');
 }
 
+export function contains(a, b) {
+  return a.some(i => b.includes(i));
+}
+
 /**
  * @param {Iterable} iterable
  * @param  {...any} ignore

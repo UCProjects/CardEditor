@@ -1,5 +1,9 @@
 :root {
   --hover-color: rgb(243, 65, 33);
+  --shadow-filter: drop-shadow(1px 1px 1px var(--hover-color))
+    drop-shadow(1px -1px 1px var(--hover-color))
+    drop-shadow(-1px 1px 1px var(--hover-color))
+    drop-shadow(-1px -1px 1px var(--hover-color));
 }
 
 .menu {
@@ -40,8 +44,5 @@
 }
 
 .menu button:hover img {
-  filter: drop-shadow(1px 1px 1px var(--hover-color))
-    drop-shadow(1px -1px 1px var(--hover-color))
-    drop-shadow(-1px 1px 1px var(--hover-color))
-    drop-shadow(-1px -1px 1px var(--hover-color));
+  filter: var(--shadow-filter);
 }

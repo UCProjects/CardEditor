@@ -34,7 +34,7 @@
   align-self: center;
 }
 
-.card .cost {
+.card .top .cost {
   width: 40px;
   border-left: 2px solid var(--border);
   font-size: 1.2rem;
@@ -42,9 +42,13 @@
   color: var(--cost);
 }
 
-.card .image {
+.card .middle {
   position: relative;
+}
+
+.card .image {
   height: 88px;
+  width: stretch;
 }
 
 .card .description {
@@ -60,19 +64,19 @@
   border-top: 2px solid var(--border);
 }
 
-.card .attack {
+.card .bottom .attack {
   width: 40px;
   border-right: 2px solid var(--border);
   color: var(--attack);
   font-size: 20px;
 }
 
-.card .rarity {
+.card .bottom .rarity {
   flex-grow: 2;
   padding: 5px 0;
 }
 
-.card .health {
+.card .bottom .health {
   width: 40px;
   border-left: 2px solid var(--border);
   color: var(--health);
@@ -83,14 +87,19 @@
 .card .tribes {
   position: absolute;
   right: 2px;
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 .card .status {
   top: 4px;
+  flex-wrap: wrap;
 }
 
 .card .tribes {
   bottom: 4px;
+  display: flex;
+  flex-wrap: wrap-reverse;
 }
 
 .card .status > img,

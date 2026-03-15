@@ -18,22 +18,22 @@ function load(resource) {
 function addTribes() {
   const container = document.createElement('div');
   container.innerHTML = document.querySelector('#selectTribe').innerHTML;
-  const last = container.querySelector('img:last-child');
   effects.forEach((effect) => {
     if (!effect.endsWith('?')) return;
     const name = effect.substring(0, effect.length - 2);
     if (tribeBlacklist.includes(name)) return;
-    last.after(getTribe(name));
+    container.append(getTribe(name));
   });
   document.querySelector('#selectTribe').innerHTML = container.innerHTML;
 }
 
 function getTribe(name) {
-  const container = document.createElement('div');
-  container.innerHTML = document.querySelector('#selectTribeImg').innerHTML;
-  const img = container.querySelector('img');
+  const img = document.createElement('img');
   img.src = `/resources/tribes/${name.toUpperCase().replace(' ', '_')}.png`;
-  img.title = name;
+  img.classList.add('selectable', 'smallIcon');
+  img.dataset.tip = name;
+  img.dataset.tribe = name.toLowerCase();
+  img.alt = name;
   return img;
 }
 
