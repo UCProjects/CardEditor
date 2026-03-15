@@ -1,4 +1,4 @@
-import style from './toast.css' with { type: 'css' };
+import style from '../../styles/toast.css' with { type: 'css' };
 
 document.adoptedStyleSheets.push(style);
 
@@ -31,7 +31,7 @@ export function toast({
   breadbox.append(el);
 }
 
-export function errorToast({
+export function error({
   classes = [],
   ...rest
 }) {
@@ -49,7 +49,17 @@ export function tryOrError(callback, message = '') {
     return callback();
   } catch (err) {
     console.error(err);
-    errorToast({ body: message });
+    if (message) error({ body: message });
+  }
+  return undefined;
+}
+
+export async function tryOrErrorAsync(callback, message = '') {
+  try {
+    return await callback();
+  } catch (err) {
+    console.error(err);
+    if (message) error({ body: message });
   }
   return undefined;
 }
