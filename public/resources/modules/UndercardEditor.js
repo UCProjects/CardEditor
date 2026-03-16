@@ -13,7 +13,7 @@ document.adoptedStyleSheets.push(style);
 const app = document.getElementById('app');
 
 class UndercardEditor {
-  /** @type {Array<import('./render/group.js').default>} */
+  /** @type {Array<import('./render/GroupRenderer.js').default>} */
   #groups = [];
 
   constructor() {
@@ -52,7 +52,7 @@ class UndercardEditor {
     this.save();
   }
 
-  /** @param {import('./render/group.js').default} renderer  */
+  /** @param {import('./render/GroupRenderer.js').default} renderer  */
   addGroup(renderer) {
     renderer.on(Elements.Group, () => this.newGroup());
     renderer.one('delete', () => {

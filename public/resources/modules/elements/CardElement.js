@@ -1,4 +1,4 @@
-import BaseElement from './image.js';
+import BaseElement from './ImageElement.js';
 import { Elements } from './types.js';
 
 export default class CardElement extends BaseElement {

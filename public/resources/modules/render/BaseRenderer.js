@@ -50,9 +50,9 @@ function bindMenu(renderer, menu) {
   // Delete
 }
 
-export default class Renderer extends EventEmitter {
+export default class BaseRenderer extends EventEmitter {
   #container;
-  /** @type {import('../elements/base.js').default} */
+  /** @type {import('../elements/BaseElement.js').default} */
   #element;
 
   constructor(element) {

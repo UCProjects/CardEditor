@@ -1,11 +1,11 @@
 import { uuidV4 } from '../3rdparty/uuid.js';
 import EventEmitter from '../eventManager.js';
-import CardRenderer from '../render/card.js';
-import GroupRenderer from '../render/group.js';
-import TextRenderer from '../render/text.js';
+import CardRenderer from '../render/CardRenderer.js';
+import GroupRenderer from '../render/GroupRenderer.js';
+import TextRenderer from '../render/TextRenderer.js';
 import { Elements } from './types.js';
 
-/** @typedef {typeof import('./types.js').default} Elements */
+/** @typedef {typeof import('./types.js').Elements} Elements */
 
 export default class BaseElement extends EventEmitter {
   description;
@@ -43,7 +43,7 @@ export default class BaseElement extends EventEmitter {
     return new Element(this.toJSON());
   }
 
-  /** @returns {import('../render/base.js').default} */
+  /** @returns {import('../render/BaseRenderer.js').default} */
   renderer() {
     switch (this.type) {
       case Elements.Card: return new CardRenderer(this);
