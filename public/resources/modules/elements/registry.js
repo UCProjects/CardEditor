@@ -1,11 +1,11 @@
 import { uuidValidateV4 } from '../3rdparty/uuid.js';
-import Text from './text.js';
-import Card from './card.js';
-import Group from './group.js';
+import Text from './TextElement.js';
+import Card from './CardElement.js';
+import Group from './GroupElement.js';
 import { Elements } from './types.js';
 
 /**
- * @type {Map<string, import('./base.js').default>}
+ * @type {Map<string, import('./BaseElement.js').default>}
  */
 const data = new Map();
 
