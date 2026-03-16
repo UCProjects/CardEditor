@@ -27,7 +27,6 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         ...globals.es2021,
-        editEvent: 'readonly',
       },
       sourceType: 'module',
     },

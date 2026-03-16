@@ -1,4 +1,3 @@
-/* global gtag */
 import card from './card.js';
 import draggable from './draggable.js';
 import tip from './tippy.js';
@@ -26,7 +25,6 @@ export default function newGroup() {
 
 /** @param {HTMLElement} container */
 function generate(monster, container) {
-  gtag('event', `create_${monster ? 'monster' : 'spell'}`);
   const wrapper = card(monster);
   container.querySelector('.cards').append(wrapper);
 
