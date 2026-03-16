@@ -55,7 +55,6 @@ export default function registerTips(wrapper) {
       const tip = e.popper._tippy;
       e.popper.querySelectorAll('img.selectable').forEach((item) => {
         item.onclick = () => {
-          editEvent('rarity');
           e.popper.querySelector('img.active').classList.remove('active');
           item.classList.add('active');
           tip.reference.querySelector('img').src = item.src;
@@ -73,7 +72,6 @@ export default function registerTips(wrapper) {
     onMount(e) {
       e.popper.querySelectorAll('img.selectable').forEach((item) => {
         item.onclick = () => {
-          editEvent('tribe');
           e.popper.querySelector('img.active').classList.remove('active');
           item.classList.add('active');
           const isMonster = item.src.includes('MONSTER');
@@ -99,7 +97,6 @@ function modifySoul(nameCell, popper) {
     activeSoul.classList.remove('active');
     nameCell.classList.remove(activeSoul.textContent);
   }
-  editEvent('soul');
   this.classList.add('active');
   // Modify the cell
   nameCell.classList.add(this.textContent);
