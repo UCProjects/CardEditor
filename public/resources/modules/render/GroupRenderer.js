@@ -1,5 +1,5 @@
 import style from '../../styles/group.css' with { type: 'css' };
-import Renderer from './base.js';
+import Renderer from './BaseRenderer.js';
 import { get, init } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
 import editor from '../editor/editor.js';
@@ -11,7 +11,7 @@ const buttonTemplate = document.querySelector('#groupButtons');
 
 // TODO how to support "sorting/dragging"
 export default class GroupRenderer extends Renderer {
-  /** @type {import('../elements/group.js').default} */
+  /** @type {import('../elements/GroupElement.js').default} */
   get element() {
     return super.element;
   }

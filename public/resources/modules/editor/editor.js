@@ -1,12 +1,12 @@
 import style from '../../styles/editor.css' with { type: 'css' };
 import EventEmitter from '../eventManager.js';
-import CardModule from './modules/card.js';
-import TextModule from './modules/text.js';
-import GroupModule from './modules/group.js';
+import CardModule from './modules/CardModule.js';
+import TextModule from './modules/TextModule.js';
+import GroupModule from './modules/GroupModule.js';
 
 document.adoptedStyleSheets.push(style);
 
-/** @typedef {import('../render/base.js').default} Renderer */
+/** @typedef {import('../render/BaseRenderer.js').default} Renderer */
 
 /** @type {HTMLDialogElement} */
 const editor = document.getElementById('editor');

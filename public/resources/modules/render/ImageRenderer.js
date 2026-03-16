@@ -1,8 +1,8 @@
 import { getURL } from '../imageBank.js';
-import Renderer from './base.js';
+import Renderer from './BaseRenderer.js';
 
 export default class ImageRenderer extends Renderer {
-  /** @type {import('../elements/image.js').default} */
+  /** @type {import('../elements/ImageElement.js').ImageElement} */
   get element() {
     return super.element;
   }

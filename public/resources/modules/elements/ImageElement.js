@@ -1,6 +1,6 @@
-import BaseElement from './base.js';
+import BaseElement from './BaseElement.js';
 
-export default class Image extends BaseElement {
+export default class ImageElement extends BaseElement {
   image;
   constructor({
     image = '',
