@@ -1,4 +1,4 @@
-import Module from '../module.js';
+import Module from '../Module.js';
 
 function updateSoul(from, to) {
   if (from === to) return;

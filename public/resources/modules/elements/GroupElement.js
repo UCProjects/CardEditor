@@ -1,4 +1,4 @@
-import BaseElement from './base.js';
+import BaseElement from './BaseElement.js';
 import { Elements } from './types.js';
 
 export default class GroupElement extends BaseElement {

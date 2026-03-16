@@ -1,11 +1,11 @@
 import style from '../../styles/card.css' with { type: 'css' };
-import Renderer from './image.js';
+import Renderer from './ImageRenderer.js';
 import { filter } from '../utils/array.js';
 
 document.adoptedStyleSheets.push(style);
 
 export default class CardRenderer extends Renderer {
-  /** @type {import('../elements/card.js').default} */
+  /** @type {import('../elements/CardElement.js').default} */
   get element() {
     return super.element;
   }
