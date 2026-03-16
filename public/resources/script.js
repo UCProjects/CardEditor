@@ -17,7 +17,6 @@ function showExtras() {
 }
 
 function generate(monster = true) {
-    gtag('event', `create_${monster ? 'monster':'spell'}`,);
     const container = document.getElementById('cards');
     const wrapper = document.createElement('span');
     wrapper.className = 'cardWrapper';
@@ -115,7 +114,6 @@ function generate(monster = true) {
             const tip = e.popper._tippy;
             e.popper.querySelectorAll('img.selectable').forEach((item) => {
                 item.onclick = () => {
-                    editEvent('rarity');
                     e.popper.querySelector('img.active').classList.remove('active');
                     item.classList.add('active');
                     tip.reference.querySelector('img').src = item.src;
@@ -139,7 +137,6 @@ function generate(monster = true) {
             const tip = e.popper._tippy;
             e.popper.querySelectorAll('img.selectable').forEach((item) => {
                 item.onclick = () => {
-                    editEvent('tribe');
                     e.popper.querySelector('img.active').classList.remove('active');
                     item.classList.add('active');
                     tribe.classList.toggle('none', item.src.includes('MONSTER'));
@@ -168,7 +165,6 @@ function finalizeName(e = {}) {
     const span = this.querySelector('span');
     const input = this.querySelector('input');
     if (span.textContent !== input.value) {
-        editEvent('name');
         span.textContent = input.value;
     }
     span.style.display = '';
@@ -184,7 +180,6 @@ function modifySoul(nameCell, popper) {
         activeSoul.classList.remove('active');
         nameCell.classList.remove(activeSoul.textContent);
     }
-    editEvent('soul');
     this.classList.add('active');
     // Modify the cell
     nameCell.classList.add(this.textContent);
@@ -205,7 +200,6 @@ function finalizeEdit(span) {
     if (this.keepAlive) return;
     const newValue = this.value || span.textContent;
     if (span.textContent !== newValue) {
-        editEvent(span.parentElement.classList[0]);
         span.textContent = newValue;
     }
     span.style.display = '';
@@ -223,7 +217,6 @@ function renderDescription(span, e = {}) {
     if (e.relatedTarget === tippy.popper) return;
     tippy.hide(0);
     if (this.value !== this._oldValue) {
-        editEvent('description');
         const description = this.value
             .replace(underlineRegex, (match, $1, $2) => `<span class="underline">${$2||$1}</span>`)
             .replace(colorRegex, (match, $1) => `<span class="${getClass($1)}">${$1}</span>`)
@@ -242,13 +235,8 @@ function getClass(keyword) {
     }
 }
 
-function editEvent(type) {
-    gtag('event', `edit_${type}`);
-}
-
 function readImage(image) {
     if (!(this.files && this.files[0])) return;
-    editEvent('image');
     const reader = new FileReader();
     reader.onload = function (e) {
         image.src = e.target.result;
@@ -257,7 +245,6 @@ function readImage(image) {
 }
 
 function saveCard(card) {
-    gtag('event', 'save');
     card.parentElement.classList.toggle('saving', true);
     const image = card.querySelector('.image img');
     let removedImage = false;

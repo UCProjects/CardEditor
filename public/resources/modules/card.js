@@ -1,5 +1,3 @@
-/* global editEvent */
-import cardMenu from './menu.js';
 import { effects, specials } from './effects.js';
 import resize from './resize.js';
 import Builder from './utils/builder.js';
@@ -45,10 +43,6 @@ export default function card(monster = true) {
       </tr>
     </table>
     <span class="footer">undercard.feildmaster.com</span>`;
-
-  // Menu
-  const element = wrapper.querySelector('.cardBoard');
-  element.oncontextmenu = cardMenu;
 
   // Name
   const nameCell = wrapper.querySelector('.name');
@@ -105,9 +99,6 @@ function finalizeName(e = {}) {
   editing = false;
   const span = this.querySelector('span');
   const input = this.querySelector('input');
-  if (span.textContent !== input.value) {
-    editEvent('name');
-  }
   span.textContent = input.value;
   span.style.display = '';
   resize(span.parentElement, { height: false });
@@ -129,7 +120,6 @@ function finalizeEdit(span) {
   editing = false;
   const newValue = this.value || span.textContent;
   if (span.textContent !== newValue) {
-    editEvent(span.parentElement.classList[0]);
     span.textContent = newValue;
   }
   span.style.display = '';
@@ -150,9 +140,6 @@ function renderDescription(span, e = {}) {
     tippy.hide(0);
   }
   editing = false;
-  if (this.value !== this._oldValue) {
-    editEvent('description');
-  }
   span.innerHTML = this.value
     .replace(underlineRegex.value, (_, $1, $2) => `<span class="underline">${$2 || $1}</span>`)
     .replace(colorRegex, (_, $1, $2) => `<span style="color:${$1}">${$2}</span>`)
@@ -186,7 +173,6 @@ function getClass(keyword) {
 // TODO: https://ga.jspm.io/npm:browser-image-compression@2.0.2
 function readImage(image) {
   if (!(this.files && this.files[0])) return;
-  editEvent('image');
   const reader = new FileReader();
   reader.onload = (e) => {
     image.src = e.target.result;
