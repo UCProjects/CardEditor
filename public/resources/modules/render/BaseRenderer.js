@@ -5,6 +5,7 @@ import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
 import { sortedMatch } from '../utils/array.js';
 import saveImage from '../save.js';
+import { register, save } from '../elements/registry.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -32,13 +33,13 @@ function bindMenu(renderer, menu) {
   });
 
   if (type === Elements.Group) {
-    menu.querySelector(`[data-type="${Elements.Group}"]`).addEventListener('click', () => {
+    menu.querySelector(`[data-tip="Group"]`).addEventListener('click', () => {
       renderer.emit(Elements.Group);
     });
   }
 
   // Edit button
-  menu.querySelector('[commandfor="editor"]').addEventListener('click', () => {
+  menu.querySelector('[data-tip="Edit"]').addEventListener('click', () => {
     editor.open(renderer);
   });
 
@@ -48,6 +49,7 @@ function bindMenu(renderer, menu) {
   });
 
   // Delete
+  menu.querySelector('[data-tip="Archive"]').addEventListener('click', () => renderer.emit('archive'));
 }
 
 export default class BaseRenderer extends EventEmitter {
@@ -55,6 +57,7 @@ export default class BaseRenderer extends EventEmitter {
   /** @type {import('../elements/BaseElement.js').default} */
   #element;
 
+  /** @param {import('../elements/BaseElement.js').default} element  */
   constructor(element) {
     super();
     this.#element = element;
@@ -64,13 +67,19 @@ export default class BaseRenderer extends EventEmitter {
     this.on('update', (data) => {
       const modified = Object.entries(data).reduce((updated, [k, v]) => {
         const val = element[k];
+        // TODO This should use `match`
         const update = Array.isArray(v) ? !sortedMatch(v, val) : val !== v;
         if (update) this.update(k, v);
         return updated || update;
       }, false);
       if (modified) {
-        // TODO Save element
+        this.emit('save');
       }
+    });
+
+    this.on('save', () => {
+      register(element);
+      save(element.id);
     });
   }
 
