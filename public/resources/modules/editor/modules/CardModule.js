@@ -1,6 +1,6 @@
 import Module from '../Module.js';
 
-function updateSoul(from, to) {
+function updateActive(from, to) {
   if (from === to) return;
   from?.classList.remove('active');
   to.classList.add('active');
@@ -35,7 +35,7 @@ export default class CardModule extends Module {
       el.classList.toggle('hidden', element.isSpell());
     });
 
-    updateSoul(
+    updateActive(
       container.querySelector('.soul .selectable.active'),
       container.querySelector(`.soul .selectable${element.soul ? `.${element.soul}` : ''}`),
     );
@@ -44,7 +44,7 @@ export default class CardModule extends Module {
       el.addEventListener('click', () => {
         const active = container.querySelector('.soul span.selectable.active');
         if (active === el) return;
-        updateSoul(active, el);
+        updateActive(active, el);
         const soul = el.textContent;
         editor.update(soul === 'NONE' ? '' : soul, 'soul');
       }, { signal });
@@ -85,6 +85,21 @@ export default class CardModule extends Module {
         refreshTribes(container.querySelector('.tribes [data-tribe="none"]'));
         editor.update(tribes, 'tribes');
       }, { signal });
+    });
+
+    updateActive(
+      container.querySelector('[data-rarity].active'),
+      container.querySelector(`[data-rarity="${element.rarity || 'COMMON'}"]`),
+    );
+
+    container.querySelectorAll('[data-rarity].selectable').forEach((el) => {
+      const { rarity } = el.dataset;
+      el.addEventListener('click', () => {
+        const active = container.querySelector('[data-rarity].active');
+        if (active === el) return;
+        updateActive(active, el);
+        editor.update(rarity, 'rarity');
+      });
     });
   }
 }
