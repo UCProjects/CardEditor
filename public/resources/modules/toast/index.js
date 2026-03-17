@@ -3,7 +3,7 @@ import style from '../../styles/toast.css' with { type: 'css' };
 document.adoptedStyleSheets.push(style);
 
 const breadbox = document.querySelector('#breadbox');
-const toastTemplate = document.querySelector('template#toast');
+const template = document.querySelector('template#toast').innerHTML;
 
 export function toast({
   body = '',
@@ -20,7 +20,7 @@ export function toast({
 
   el.classList.add('toast', ...classes);
 
-  el.innerHTML = toastTemplate.innerHTML;
+  el.innerHTML = template;
   el.querySelector('header').innerHTML = title;
   el.querySelector('div').innerHTML = body;
   el.querySelector('footer').innerHTML = footer;
@@ -44,9 +44,9 @@ export function error({
   });
 }
 
-export function tryOrError(callback, message = '') {
+export async function tryOrError(callback, message = '') {
   try {
-    return callback();
+    return await callback();
   } catch (err) {
     console.error(err);
     if (message) error({ body: message });
@@ -54,9 +54,9 @@ export function tryOrError(callback, message = '') {
   return undefined;
 }
 
-export async function tryOrErrorAsync(callback, message = '') {
+export function tryOrErrorSync(callback, message = '') {
   try {
-    return await callback();
+    return callback();
   } catch (err) {
     console.error(err);
     if (message) error({ body: message });

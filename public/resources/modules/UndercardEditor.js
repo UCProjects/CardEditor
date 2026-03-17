@@ -1,19 +1,21 @@
 import { uuidValidate, uuidValidateV4, uuidValidateV6 } from './3rdparty/uuid.js';
 import { add as addImage } from './imageBank.js';
-import { get as getElement, init, load as loadElement, save, register } from './elements/registry.js';
+import { get as getElement, init, load as loadElement } from './elements/registry.js';
 import './editor/editor.js';
 import './tip/index.js';
 import style from '../styles/index.css' with { type: 'css' };
 import { getArray } from './utils/array.js';
-import { tryOrError } from './toast/index.js';
+import { tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
 
 document.adoptedStyleSheets.push(style);
 
 const app = document.getElementById('app');
 
+/** @typedef {import('./render/GroupRenderer.js').default} GroupRenderer */
+
 class UndercardEditor {
-  /** @type {Array<import('./render/GroupRenderer.js').default>} */
+  /** @type {Array<GroupRenderer>} */
   #groups = [];
 
   constructor() {
@@ -26,11 +28,11 @@ class UndercardEditor {
   init() {
     const groups = localStorage.getItem('groups');
     if (groups) {
-      tryOrError(
+      tryOrErrorSync(
         () => {
           const array = getArray(JSON.parse(groups)) || [];
           array.forEach((id) => {
-            tryOrError(
+            tryOrErrorSync(
               () => this.addGroup(getElement(id).renderer()),
               `Error adding Group[${id}]`
             );
@@ -43,35 +45,40 @@ class UndercardEditor {
     if (!this.#groups.length) this.newGroup();
   }
 
-  newGroup() {
+  newGroup(index) {
     const group = init({ type: Elements.Group });
-    // TODO register on save?
-    register(group);
-    this.addGroup(group.renderer());
-    // Save immediately?
-    this.save();
+    this.addGroup(group.renderer(), index);
   }
 
-  /** @param {import('./render/GroupRenderer.js').default} renderer  */
-  addGroup(renderer) {
-    renderer.on(Elements.Group, () => this.newGroup());
-    renderer.one('delete', () => {
+  /** @param {GroupRenderer} renderer  */
+  addGroup(renderer, after = 0) {
+    renderer.on(Elements.Group, () => this.newGroup(this.#groups.indexOf(renderer) + 1));
+    renderer.on('archive', () => {
       const index = this.#groups.indexOf(renderer);
-      if (!~index) return;
+      if (!~index || this.#groups.length === 1) return;
+      renderer.container.remove();
       this.#groups.splice(index, 1);
     });
-    // TODO on delete, remove from groups
-    app.append(renderer.content());
-    this.#groups.push(renderer);
-    // TODO save when modified, rather than here
-    save(renderer.element.id);
+    renderer.content();
+    if (after) {
+      this.#groups[after - 1].container.after(renderer.container);
+      this.#groups.splice(after, 0, renderer);
+    } else {
+      app.append(renderer.container);
+      this.#groups.push(renderer);
+    }
+    // renderer.one('save', () => this.save());
   }
 
   save() {
     const groups = this.#groups
       .filter(({ element: { id } }) => getElement(id)) // Only save groups that are registered
       .map(({ element: { id } }) => id); // Convert to IDs
-    localStorage.setItem('groups', JSON.stringify(groups));
+    if (groups.length) {
+      localStorage.setItem('groups', JSON.stringify(groups));
+    } else {
+      localStorage.removeItem('groups');
+    }
   }
 }
 
@@ -80,12 +87,12 @@ export async function loadStorage() {
   Object.entries(localStorage).forEach(([id, data]) => {
     if (!uuidValidate(id)) return;
     if (uuidValidateV4(id)) {
-      tryOrError(
+      tryOrErrorSync(
         () => loadElement(id),
         `Error loading Element[${id}]`,
       );
     } else if (uuidValidateV6(id)) {
-      tryOrError(
+      tryOrErrorSync(
         () => addImage({
           ...JSON.parse(data),
           id,
