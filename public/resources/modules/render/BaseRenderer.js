@@ -100,7 +100,8 @@ export default class BaseRenderer extends EventEmitter {
   }
 
   description() {
-    const container = this.query('.description div') || this.query('.description');
+    const el = this.query('.description');
+    const container = el.querySelector('div') || el;
     container.innerHTML = getHTMLDescription(this.element.description);
   }
 
