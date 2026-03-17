@@ -21,11 +21,11 @@ export default class GroupRenderer extends Renderer {
     if (this.query('.buttons')) return;
     this.addMenu();
     this.addButtons();
-    this.#addEvents();
+    this.#addGroupEvents();
     const elements = this.element.content.map((id) => tryOrErrorSync(
       () => {
         const render = get(id).renderer();
-        render.addMenu();
+        this.#addElementEvents(render);
         return render.container;
       },
       `Failed to load ${id}`,
@@ -41,33 +41,44 @@ export default class GroupRenderer extends Renderer {
     this.query('.content').append(wrapper);
   }
 
+  /** @param {import('../elements/BaseElement.js').default} element */
   #newElement(element) {
     const { content } = this.element;
     content.push(element.id);
 
     const render = element.renderer();
-    render.addMenu();
+    this.#addElementEvents(render);
     this.query('.buttons').before(render.container);
 
-    editor.open(render);
+    const editController = new AbortController();
+    editor.on('save', () => editController.abort(), { signal: editController.signal });
+    editor.on('close', () => {
+      editController.abort();
+      render.emit('archived');
+      this.emit('save');
+    }, { signal: editController.signal });
 
-    const controller = new AbortController();
-    editor.one('save', () => {
-      if (controller.signal.aborted) return;
-      this.emit('save');
-      controller.abort();
-    }, { signal: controller.signal });
-    editor.one('close', () => {
-      if (controller.signal.aborted) return;
-      controller.abort();
-      const index = content.indexOf(element.id);
-      if (!~index) return;
-      content.splice(index, 1);
-      this.emit('save');
-    }, { signal: controller.signal });
+    editor.open(render);
   }
 
-  #addEvents() {
+  /** @param {import('./BaseRenderer.js').default} render */
+  #addElementEvents(render) {
+    render.addMenu();
+    const archivedController = new AbortController();
+    render.one('save', () => this.emit('save'), { signal: archivedController.signal });
+
+    render.on('archive', () => render.emit('archived'), { signal: archivedController.signal });
+    render.on('archived', () => {
+      const index = this.element.content.indexOf(render.element.id);
+      if (!~index) return;
+      this.element.content.splice(index, 1);
+      render.container.remove();
+      render.emit('save');
+      archivedController.abort();
+    }, { signal: archivedController.signal });
+  }
+
+  #addGroupEvents() {
     this.on(Elements.Card, (monster = false) => {
       const card = init({ type: Elements.Card });
       if (monster) card.setMonster();
