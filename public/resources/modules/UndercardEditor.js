@@ -31,6 +31,7 @@ class UndercardEditor {
         () => {
           groups.forEach((id) => {
             tryOrErrorSync(
+              // FIXME if load errors, group is lost to the void
               () => this.addGroup(getElement(id).renderer()),
               `Error adding Group[${id}]`
             );
@@ -54,8 +55,7 @@ class UndercardEditor {
     renderer.on('archive', () => {
       const index = this.#groups.indexOf(renderer);
       if (!~index || this.#groups.length === 1) return;
-      renderer.container.remove();
-      this.#groups.splice(index, 1);
+      renderer.emit('archived');
     });
     renderer.content();
     if (after) {

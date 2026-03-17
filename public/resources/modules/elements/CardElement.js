@@ -44,7 +44,8 @@ export default class CardElement extends BaseElement {
   set attack(value = 0) {
     if (this.isSpell()) throw new Error('Adding attack to spell');
     if (value < 0) throw new Error('Invalid attack value');
-    this.#attack = value;
+    // this.#attack = Math.min(Math.max(0, Number(value)), 999); // Ideally, this would be handled by editor
+    this.#attack = Number(value);
   }
 
   get health() {
@@ -54,7 +55,8 @@ export default class CardElement extends BaseElement {
   set health(value = 0) {
     if (this.isSpell()) throw new Error('Adding health to spell');
     if (value < 0) throw new Error('Invalid health value');
-    this.#health = value;
+    // this.#health = Math.min(Math.max(0, Number(value)), 999);
+    this.#health = Number(value);
   }
 
   setMonster() {
