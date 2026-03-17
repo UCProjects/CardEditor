@@ -4,7 +4,6 @@ import { get as getElement, init, load as loadElement } from './elements/registr
 import './editor/editor.js';
 import './tip/index.js';
 import style from '../styles/index.css' with { type: 'css' };
-import { getArray } from './utils/array.js';
 import { tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
 
@@ -26,12 +25,11 @@ class UndercardEditor {
 
 
   init() {
-    const groups = localStorage.getItem('groups');
-    if (groups) {
+    const groups = tryOrErrorSync(() => JSON.parse(localStorage.getItem('groups')));
+    if (Array.isArray(groups)) {
       tryOrErrorSync(
         () => {
-          const array = getArray(JSON.parse(groups)) || [];
-          array.forEach((id) => {
+          groups.forEach((id) => {
             tryOrErrorSync(
               () => this.addGroup(getElement(id).renderer()),
               `Error adding Group[${id}]`
@@ -74,11 +72,7 @@ class UndercardEditor {
     const groups = this.#groups
       .filter(({ element: { id } }) => getElement(id)) // Only save groups that are registered
       .map(({ element: { id } }) => id); // Convert to IDs
-    if (groups.length) {
-      localStorage.setItem('groups', JSON.stringify(groups));
-    } else {
-      localStorage.removeItem('groups');
-    }
+    localStorage.setItem('groups', JSON.stringify(groups));
   }
 }
 
