@@ -14,7 +14,7 @@ export default class EventEmitter {
     this.#events[event].push(fn);
     options.signal?.addEventListener('abort', () => {
       this.off(event, fn);
-    });
+    }, { once: true });
     return this;
   }
 
