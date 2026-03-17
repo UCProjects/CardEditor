@@ -129,11 +129,13 @@ input, textarea {
   justify-content: space-between;
 }
 
-.helper [data-editing="tribes"] [data-tribe] {
+.helper [data-rarity],
+.helper [data-tribe] {
   opacity: 0.4;
 }
 
-.helper [data-editing="tribes"] [data-tribe].active {
+.helper [data-rarity].active,
+.helper [data-tribe].active {
   opacity: 1;
   filter: var(--shadow-filter);
 }
