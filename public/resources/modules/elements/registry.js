@@ -9,6 +9,28 @@ import { Elements } from './types.js';
  */
 const data = new Map();
 
+// TODO make an archive that holds unowned elements
+
+export function get(id) {
+  return data.get(id);
+}
+
+export function getAll() {
+  return [...data.values()];
+}
+
+export function init(props) {
+  switch (props.type) {
+    case Elements.Card: return new Card(props);
+    case Elements.Group: return new Group(props);
+    case Elements.Text: return new Text(props);
+    default: {
+      console.dir(props);
+      throw new Error(`Unknown Entity: [${props.id}, ${props.type}]`);
+    }
+  }
+}
+
 export function load(id) {
   if (!id) throw new Error('Must provide ID');
   if (!uuidValidateV4(id)) throw new Error(`Invalid ID: ${id}`);
@@ -18,6 +40,17 @@ export function load(id) {
     ...JSON.parse(item),
     id,
   }));
+}
+
+/** @param {Group | Card | Text} element  */
+export function register(element) {
+  data.set(element.id, element);
+}
+
+export function remove(idOrElement) {
+  const key = idOrElement.id || idOrElement;
+  localStorage.removeItem(key);
+  return data.delete(key);
 }
 
 export function save(key) {
@@ -40,34 +73,5 @@ export function save(key) {
     }
   } else {
     [...data.keys()].forEach(save);
-  }
-}
-
-export function get(id) {
-  return data.get(id);
-}
-
-export function getAll() {
-  return [...data.values()];
-}
-
-export function remove(key) {
-  return data.delete(key);
-}
-
-/** @param {Group | Card | Text} element  */
-export function register(element) {
-  data.set(element.id, element);
-}
-
-export function init(props) {
-  switch (props.type) {
-    case Elements.Card: return new Card(props);
-    case Elements.Group: return new Group(props);
-    case Elements.Text: return new Text(props);
-    default: {
-      console.dir(props);
-      throw new Error(`Unknown Entity: [${props.id}, ${props.type}]`);
-    }
   }
 }

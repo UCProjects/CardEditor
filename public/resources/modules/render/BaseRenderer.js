@@ -9,7 +9,7 @@ import { register, save } from '../elements/registry.js';
 
 document.adoptedStyleSheets.push(style);
 
-const menuTemplate = document.querySelector('template#menu');
+const menuHTML = document.querySelector('template#menu').innerHTML;
 
 /**
  * @param {Renderer} renderer
@@ -17,14 +17,14 @@ const menuTemplate = document.querySelector('template#menu');
  */
 function bindMenu(renderer, menu) {
   const { type } = renderer.element;
-  if (type === Elements.Card) {
-    const card = renderer.container;
-    card.addEventListener('mouseenter', () => {
-      menu.showPopover({ source: card });
-    });
-  } else {
+  if (type === Elements.Group) {
     renderer.query('header').addEventListener('mouseenter', (e) => {
       menu.showPopover({ source: e.target });
+    });
+  } else {
+    const el = renderer.container;
+    el.addEventListener('mouseenter', () => {
+      menu.showPopover({ source: el });
     });
   }
 
@@ -122,7 +122,7 @@ export default class BaseRenderer extends EventEmitter {
     const menu = this.query('.menu');
     if (menu) return menu; // Exists
     // Create menu
-    this.container.insertAdjacentHTML('beforeend', menuTemplate.innerHTML);
+    this.container.insertAdjacentHTML('beforeend', menuHTML);
     const container = this.query('.menu');
     bindMenu(this, container);
     return container;
@@ -130,7 +130,8 @@ export default class BaseRenderer extends EventEmitter {
 
   update(key, value) {
     if (!key) throw new Error('Updating without key');
-    this.element[key] = value;
+    // TODO this should be controlled in other areas?
+    this.element[key] = typeof this.element[key] === 'number' ? Number(value) : value;
     this[key]?.();
   }
 

@@ -1,4 +1,5 @@
 import BaseElement from './BaseElement.js';
+import { get } from './registry.js';
 import { Elements } from './types.js';
 
 export default class GroupElement extends BaseElement {
@@ -15,5 +16,12 @@ export default class GroupElement extends BaseElement {
       type: Elements.Group,
     });
     this.content.push(...content);
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      content: this.content.filter(get),
+    };
   }
 }
