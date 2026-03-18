@@ -11,6 +11,14 @@ export default class Module extends EventEmitter {
     this.#editor = instance;
   }
 
+  get container() {
+    return this.instance.container;
+  }
+
+  get element() {
+    return this.instance.element;
+  }
+
   get instance() {
     return this.#editor;
   }
@@ -19,17 +27,12 @@ export default class Module extends EventEmitter {
     return this.#controller.signal;
   }
 
-  get element() {
-    return this.#editor.element;
-  }
-
   // TODO: simplify this?
   init() {
     this.#controller?.abort();
     this.#controller = new AbortController();
 
-    const { instance, signal } = this;
-    const { container, element } = instance;
+    const { container, element, instance, signal } = this;
 
     // Bind generic events
     container.querySelectorAll('input[name]').forEach((input) => {
@@ -43,7 +46,7 @@ export default class Module extends EventEmitter {
     const descriptionInput = container.querySelector('textarea[name="description"]');
     descriptionInput.value = element.description;
     descriptionInput.addEventListener('input', (event) => {
-      // TODO strip open ended brackets from value
+      // TODO strip open ended brackets from value?
       instance.update(event.currentTarget.value, 'description');
     }, { signal });
 
