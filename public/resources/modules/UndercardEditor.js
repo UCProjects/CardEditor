@@ -31,7 +31,7 @@ class UndercardEditor {
         () => {
           groups.forEach((id) => {
             tryOrErrorSync(
-              // FIXME if load errors, group is lost to the void
+              // FIXME if load errors, group is lost to the void.
               () => this.addGroup(getElement(id).renderer()),
               `Error adding Group[${id}]`
             );

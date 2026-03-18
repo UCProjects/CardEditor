@@ -1,16 +1,18 @@
 import style from '../../styles/group.css' with { type: 'css' };
 import Renderer from './BaseRenderer.js';
-import { get, init, register, save } from '../elements/registry.js';
+import { get, init } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
 import editor from '../editor/editor.js';
 import { tryOrErrorSync } from '../toast/index.js';
 
 document.adoptedStyleSheets.push(style);
 
-const buttonTemplate = document.querySelector('#groupButtons');
+const buttonHTML = document.querySelector('#groupButtons').innerHTML;
 
 // TODO how to support "sorting/dragging"
 export default class GroupRenderer extends Renderer {
+  #deleteController = new AbortController();
+
   /** @type {import('../elements/GroupElement.js').default} */
   get element() {
     return super.element;
@@ -37,7 +39,7 @@ export default class GroupRenderer extends Renderer {
   addButtons() {
     const wrapper = document.createElement('div');
     wrapper.classList.add('buttons', 'no-save');
-    wrapper.innerHTML = buttonTemplate.innerHTML;
+    wrapper.innerHTML = buttonHTML;
     this.query('.content').append(wrapper);
   }
 
@@ -72,10 +74,13 @@ export default class GroupRenderer extends Renderer {
       const index = this.element.content.indexOf(render.element.id);
       if (!~index) return;
       this.element.content.splice(index, 1);
-      render.container.remove();
-      render.emit('save');
+      render.unload();
+      render.emit('delete'); // TODO replace with archive
+      this.emit('save');
       archivedController.abort();
     }, { signal: archivedController.signal });
+
+    this.on('delete', () => render.emit('delete'), { signal: this.#deleteController.signal });
   }
 
   #addGroupEvents() {
@@ -85,9 +90,10 @@ export default class GroupRenderer extends Renderer {
       this.#newElement(card);
     });
     this.on(Elements.Text, () => this.#newElement(init({ type: Elements.Text })));
-    this.on('save', () => {
-      register(this.element);
-      save(this.element.id);
+    this.on('archived', () => {
+      this.unload();
+      this.emit('delete'); // TODO replace with archive
+      this.#deleteController.abort();
     });
 
     this.query('.buttons button.monster').addEventListener('click', () => this.emit(Elements.Card, true));
