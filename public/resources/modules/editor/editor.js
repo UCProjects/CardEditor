@@ -104,6 +104,8 @@ class Editor extends EventEmitter {
     editor.returnValue = undefined;
     editor.showModal();
 
+    this.#renderer.render();
+
     this.emit('open');
   }
 

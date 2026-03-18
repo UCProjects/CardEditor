@@ -32,7 +32,11 @@ class UndercardEditor {
           groups.forEach((id) => {
             tryOrErrorSync(
               // FIXME if load errors, group is lost to the void.
-              () => this.addGroup(getElement(id).renderer()),
+              () => {
+                const renderer = getElement(id).renderer();
+                this.addGroup(renderer);
+                setTimeout(() => renderer.emit('loaded'), 50);
+              },
               `Error adding Group[${id}]`
             );
           });
@@ -57,7 +61,6 @@ class UndercardEditor {
       if (!~index || this.#groups.length === 1) return;
       renderer.emit('archived');
     });
-    renderer.content();
     if (after) {
       this.#groups[after - 1].container.after(renderer.container);
       this.#groups.splice(after, 0, renderer);
@@ -65,6 +68,7 @@ class UndercardEditor {
       app.append(renderer.container);
       this.#groups.push(renderer);
     }
+    renderer.content();
     // renderer.one('save', () => this.save());
   }
 
