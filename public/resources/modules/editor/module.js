@@ -35,7 +35,7 @@ export default class Module extends EventEmitter {
     const { container, element, instance, signal } = this;
 
     // Bind generic events
-    container.querySelectorAll('input[name]').forEach((input) => {
+    container.querySelectorAll('input[name]:not([type="file"], [type="number"], .external > input)').forEach((input) => {
       const key = input.name;
       input.value = element[key];
       input.addEventListener('input', () => {
