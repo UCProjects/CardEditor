@@ -28,6 +28,7 @@ export default class GroupRenderer extends Renderer {
       () => {
         const render = get(id).renderer();
         this.#addElementEvents(render);
+        this.one('loaded', () => render.render());
         return render.container;
       },
       `Failed to load ${id}`,
