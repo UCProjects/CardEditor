@@ -51,6 +51,6 @@ export default class EventEmitter {
   /** @param {string} event */
   emit(event, ...args) {
     const events = this.#events[event] || [];
-    [...events].forEach(fn => fn(...args));
+    [...events].forEach(fn => tryOrErrorSync(() => fn(...args)));
   }
 }
