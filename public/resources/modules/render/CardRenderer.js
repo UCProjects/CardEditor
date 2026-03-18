@@ -4,6 +4,9 @@ import { filter } from '../utils/array.js';
 
 document.adoptedStyleSheets.push(style);
 
+/** @type {HTMLTemplateElement} */
+const tribeTemplate = document.querySelector('template#selectTribe');
+
 export default class CardRenderer extends Renderer {
   /** @type {import('../elements/CardElement.js').default} */
   get element() {
@@ -58,22 +61,21 @@ export default class CardRenderer extends Renderer {
   }
 
   tribes() {
-    // TODO render elements rather than load from template
-    this.queryAll('.tribes [data-tribe]').forEach((el) => {
-      const tribe = el.dataset.tribe;
-      el.classList.remove('selectable');
-      const { tribes } = this.element;
-      el.classList.toggle('hidden', !tribes.includes(tribe));
-    });
-    // TODO Allow custom
+    const tribes = document.importNode(tribeTemplate.content, true);
+    const elements = this.element.tribes.map((tribe) => {
+      const element = tribes.querySelector(`[data-tribe="${tribe}"]`);
+      if (element) {
+        element.classList.remove('selectable');
+        return element;
+      } else {
+        // TODO Custom?
+        return undefined;
+      }
+    }).filter(_ => _);
+    this.query('.tribes').replaceChildren(...elements);
   }
 
   render() {
-    // TODO remove this
-    this.queryAll('[data-template]').forEach((el) => {
-      const template = el.dataset.template;
-      el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load ${template}`;
-    });
     super.render();
     this.attack();
     this.cost();
