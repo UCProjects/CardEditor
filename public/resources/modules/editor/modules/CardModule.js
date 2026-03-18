@@ -1,3 +1,4 @@
+import { clampNumber } from '../../utils/funcs.js';
 import Module from '../Module.js';
 
 function updateActive(from, to) {
@@ -10,26 +11,31 @@ export default class CardModule extends Module {
   init() {
     super.init();
 
-    // Bind edit events, name, description, image, soul, number,
+    const { container, instance: editor, element, signal } = this;
 
-    const { instance: editor , signal } = this;
-    const { container, element } = editor;
-    // TODO: simplify this
-    container.querySelector('input[name="name"]').addEventListener('input', () => {
-      // TODO
-    }, { signal });
+    // TODO: simplify events
 
-    container.querySelectorAll('input[type="number"]').forEach((number) => {
-      number.addEventListener('input', () => {
-        editor.update(number.value, number.name);
+    // Stats
+    container.querySelectorAll('input[type="number"]:not(.external > input)').forEach((input) => {
+      const key = input.name;
+      input.value = element[key];
+
+      // Only allow positive integers
+      input.addEventListener('beforeinput', (e) => {
+        if (e.inputType.startsWith('deleteContent')) return;
+        if (!/^\d+$/.test(e.data)) e.preventDefault();
+      }, { signal });
+
+      input.addEventListener('input', () => {
+        const value = clampNumber(input.value);
+        input.value = value;
+        editor.update(value, input.name);
       }, { signal });
     });
 
-    // TODO extras override
-    const showSoul = element.isSpell();
-    container.querySelector('fieldset.soul').style.display = showSoul ? 'block' : 'none';
-
-    container.querySelector('[data-tribe="none"]')?.classList.toggle('active', !this.element.tribes.length);
+    // soul
+    const showExtra = element.isSpell(); // TODO extras override
+    container.querySelector('fieldset.soul').style.display = showExtra ? 'block' : 'none';
 
     container.querySelectorAll('.monster').forEach((el) => {
       el.classList.toggle('hidden', element.isSpell());
@@ -50,6 +56,7 @@ export default class CardModule extends Module {
       }, { signal });
     });
 
+    // tribes
     function refreshTribes(...elements) {
       elements.forEach((el) => {
         const { tribe } = el.dataset;
@@ -86,6 +93,7 @@ export default class CardModule extends Module {
       }, { signal });
     });
 
+    // rarity
     updateActive(
       container.querySelector('[data-rarity].active'),
       container.querySelector(`[data-rarity="${element.rarity || 'COMMON'}"]`),
@@ -98,7 +106,10 @@ export default class CardModule extends Module {
         if (active === el) return;
         updateActive(active, el);
         editor.update(rarity, 'rarity');
-      });
+      }, { signal });
     });
+
+    // effects
+    // avatar
   }
 }

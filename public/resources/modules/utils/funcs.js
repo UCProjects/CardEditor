@@ -36,3 +36,7 @@ export function isElementInViewport(el) {
     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 }
+
+export function clampNumber(number, max = 999, min = 0) {
+  return Math.min(Math.max(min, Number(number)), max);
+}
