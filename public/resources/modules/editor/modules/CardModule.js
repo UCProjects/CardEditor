@@ -82,7 +82,6 @@ export default class CardModule extends Module {
           tribes.splice(index, 1);
         }
         refreshTribes(...container.querySelectorAll('[data-tribe].selectable'));
-        refreshTribes(container.querySelector('.tribes [data-tribe="none"]'));
         editor.update(tribes, 'tribes');
       }, { signal });
     });
