@@ -5,7 +5,7 @@ import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
 import { sortedMatch } from '../utils/array.js';
 import saveImage from '../save.js';
-import { register, save } from '../elements/registry.js';
+import { register, remove, save } from '../elements/registry.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -80,6 +80,10 @@ export default class BaseRenderer extends EventEmitter {
     this.on('save', () => {
       register(element);
       save(element.id);
+    });
+
+    this.on('delete', () => {
+      remove(this.element);
     });
   }
 
