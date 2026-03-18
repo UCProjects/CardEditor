@@ -31,9 +31,10 @@ function getTribe(name) {
   const img = document.createElement('img');
   img.src = `/resources/tribes/${name.toUpperCase().replace(' ', '_')}.png`;
   img.classList.add('selectable', 'smallIcon');
+  img.alt = name;
   img.dataset.tip = name;
   img.dataset.tribe = name.toLowerCase();
-  img.alt = name;
+  img.draggable = false;
   return img;
 }
 
