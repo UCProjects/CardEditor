@@ -22,6 +22,7 @@ input, textarea {
 
 #editor input,
 #editor textarea {
+  width: -moz-available;
   width: stretch;
 }
 
@@ -163,6 +164,7 @@ fieldset.soul {
 
 #editor .element.group,
 #editor .element.text {
+  max-width: -moz-available;
   max-width: stretch;
 }
 
