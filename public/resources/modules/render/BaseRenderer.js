@@ -143,9 +143,9 @@ export default class BaseRenderer extends EventEmitter {
     const template = document.querySelector(id);
     if (!template) throw new Error(`Failed to find template '${id}'`);
     const container = document.createElement('div');
-    container.id = `${element.type}-${element.id}`;
     container.innerHTML = template.innerHTML;
     container.classList.add('element', element.type);
+    container.dataset.id = element.id;
     return container;
   }
 }

@@ -1,6 +1,6 @@
 [popover="hint"].tooltip {
   inset: unset;
-  position: absolute;
+  position: fixed;
   bottom: calc(anchor(top) + 5px);
   justify-self: anchor-center;
   margin: 0;

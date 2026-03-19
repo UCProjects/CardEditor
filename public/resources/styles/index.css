@@ -56,7 +56,6 @@ body > footer img {
 }
 
 .hidden,
-.template,
 img[src=""] {
     display: none;
 }

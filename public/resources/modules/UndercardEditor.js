@@ -91,13 +91,13 @@ class UndercardEditor {
 
   versionToast(force = false) {
     if (this.#toast?.isOpen || (
-      !force && localStorage.getItem('versionToast') === version
+      !force && localStorage.getItem('version') === version
     )) return;
     this.#toast = toast({
       title: `Editor v${version}`,
       body: document.querySelector('#versionText').innerHTML,
     }).on('close', () => {
-      localStorage.setItem('versionToast', version);
+      localStorage.setItem('version', version);
     });
   }
 }
