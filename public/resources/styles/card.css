@@ -49,6 +49,7 @@
 
 .card .image {
   height: 88px;
+  width: -moz-available;
   width: stretch;
 }
 
@@ -60,7 +61,7 @@
   overflow: hidden;
 }
 
-.card .image,
+.card .middle,
 .card .description,
 .card .bottom > * {
   border-top: 2px solid var(--border);
