@@ -33,10 +33,8 @@ export default class CardModule extends Module {
       }, { signal });
     });
 
-    // soul
+    // Extras
     const hideExtra = element.isSpell(); // TODO extras override
-    container.querySelector('fieldset.soul').style.display = hideExtra ? 'none' : 'block';
-
     container.querySelectorAll('[data-extra]').forEach((el) => {
       el.classList.toggle('hidden', hideExtra);
     });
