@@ -13,11 +13,11 @@ document.body.append(tip);
 
 function show(event) {
   const source = event.target;
+  if (!source.dataset) return;
   const editorText = editor.isOpen && (source.dataset.editableFor || source.dataset.editable);
   const text = source.dataset.tip;
   if (!text && !editorText) return;
   tip.textContent = text || `Edit ${editorText}`;
-  tip.hidePopover();
   tip.showPopover({ source });
   tip.classList.toggle('flip', !isElementInViewport(source));
 }
@@ -26,8 +26,10 @@ function show(event) {
 function hide(event) {
   const keys = ['tip', editor.isOpen && 'editable'];
   if (
-    !contains(keys, Object.keys(event.target.dataset)) ||
-    event.target.contains(event.toElement || event.relatedTarget)
+    !tip.matches(':popover-open') ||
+    event.target.contains(event.toElement || event.relatedTarget) ||
+    !event.target.dataset ||
+    !contains(keys, Object.keys(event.target.dataset))
   ) return;
   tip.hidePopover();
 }
