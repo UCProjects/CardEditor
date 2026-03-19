@@ -25,5 +25,5 @@ Promise.all(preloads)
   .then(ready)
   .catch((err) => {
     console.error(err);
-    errorToast('Failed to load Editor');
+    errorToast({ body: 'Failed to load Editor' });
   });
