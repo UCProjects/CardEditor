@@ -4,18 +4,22 @@ import { get as getElement, init, load as loadElement } from './elements/registr
 import './editor/editor.js';
 import './tip/index.js';
 import style from '../styles/index.css' with { type: 'css' };
-import { tryOrErrorSync } from './toast/index.js';
+import { toast, tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
 
 document.adoptedStyleSheets.push(style);
 
 const app = document.getElementById('app');
+const version = document.querySelector('template#version').innerHTML;
 
 /** @typedef {import('./render/GroupRenderer.js').default} GroupRenderer */
 
 class UndercardEditor {
   /** @type {Array<GroupRenderer>} */
   #groups = [];
+
+  /** @type {Readonly<{isOpen: boolean }>} */
+  #toast;
 
   constructor() {
     window.addEventListener('beforeunload', () => {
@@ -25,6 +29,8 @@ class UndercardEditor {
 
 
   init() {
+    this.versionToast();
+
     const groups = tryOrErrorSync(() => JSON.parse(localStorage.getItem('groups')));
     if (Array.isArray(groups)) {
       tryOrErrorSync(
@@ -77,6 +83,18 @@ class UndercardEditor {
       .filter(({ element: { id } }) => getElement(id)) // Only save groups that are registered
       .map(({ element: { id } }) => id); // Convert to IDs
     localStorage.setItem('groups', JSON.stringify(groups));
+  }
+
+  versionToast(force = false) {
+    if (this.#toast?.isOpen || (
+      !force && localStorage.getItem('versionToast') === version
+    )) return;
+    this.#toast = toast({
+      title: `Editor v${version}`,
+      body: document.querySelector('#versionText').innerHTML,
+    }).on('close', () => {
+      localStorage.setItem('versionToast', version);
+    });
   }
 }
 

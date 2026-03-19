@@ -1,4 +1,5 @@
 import style from '../../styles/toast.css' with { type: 'css' };
+import EventEmitter from '../eventManager.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -13,9 +14,11 @@ export function toast({
   title = '',
 }) {
   const el = document.createElement('article');
+  const events = new EventEmitter();
 
   function close() {
     el.remove();
+    events.emit('close');
   }
 
   el.classList.add('toast', ...classes);
@@ -29,13 +32,19 @@ export function toast({
   signal?.addEventListener('abort', close);
 
   breadbox.append(el);
+
+  Object.defineProperty(events, 'isOpen', {
+    get: () => el.isConnected,
+  });
+
+  return events;
 }
 
 export function error({
   classes = [],
   ...rest
 }) {
-  toast({
+  return toast({
     classes: [
       'error',
       ...classes,

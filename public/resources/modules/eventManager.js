@@ -39,6 +39,26 @@ export default class EventEmitter {
   }
 
   /**
+   * Listens until you return true, in which case it will turn off
+   *
+   * Is async, which means other events will occur while this listener runs
+   * @param {string} event
+   * @param {(...args: any[]) => boolean | Promise<boolean>} fn
+   * @param {{
+   *  signal?: AbortSignal;
+   * }} options
+   */
+  until(event, fn, options) {
+    const controller = new AbortController();
+    return this.on(event, async (...args) => {
+      if (await fn(...args)) controller.abort();
+    }, {
+      ...options,
+      signal: AbortSignal.any([controller.signal, options?.signal].filter(_ => _)),
+    });
+  }
+
+  /**
    * @param {string} event
    * @param {(...args: any[]) => void} fn
    */

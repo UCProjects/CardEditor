@@ -20,18 +20,28 @@
   padding: 10px;
   border: 1px solid white;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 #breadbox .toast.error {
   background-color: rgba(200, 0, 0, 0.6);
 }
 
-#breadbox .toast:popover-open {
-  display: block;
+#breadbox .toast header {
+  border-bottom: 2px solid var(--border);
+  font-size: large;
+  margin-bottom: 5px;
 }
 
-#breadbox .toast header {}
+#breadbox .toast div {
+  white-space: normal;
+}
 
-#breadbox .toast div {}
+#breadbox .toast footer {
+  font-size: small;
+}
 
-#breadbox .toast footer {}
+#breadbox .toast header:empty,
+#breadbox .toast footer:empty {
+  display: none;
+}

@@ -71,3 +71,12 @@ img[src=""] {
   align-items: center;
   justify-content: center;
 }
+
+.strike {
+  text-decoration: line-through;
+}
+
+.warn {
+  color: red;
+  font-weight: bold;
+}
