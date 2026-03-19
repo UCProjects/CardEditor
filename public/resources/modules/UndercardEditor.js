@@ -35,21 +35,25 @@ class UndercardEditor {
     if (Array.isArray(groups)) {
       tryOrErrorSync(
         () => {
-          groups.forEach((id) => {
-            tryOrErrorSync(
-              // FIXME if load errors, group is lost to the void.
-              () => {
-                const renderer = getElement(id).renderer();
-                this.addGroup(renderer);
-                if (typeof window.requestIdleCallback === 'function') {
-                  requestIdleCallback(() => renderer.emit('loaded'));
-                } else {
-                  setTimeout(() => renderer.emit('loaded'), 100);
-                }
-              },
-              `Error adding Group[${id}]`
-            );
-          });
+          const loaded = groups.map((id) => tryOrErrorSync(
+            // FIXME if load errors, group is lost to the void.
+            () => {
+              const renderer = getElement(id).renderer();
+              this.addGroup(renderer);
+              return renderer;
+
+            },
+            `Error adding Group[${id}]`
+          ));
+
+          function updateElements() {
+            requestAnimationFrame(() => loaded.forEach((el) => el?.emit('loaded')));
+          }
+          if (typeof window.requestIdleCallback === 'function') {
+            requestIdleCallback(updateElements);
+          } else {
+            setTimeout(updateElements, 100);
+          }
         },
         'Error loading groups'
       );
