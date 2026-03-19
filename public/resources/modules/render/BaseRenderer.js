@@ -48,7 +48,7 @@ function bindMenu(renderer, menu) {
     saveImage(renderer.container, renderer.element.name || type);
   });
 
-  // Delete
+  // Archive
   menu.querySelector('[data-tip="Archive"]').addEventListener('click', () => renderer.emit('archive'));
 }
 

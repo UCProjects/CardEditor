@@ -57,6 +57,7 @@
   font-size: 0.8rem;
   padding: 2px 1px;
   height: 80px;
+  overflow: hidden;
 }
 
 .card .image,
