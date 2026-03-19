@@ -34,11 +34,11 @@ export default class CardModule extends Module {
     });
 
     // soul
-    const showExtra = element.isSpell(); // TODO extras override
-    container.querySelector('fieldset.soul').style.display = showExtra ? 'block' : 'none';
+    const hideExtra = element.isSpell(); // TODO extras override
+    container.querySelector('fieldset.soul').style.display = hideExtra ? 'none' : 'block';
 
-    container.querySelectorAll('.monster').forEach((el) => {
-      el.classList.toggle('hidden', element.isSpell());
+    container.querySelectorAll('[data-extra]').forEach((el) => {
+      el.classList.toggle('hidden', hideExtra);
     });
 
     updateActive(
