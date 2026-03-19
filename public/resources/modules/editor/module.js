@@ -51,7 +51,7 @@ export default class Module extends EventEmitter {
     }, { signal });
 
     // Generic hide soul
-    container.querySelector('fieldset.soul').style.display = 'none';
+    container.querySelector('fieldset.soul').classList.add('hidden');
 
 
     this.on('click', (key) => {
