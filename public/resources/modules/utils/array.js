@@ -31,6 +31,16 @@ export function isIterable(obj) {
   return obj && typeof obj[Symbol.iterator] === 'function';
 }
 
+export function match(array, other) {
+  if (
+    !Array.isArray(array) ||
+    !Array.isArray(other) ||
+    array.length !== other.length
+  ) return false;
+
+  return array.every((val, i) => val === other[i]);
+}
+
 export function sortedMatch(array, other) {
   if (
     !Array.isArray(array) ||
@@ -38,8 +48,20 @@ export function sortedMatch(array, other) {
     array.length !== other.length
   ) return false;
 
+  if (array === other) return true;
+
   const sortedA = [...array].sort();
   const sortedO = [...other].sort();
 
   return sortedA.every((val, i) => val === sortedO[i]);
+}
+
+/**
+ * @param {Array<any>} array
+ * @param {number} from
+ * @param {number} to
+ */
+export function swap(array, from, to) {
+  const [moved] = array.splice(from, 1);
+  array.splice(to, 0, moved);
 }
