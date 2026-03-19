@@ -134,8 +134,7 @@ export default class BaseRenderer extends EventEmitter {
 
   update(key, value) {
     if (!key) throw new Error('Updating without key');
-    // TODO this should be controlled in other areas?
-    this.element[key] = typeof this.element[key] === 'number' ? Number(value) : value;
+    if (value !== undefined) this.element[key] = value;
     this[key]?.();
   }
 
