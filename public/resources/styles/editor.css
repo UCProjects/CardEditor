@@ -86,12 +86,28 @@ input, textarea {
   min-height: 40px;
 }
 
-/* TODO: Change effects/tribes to placeholder image */
 #editor [data-editable="effects"]:empty,
-#editor [data-editable="tribes"]:empty,
 #editor [data-editable]:hover,
 .editable {
   border: 1px solid red;
+}
+
+#editor [data-editable="tribes"]:empty {
+  background-image: url('/resources/tribes/MONSTER.png');
+  background-size: 14px;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.1;
+}
+
+/* TODO: Change effects to placeholder image */
+#editor [data-editable="effects"]:empty {
+  border: 1px solid red;
+}
+
+#editor [data-editable="effects"]:empty:hover,
+#editor [data-editable="tribes"]:empty:hover {
+  opacity: 1;
 }
 
 #editor[data-type="group"] .content,
@@ -148,4 +164,8 @@ fieldset.soul {
 #editor .element.group,
 #editor .element.text {
   max-width: stretch;
+}
+
+#editor optgroup:empty {
+  display: none;
 }
