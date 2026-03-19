@@ -109,5 +109,12 @@ export default class CardModule extends Module {
 
     // effects
     // avatar
+
+    // Redirect 'image' to 'avatar'
+    this.on('click', (key) => {
+      if (key === 'image') {
+        this.emit('click', 'avatar');
+      }
+    }, { signal });
   }
 }
