@@ -1,3 +1,5 @@
+import { tryOrErrorSync } from './toast/index.js';
+
 export default class EventEmitter {
   /** @type {Record<string, Function[]} */
   #events = {};
