@@ -41,7 +41,11 @@ class UndercardEditor {
               () => {
                 const renderer = getElement(id).renderer();
                 this.addGroup(renderer);
-                setTimeout(() => renderer.emit('loaded'), 50);
+                if (typeof window.requestIdleCallback === 'function') {
+                  requestIdleCallback(() => renderer.emit('loaded'));
+                } else {
+                  setTimeout(() => renderer.emit('loaded'), 100);
+                }
               },
               `Error adding Group[${id}]`
             );
