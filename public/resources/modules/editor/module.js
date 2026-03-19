@@ -55,7 +55,7 @@ export default class Module extends EventEmitter {
 
 
     this.on('click', (key) => {
-      const el = container.querySelector(`input[name="${key}"], textarea[name="${key}"]`);
+      const el = container.querySelector(`[name="${key}"]`);
       if (!el) return;
       el.focus();
       if (el.type === 'number') el.select();
