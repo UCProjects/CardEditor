@@ -54,7 +54,10 @@ export default class GroupRenderer extends Renderer {
     this.query('.buttons').before(render.container);
 
     const editController = new AbortController();
-    editor.on('save', () => editController.abort(), { signal: editController.signal });
+    editor.on('save', () => {
+      editController.abort();
+      this.emit('save');
+    }, { signal: editController.signal });
     editor.on('close', () => {
       editController.abort();
       render.emit('archived');
