@@ -48,12 +48,14 @@ class Editor extends EventEmitter {
     editor.addEventListener('close', () => {
       const reason = editor.returnValue;
       const save = reason !== 'cancel';
-      if (save) this.emit('save');
+      if (save) {
+        this.emit('save'); // Allow listeners to make modifications
+        this.#original.emit('update', this.element.toJSON());
+        this.emit('saved');
+      }
 
       this.emit('close', reason);
     });
-
-    this.on('save', () => this.#original.emit('update', this.element.toJSON()));
 
     this.on('close', () => {
       this.#module[this.#renderer.element.type].unload();
@@ -100,6 +102,7 @@ class Editor extends EventEmitter {
     });
 
     module.init();
+    this.emit('init');
 
     editor.returnValue = undefined;
     editor.showModal();
