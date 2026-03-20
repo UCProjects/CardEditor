@@ -75,7 +75,7 @@ fetch('https://undercards.net/AllCards')
   })))
   .then((avatars) => Promise.all([
     updateFile(resolve(base, 'data', 'avatars.json'), avatars),
-    updateFile(resolve(base, 'data', 'status.json'), effects.values()),
+    updateFile(resolve(base, 'data', 'status.json'), [...effects.values()]),
     downloadAvatars(Object.values(avatars)),
     downloadEffects(),
   ]));
