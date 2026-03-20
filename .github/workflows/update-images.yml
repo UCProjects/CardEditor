@@ -1,0 +1,35 @@
+name: Update images
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 5 * * 0
+jobs:
+  build:
+    name: Update images
+    runs-on: self-hosted
+    outputs:
+      pushed: ${{ steps.push.outputs.pushed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 18
+      - run: npm clean-install
+      - name: Download images
+        run: node scripts/downloadImages.js
+      - name: Commit and push
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Update images (${{ github.run_number }})'
+          pathspec_error_handling: ignore
+        id: push
+  deploy:
+    name: Trigger deploy
+    needs: build
+    if: needs.build.outputs.pushed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/firebase-hosting-merge.yml
+    secrets:
+      FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA: ${{secrets.FIREBASE_SERVICE_ACCOUNT_UNDERCARD_509BA}}
