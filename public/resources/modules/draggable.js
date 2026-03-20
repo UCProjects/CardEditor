@@ -1,13 +1,9 @@
-import 'https://cdnjs.cloudflare.com/ajax/libs/draggable/1.0.0-beta.8/draggable.bundle.js';
+//
+import { Draggable, Sortable } from 'https://ga.jspm.io/npm:@shopify/draggable@1.2.1/build/esm/index.mjs';
 import { editing } from './card.js';
 
-const {
-  Draggable,
-  // Sensors,
-  Sortable,
-} = window.Draggable;
 const instance = new Sortable([], {
-  draggable: '.cardWrapper',
+  draggable: '.element',
   classes: {
     'source:dragging': 'dragging',
   },
@@ -26,5 +22,5 @@ export default function setup(group) {
 }
 
 export function isDragging() {
-  return instance && instance.isDragging();
+  return instance?.isDragging();
 }
