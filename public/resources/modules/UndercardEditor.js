@@ -46,14 +46,7 @@ class UndercardEditor {
             `Error adding Group[${id}]`
           ));
 
-          function updateElements() {
-            requestAnimationFrame(() => loaded.forEach((el) => el?.emit('loaded')));
-          }
-          if (typeof window.requestIdleCallback === 'function') {
-            requestIdleCallback(updateElements);
-          } else {
-            setTimeout(updateElements, 100);
-          }
+          setTimeout(() => requestAnimationFrame(() => loaded.forEach((el) => el?.emit('loaded'))), 100);
         },
         'Error loading groups'
       );
