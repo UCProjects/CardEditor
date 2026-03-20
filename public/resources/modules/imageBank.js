@@ -73,6 +73,9 @@ export function getAll(type, strict = false) {
 }
 
 export function getURL(id, ofType) {
+  if (id.startsWith('http') || id.startsWith('data:')) {
+    return id;
+  }
   if (avatars.has(id)) {
     return `./resources/avatar/${avatars.get(id)}.png`;
   }

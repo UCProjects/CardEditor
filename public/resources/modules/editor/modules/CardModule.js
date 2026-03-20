@@ -1,5 +1,5 @@
 import { clampNumber } from '../../utils/funcs.js';
-import Module from '../Module.js';
+import Module from './ImageModule.js';
 
 function updateActive(from, to) {
   if (from === to) return;
@@ -108,13 +108,5 @@ export default class CardModule extends Module {
     });
 
     // effects
-    // avatar
-
-    // Redirect 'image' to 'avatar'
-    this.on('click', (key) => {
-      if (key === 'image') {
-        this.emit('click', 'avatar');
-      }
-    }, { signal });
   }
 }
