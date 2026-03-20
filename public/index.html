@@ -110,14 +110,28 @@
               <input type="number" name="health" min="0" max="999" />
             </fieldset>
           </div>
-          <div data-editing="avatar">
-            <fieldset>
-              <legend>Avatar</legend>
-            </fieldset>
-          </div>
           <div data-editing="image">
             <fieldset>
-              <legend>Image</legend>
+              <legend data-type="card">Avatar</legend>
+              <legend data-type="text">Image</legend>
+              <select name="image">
+                <option value=""></option>
+                <option value="url">Link</option>
+                <option value="upload" class="hidden">File</option>
+                <optgroup label="Vanilla" data-type="card"></optgroup>
+                <optgroup label="Images" data-type="card"></optgroup>
+                <optgroup label="Images" data-type="text"></optgroup>
+              </select>
+            </fieldset>
+            <fieldset name="upload" class="hidden external" >
+              <legend>File</legend>
+              <input name="upload" type="file" accept="image/*" />
+              <div class="warn hidden">Failed to load image</div>
+            </fieldset>
+            <fieldset name="url" class="hidden external">
+              <legend>Link</legend>
+              <input name="url" type="url" pattern="https?://.*" placeholder="https://example.com" />
+              <div class="warn hidden">Failed to load image</div>
             </fieldset>
           </div>
           <div data-editing="effects">
@@ -239,7 +253,7 @@
           <div class="cost center" data-editable="number" data-editable-for="cost"></div>
         </div>
         <div class="middle">
-          <div class="image" data-editable="avatar" data-editable-for="image">
+          <div class="image" data-editable="image">
             <img src="" class="avatar" draggable="false" />
           </div>
           <div class="status" data-editable="effects"></div>

@@ -53,6 +53,8 @@ export default class Module extends EventEmitter {
     // Generic hide soul
     container.querySelector('fieldset.soul').classList.add('hidden');
 
+    // Clear upload and url text
+    container.querySelectorAll('.external input').forEach((el) => el.value = '');
 
     this.on('click', (key) => {
       const el = container.querySelector(`[name="${key}"]`);
