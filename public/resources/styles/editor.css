@@ -20,6 +20,7 @@ input, textarea {
   backdrop-filter: blur(3px);
 }
 
+#editor .stretch,
 #editor input,
 #editor textarea {
   width: -moz-available;
