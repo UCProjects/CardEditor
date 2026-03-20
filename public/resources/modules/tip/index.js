@@ -18,6 +18,7 @@ function show(event) {
   const text = source.dataset.tip;
   if (!text && !editorText) return;
   tip.textContent = text || `Edit ${editorText}`;
+  tip.hidePopover();
   tip.showPopover({ source });
   tip.classList.toggle('flip', !isElementInViewport(source));
 }
