@@ -22,7 +22,7 @@ const effects = new Set([
 
 async function updateFile(path, data) {
   // Create blank if not exists
-  await fs.writeFile(path, Array.isArray(data) ? [] : {}, { flag: 'wx' });
+  await fs.writeFile(path, JSON.stringify(Array.isArray(data) ? [] : {}), { flag: 'wx' });
 
   // Load existing
   const file = await fs.readFile(path);
