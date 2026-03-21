@@ -3,7 +3,7 @@ import { Elements } from '../elements/types.js';
 import EventEmitter from '../eventManager.js';
 import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
-import { sortedMatch } from '../utils/array.js';
+import { match } from '../utils/array.js';
 import saveImage from '../save.js';
 import { register, remove, save } from '../elements/registry.js';
 
@@ -67,8 +67,7 @@ export default class BaseRenderer extends EventEmitter {
     this.on('update', (data) => {
       const modified = Object.entries(data).reduce((updated, [k, v]) => {
         const val = element[k];
-        // TODO This should use `match`
-        const update = Array.isArray(v) ? !sortedMatch(v, val) : val !== v;
+        const update = Array.isArray(v) ? !match(v, val) : val !== v;
         if (update) this.update(k, v);
         return updated || update;
       }, false);

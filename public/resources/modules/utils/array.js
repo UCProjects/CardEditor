@@ -3,6 +3,12 @@ export function allStrings(...data) {
   return data.every((value) => typeof value === 'string');
 }
 
+export function asArray(value, includeSelf = true) {
+  if (Array.isArray(value)) return value;
+  if (isIterable(value)) return [...value];
+  return includeSelf ? [value] : [];
+}
+
 export function contains(a, b) {
   return a.some(i => b.includes(i));
 }
@@ -13,11 +19,7 @@ export function contains(a, b) {
  * @returns {Array}
  */
 export function filter(iterable, ...ignore) {
-  const array = Array.isArray(iterable) ? iterable : (
-    // Iterables require transforming to arrays to filter
-    isIterable(iterable) ? [...iterable] : []
-  );
-  return array.filter((i) => !ignore.includes(i));
+  return asArray(iterable, false).filter((i) => !ignore.includes(i));
 }
 
 export function getArray(value) {
@@ -28,7 +30,7 @@ export function getArray(value) {
 }
 
 export function isIterable(obj) {
-  return obj && typeof obj[Symbol.iterator] === 'function';
+  return obj && typeof obj === 'object' && typeof obj[Symbol.iterator] === 'function';
 }
 
 export function match(array, other) {

@@ -1,6 +1,6 @@
 import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './ImageRenderer.js';
-import { filter } from '../utils/array.js';
+import { asArray, filter } from '../utils/array.js';
 import resize from '../resize.js';
 
 document.adoptedStyleSheets.push(style);
@@ -28,13 +28,18 @@ export default class CardRenderer extends Renderer {
   }
 
   effects() {
-    this.query('.effects [data-effect="none"]')?.classList.toggle('active', !this.element.effects.length);
-
-    this.queryAll('.effects [data-effect]').forEach((el) => {
-      const effect = el.dataset.effect;
-      el.classList.toggle('active', this.element.effects.includes(effect));
+    const effects = this.element.effects.map((entry) => {
+      const [effect, count = 0] = asArray(entry);
+      const span = document.createElement('span');
+      const img = document.createElement('img');
+      img.src = `/resources/images/effects/${effect}.png`;
+      img.alt = effect;
+      img.draggable = false;
+      span.dataset.overlay = count;
+      span.append(img);
+      return span;
     });
-
+    this.query('.status').replaceChildren(...effects);
     // TODO Allow custom
   }
 
