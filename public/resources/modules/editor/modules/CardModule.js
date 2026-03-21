@@ -1,10 +1,21 @@
+import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
+import { object } from '../../utils/object.js';
 import Module from './ImageModule.js';
 
 function updateActive(from, to) {
   if (from === to) return;
   from?.classList.remove('active');
   to.classList.add('active');
+}
+
+/** @type {HTMLTemplateElement} */
+const effectRow = document.getElementById('effectRow');
+
+/** @param {InputEvent} e  */
+function positiveInputListener(e) {
+  if (e.inputType.startsWith('deleteContent')) return;
+  if (!/^\d+$/.test(e.data)) e.preventDefault();
 }
 
 export default class CardModule extends Module {
@@ -21,10 +32,7 @@ export default class CardModule extends Module {
       input.value = element[key];
 
       // Only allow positive integers
-      input.addEventListener('beforeinput', (e) => {
-        if (e.inputType.startsWith('deleteContent')) return;
-        if (!/^\d+$/.test(e.data)) e.preventDefault();
-      }, { signal });
+      input.addEventListener('beforeinput', positiveInputListener, { signal });
 
       input.addEventListener('input', () => {
         const value = clampNumber(input.value);
@@ -108,5 +116,76 @@ export default class CardModule extends Module {
     });
 
     // effects
+    const effects = object();
+    const effectList = document.getElementById('effects');
+    const activeList = document.querySelector('[data-editing="effects"] .activeList');
+    const effectSet = activeList.parentElement;
+    const empty = effectSet.querySelector('.empty');
+
+    function updateEffects() {
+      const data = effects.entries().map((entry) => {
+        const [key, value] = entry;
+        if (!value) return key;
+        return entry;
+      });
+      editor.update(data, 'effects');
+    }
+
+    activeList.innerHTML = ''; // Clear
+
+    function addActive(effect, count = 0) {
+      const row = document.importNode(effectRow.content, true);
+      const [wrapper] = row.children;
+
+      const img = row.querySelector('img');
+      img.src = `/resources/images/effects/${effect}.png`;
+      img.alt = effect;
+
+      const input = row.querySelector('input');
+      input.value = count;
+      input.addEventListener('beforeinput', positiveInputListener);
+      input.addEventListener('input', (e) => {
+        const value = clampNumber(input.value, 99);
+        input.value = value;
+        effects[effect] = value;
+        updateEffects();
+      });
+
+      // Remove
+      const remove = row.querySelector('button.remove');
+      remove.addEventListener('click', () => {
+        effectList.querySelector(`[data-value="${effect}"]`).classList.remove('hidden');
+        wrapper.remove();
+        delete effects[effect];
+        empty.classList.toggle('hidden', effects.size);
+        updateEffects();
+      });
+
+      // It's new
+      if (!effects.has(effect)) {
+        effects[effect] = count;
+        updateEffects();
+      }
+
+      activeList.appendChild(row);
+    }
+
+    element.effects.forEach((data) => {
+      const [effect, count = 0] = asArray(data);
+      effects[effect] = count;
+      addActive(effect, count);
+    });
+
+    effectList.querySelectorAll('[data-value]').forEach((el) => {
+      const effect = el.dataset.value;
+      el.classList.toggle('hidden', effects.has(effect));
+      el.addEventListener('click', () => {
+        el.classList.add('hidden');
+        addActive(effect);
+        empty.classList.add('hidden');
+      }, { signal });
+    });
+
+    empty.classList.toggle('hidden', effects.size);
   }
 }
