@@ -125,3 +125,18 @@
 .card.spell .attack {
   display: none;
 }
+
+[data-overlay] {
+  position: relative;
+  text-shadow: var(--text-shadow);
+}
+
+[data-overlay]:not([data-overlay="0"])::before {
+  content: attr(data-overlay);
+  position: absolute;
+  font-family: segoe ui, monospace;
+  bottom: 0;
+  left: 0;
+  font-size: 11px;
+  color: var(--font);
+}
