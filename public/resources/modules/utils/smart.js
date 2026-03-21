@@ -1,6 +1,10 @@
-export function object() {
-  const ret = {};
-
+/**
+ * @template T
+ * @param {T} obj
+ * @returns {T}
+ */
+export function object(obj = {}) {
+  const ret = { ...obj };
   Object.defineProperties(ret, {
     entries: {
       get() {
@@ -10,6 +14,11 @@ export function object() {
     has: {
       get() {
         return (key) => Object.hasOwn(this, key);
+      },
+    },
+    hasValue: {
+      get() {
+        return (value) => Object.values(this).includes(value);
       },
     },
     size: {
