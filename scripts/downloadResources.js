@@ -31,6 +31,10 @@ fetch('https://undercards.net/translation/en.json')
           tribes.push(val.endsWith('s') ? `${val}?` : val);
         }
         tribeKeys.push(key.substring(6));
+      } else if (key.startsWith('enchant-')) {
+        if (key.endsWith('-desc')) return;
+        const [, text] = val.split('|');
+        keywords.push(text);
       }
     });
   })
@@ -51,14 +55,14 @@ function downloadTribes() {
     }));
 }
 
-function saveData() {
-  const file = path.resolve(base, 'data', 'effects.json');
+async function saveData() {
+  const file = path.resolve(base, 'data', 'keywords.json');
   const data = [
     ...keywords,
     ...tribes,
   ];
-  return saveExtra(file, data)
-    .then(() => fs.writeFile(file, JSON.stringify(data, null, spacer)));
+  await saveExtra(file, data);
+  await fs.writeFile(file, JSON.stringify(data, null, spacer));
 }
 
 function saveExtra(file, data) {
