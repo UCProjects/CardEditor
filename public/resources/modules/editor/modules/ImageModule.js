@@ -34,7 +34,9 @@ export default class ImageModule extends Module {
       link.classList.toggle('hidden', !isLink);
 
       if (isFile || isLink) {
-        container.querySelector(`[data-editing="image"] input[name="${value}"]`).focus();
+        const input = container.querySelector(`[data-editing="image"] input[name="${value}"]`);
+        input.focus();
+        update(input.value);
       } else {
         update(value);
       }
@@ -51,13 +53,6 @@ export default class ImageModule extends Module {
       }, { signal });
     }
 
-    file.querySelector('input').addEventListener('change', () => {
-      // TODO How to handle temporary uploads?
-    }, { signal });
-
-    // On save, if new upload, save image to image bank and update element value...?
-    // Or should I delete the upload on close and when value changed?
-
     // If error, reset input
     container.querySelector('.preview .image img').addEventListener('error', () => {
       if (!element.image) return;
@@ -65,6 +60,14 @@ export default class ImageModule extends Module {
       el.querySelector('.warn').classList.remove('hidden');
       update('');
     }, { signal });
+
+    // File handling
+    file.querySelector('input').addEventListener('change', () => {
+      // TODO How to handle temporary uploads?
+    }, { signal });
+
+    // On save, if new upload, save image to image bank and update element value...?
+    // Or should I delete the upload on close and when value changed?
 
     this.on('click', (type) => {
       if (type !== 'image' || select.value !== 'url') return;
