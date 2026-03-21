@@ -26,7 +26,7 @@ export function getProps(obj, ...ignore) {
 
 export function isBase64(string) {
   const [prefix, data=prefix] = string.split(',');
-  return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(data);
+  return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}=)|([0-9a-zA-Z+/]{3}))?=$/.test(data);
 }
 
 /** @param {HTMLElement} el  */
