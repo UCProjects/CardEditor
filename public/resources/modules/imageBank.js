@@ -8,6 +8,7 @@ export const ready = Promise.all([
 export const ImageType = Object.freeze({
   Avatar: 'avatar',
   Artifact: 'artifact',
+  Effect: 'effect',
   // Rarity: 'rarity',
   // Tribe: 'tribe',
 });
@@ -72,16 +73,23 @@ export function getAll(type, strict = false) {
   )));
 }
 
-export function getURL(id, ofType) {
+/**
+ * @param {string} id
+ * @param {ImageType[keyof ImageType]?} ofType
+ * @returns {string | undefined}
+ */
+export function getURL(id, ofType, strict = false) {
   if (id.startsWith('http') || id.startsWith('data:')) {
     return id;
   }
-  if (avatars.has(id)) {
+  if (avatars.has(id) && (!ofType || ofType === ImageType.Avatar)) {
     return `./resources/avatar/${avatars.get(id)}.png`;
   }
   const { src = '', type } = images.get(id) || {};
-  const matchType = ofType && type === ofType;
-  if (!matchType) return undefined;
+  if (!src && ofType === ImageType.Effect) {
+    return `/resources/images/effects/${id}.png`;
+  }
+  if (ofType && (type ? type !== ofType : strict)) return undefined;
   // Images must be external OR base64
   if (src.startsWith('http') || isBase64(src)) {
     return src;

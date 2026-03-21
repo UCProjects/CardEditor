@@ -2,6 +2,7 @@ import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './ImageRenderer.js';
 import { asArray, filter } from '../utils/array.js';
 import resize from '../resize.js';
+import { getURL, ImageType } from '../imageBank.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -30,9 +31,11 @@ export default class CardRenderer extends Renderer {
   effects() {
     const effects = this.element.effects.map((entry) => {
       const [effect, count = 0] = asArray(entry);
+      const src = getURL(effect, ImageType.Effect);
+      if (!src) return '';
       const span = document.createElement('span');
       const img = document.createElement('img');
-      img.src = `/resources/images/effects/${effect}.png`;
+      img.src = src;
       img.alt = effect;
       img.draggable = false;
       span.dataset.overlay = count;
@@ -40,7 +43,6 @@ export default class CardRenderer extends Renderer {
       return span;
     });
     this.query('.status').replaceChildren(...effects);
-    // TODO Allow custom
   }
 
   health() {
