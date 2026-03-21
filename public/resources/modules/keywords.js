@@ -1,4 +1,4 @@
-export const effects = [];
+export const keywords = [];
 export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'TOKEN', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
 const tribeBlacklist = ['Tem', 'Frog'];
@@ -18,7 +18,7 @@ function load(resource) {
 function addTribes() {
   const container = document.createElement('div');
   container.innerHTML = document.querySelector('#selectTribe').innerHTML;
-  effects.forEach((effect) => {
+  keywords.forEach((effect) => {
     if (!effect.endsWith('?')) return;
     const name = effect.substring(0, effect.length - 2);
     if (tribeBlacklist.includes(name)) return;
@@ -38,14 +38,14 @@ function getTribe(name) {
   return img;
 }
 
-const resources = ['effects', 'extra'];
+const resources = ['keywords', 'extra'];
 
 export const ready = Promise.all(resources.map(load))
   .then((res) => {
     // Populate effects array
-    res.forEach((data) => effects.push(...data));
+    res.forEach((data) => keywords.push(...data));
 
-    effects.forEach(addType);
+    keywords.forEach(addType);
     specials.forEach(addType);
   })
   .then(addTribes);

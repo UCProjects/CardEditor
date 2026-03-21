@@ -1,12 +1,12 @@
 import app, { loadStorage } from './UndercardEditor.js';
 import serviceWorker from './sw.register.js';
-import { ready as effects } from './effects.js';
+import { ready as keywords } from './keywords.js';
 import { error as errorToast } from './toast/index.js';
 import { load as loadStatus } from './status.js';
 
 const preloads = [
   serviceWorker(),
-  effects,
+  keywords,
   loadStatus(),
   loadStorage(),
 ];
