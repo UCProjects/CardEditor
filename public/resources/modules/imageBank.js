@@ -87,13 +87,12 @@ export function getAll(type, strict = false) {
  */
 export function getURL(id, ofType, strict = false) {
   if (!id) return undefined;
-  if (id.startsWith('http') || isBase64(id)) {
-    return id;
-  }
+  if (id.startsWith('http')) return id;
   if (avatars.has(id) && (!ofType || ofType === ImageType.Avatar)) {
     return `/resources/avatar/${avatars.get(id)}.png`;
   }
   const { src = '', type } = images.get(id) || {};
+  if (!src && isBase64(id)) return id;
   if (ofType && (type ? type !== ofType : strict)) return undefined;
   return src || undefined;
 }
