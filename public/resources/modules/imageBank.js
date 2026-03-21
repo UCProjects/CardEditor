@@ -6,13 +6,13 @@ export const ready = Promise.all([
   fetchAvatars(),
 ]);
 
-export const ImageType = Object.freeze(object(Object.freeze({
+export const ImageType = object(Object.freeze({
   Avatar: 'avatar',
   Artifact: 'artifact',
   Effect: 'effect',
   // Rarity: 'rarity',
   // Tribe: 'tribe',
-})));
+}));
 
 /**
  * @typedef {{
