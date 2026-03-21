@@ -1,4 +1,5 @@
-import { getURL } from '../imageBank.js';
+import { Elements } from '../elements/types.js';
+import { getURL, ImageType } from '../imageBank.js';
 import Renderer from './BaseRenderer.js';
 
 export default class ImageRenderer extends Renderer {
@@ -8,8 +9,8 @@ export default class ImageRenderer extends Renderer {
   }
 
   image() {
-    // TODO Get from imageBank
-    const image = getURL(this.element.image) || '';
+    const type = this.element.type === Elements.Card ? ImageType.Avatar : ImageType.Artifact;
+    const image = getURL(this.element.image, type) || '';
     this.container.querySelector('img.image, .image img').src = image;
   }
 
