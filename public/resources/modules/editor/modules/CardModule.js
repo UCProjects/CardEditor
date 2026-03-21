@@ -1,6 +1,6 @@
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
-import { object } from '../../utils/object.js';
+import { object } from '../../utils/smart.js';
 import Module from './ImageModule.js';
 
 function updateActive(from, to) {
