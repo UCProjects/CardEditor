@@ -1,3 +1,5 @@
+import { compress, read as readFile } from '../../utils/file.js';
+import { isBase64 } from '../../utils/funcs.js';
 import Module from '../Module.js';
 
 export default class ImageModule extends Module {
@@ -15,11 +17,12 @@ export default class ImageModule extends Module {
     const file = container.querySelector('fieldset[name="upload"]');
     const link = container.querySelector('fieldset[name="url"]');
 
-    const isURL = element.image.startsWith('http');
+    const isURL = element.image.startsWith('http') || isBase64(element.image);
 
     select.value = isURL ? 'url' : element.image || '';
 
     container.querySelectorAll('[data-editing="image"] .warn').forEach((el) => el.classList.add('hidden'));
+    file.classList.add('hidden');
     link.classList.toggle('hidden', !isURL);
     blank.classList.toggle('hidden', select.value !== '');
 
@@ -36,7 +39,8 @@ export default class ImageModule extends Module {
       if (isFile || isLink) {
         const input = container.querySelector(`[data-editing="image"] input[name="${value}"]`);
         input.focus();
-        update(input.value);
+        if (isLink) update(input.value);
+        else input.value = ''; // TODO load image?
       } else {
         update(value);
       }
@@ -62,16 +66,40 @@ export default class ImageModule extends Module {
     }, { signal });
 
     // File handling
-    file.querySelector('input').addEventListener('change', () => {
-      // TODO How to handle temporary uploads?
-    }, { signal });
+    {
+      const input = file.querySelector('input');
+      const warn = file.querySelector('.warn').classList;
+      input.addEventListener('change', async () => {
+        warn.add('hidden');
+        const [upload] = input.files;
+        if (!upload) return;
+        const data = await (async () => {
+          const options = this.compressionOptions();
+          if (options) {
+            const compressed = await compress(upload, {
+              ...options,
+              signal,
+            });
+            if (signal.aborted) return '';
+            return readFile(compressed);
+          }
+          return readFile(upload);
+        })() || '';
+        if (!data) warn.remove('hidden');
+        else link.querySelector('input').value = data;
+        update(data);
+      }, { signal });
+    }
 
     // On save, if new upload, save image to image bank and update element value...?
-    // Or should I delete the upload on close and when value changed?
 
     this.on('click', (type) => {
       if (type !== 'image' || select.value !== 'url') return;
       link.querySelector('input').focus();
     });
+  }
+
+  compressionOptions() {
+    return undefined;
   }
 }
