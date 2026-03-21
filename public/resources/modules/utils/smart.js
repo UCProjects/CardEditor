@@ -1,7 +1,7 @@
 export function object() {
-  const obj = {};
+  const ret = {};
 
-  Object.defineProperties(obj, {
+  Object.defineProperties(ret, {
     entries: {
       get() {
         return () => [...Object.entries(this)];
@@ -19,5 +19,5 @@ export function object() {
     },
   });
 
-  return obj;
+  return ret;
 }
