@@ -30,7 +30,7 @@ const images = new Map();
 
 /**
  * @param {string | ImageStore} data
- * @returns {string} id
+ * @returns {string | false} id, false if exists
  */
 export function add(data) {
   if (!data) throw new Error('No image data');
@@ -44,7 +44,7 @@ export function add(data) {
     ...store
   } = data;
   // Images are "frozen"
-  if (images.has(id)) return id;
+  if (images.has(id)) return false;
   if (uuidValidate(id) && !uuidValidateV6(id)) throw new Error(`Invalid ID: ${JSON.stringify(data)}`);
   if (!store.src) throw new Error(`Malformed data: ${JSON.stringify(data)}`);
   if (data.type && !ImageType.hasValue(data.type)) throw new Error(`Unknown data type: ${data.type}`);

@@ -28,5 +28,5 @@ export function object(obj = {}) {
     },
   });
 
-  return Object.isFrozen(obj) ? Object.freeze(obj) : ret;
+  return Object.isFrozen(obj) ? Object.freeze(ret) : ret;
 }
