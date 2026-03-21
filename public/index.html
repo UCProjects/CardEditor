@@ -137,12 +137,18 @@
           <div data-editing="effects">
             <fieldset>
               <legend>Effects</legend>
+              <div id="effects" class="grid"></div>
+            </fieldset>
+            <fieldset name="effects">
+              <legend>Applied</legend>
+              <div class="activeList"></div>
+              <div class="empty">Applied effects will appear here</div>
             </fieldset>
           </div>
           <div data-editing="tribes">
             <fieldset>
               <legend>Tribes</legend>
-              <div data-template="selectTribe"></div>
+              <div data-template="selectTribe" class="grid"></div>
             </fieldset>
           </div>
           <div data-editing="rarity">
@@ -161,21 +167,6 @@
       </section>
     </dialog>
     <div id="breadbox"></div>
-    <template id="version">3.0.0</template>
-    <template id="versionText">
-      <div>
-        <p>Features:</p>
-        <ul>
-          <li>Interactive Editor</li>
-          <li>Saving</li>
-          <li>Artifacts</li>
-          <li>Multi-Tribes</li>
-          <li class="strike">Effects</li>
-          <li class="strike">Archive</li>
-        </ul>
-        <p class="warn">Please note: Archiving currently deletes the item(s)</p>
-      </div>
-    </template>
     <template id="selectSoul">
       <span class="selectable active">NONE</span>
       <span class="selectable KINDNESS">KINDNESS</span>
@@ -291,10 +282,30 @@
       <footer></footer>
     </template>
     <template id="effectRow">
-      <div class="effect-row external" data-value="" draggable="true">
-        <span class="material-icons">drag_indicator</span>
-        <img src="" draggable="false"/>
-        <input type="number" name="count" value="0">
+      <div class="effect-row external">
+        <div class="flex">
+          <span class="material-icons hidden">drag_indicator</span>
+          <img src="" class="smallIcon" draggable="false"/>
+        </div>
+        <div class="flex">
+          <input type="number" name="count" value="0" min="0" max="99">
+          <button class="remove">x</button>
+        </div>
+      </div>
+    </template>
+    <template id="version">3.0.0</template>
+    <template id="versionText">
+      <div>
+        <p>Features:</p>
+        <ul>
+          <li>Interactive Editor</li>
+          <li>Saving</li>
+          <li>Artifacts</li>
+          <li>Multi-Tribes</li>
+          <li>Effects</li>
+          <li class="strike">Archive</li>
+        </ul>
+        <p class="warn">Please note: Archiving currently deletes the item(s)</p>
       </div>
     </template>
   </body>
