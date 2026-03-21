@@ -39,6 +39,17 @@ input, textarea {
   background-color: var(--background-alt);
   padding: 5px var(--spacing);
   grid-column: 1 / -1;
+  justify-content: space-between;
+}
+
+.editor-wrapper > header button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.editor-wrapper > header button:hover {
+  color: var(--accent);
 }
 
 .editor-wrapper > .helper {
