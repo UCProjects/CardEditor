@@ -26,7 +26,7 @@ async function updateFile(path, data) {
   const existing = JSON.parse(file.toString());
 
   // Combine with existing data
-  const newData = Array.isArray(data) ? new Set([
+  const newData = Array.isArray(existing) ? new Set([
     ...existing,
     ...data,
   ]).values() : {
@@ -75,7 +75,7 @@ fetch('https://undercards.net/AllCards')
   })))
   .then((avatars) => Promise.all([
     updateFile(resolve(base, 'data', 'avatars.json'), avatars),
-    updateFile(resolve(base, 'data', 'status.json'), [...effects.values()]),
+    updateFile(resolve(base, 'data', 'status.json'), effects),
     downloadAvatars(Object.values(avatars)),
     downloadEffects(),
   ]));
