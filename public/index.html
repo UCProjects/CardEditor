@@ -62,9 +62,12 @@
       <fieldset>
         <legend>Custom</legend>
         <div>
-          <span>_Words to underline_</span>
-          <span>{Card name}</span>
+          <span>_<span class="underline">Words to underline</span>_</span>
+          <span>{<span class="cardName">Card name</span>}</span>
           <span>{color|Text}</span>
+          <span>{{stats|<span class="COST">cost</span>|<span class="attack">attack</span>|<span class="health">health</span>}}</span>
+          <span>{{switch|<span class="switchLeft">text</span>|left}}</span>
+          <span>{{switch|<span class="switchRight">text</span>|right}}</span>
           <span>\bypass</span>
         </div>
       </fieldset>
@@ -298,13 +301,14 @@
     <template id="version">3.0.0</template>
     <template id="versionText">
       <div>
-        <p>Features:</p>
+        <p>New Features:</p>
         <ul>
           <li>Interactive Editor</li>
           <li>Saving</li>
           <li>Artifacts</li>
           <li>Multi-Tribes</li>
           <li>Effects</li>
+          <li>Switch <span class="switchLeft">left</span> and <span class="switchRight">right</span></li>
           <li class="strike">Archive</li>
         </ul>
         <p class="warn">Please note: Archiving currently deletes the item(s)</p>
