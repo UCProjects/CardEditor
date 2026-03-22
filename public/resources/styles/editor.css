@@ -98,7 +98,7 @@ input, textarea {
   width: 40px;
 }
 
-#editor .description {
+#editor [data-type="text"] .description {
   min-height: 150px;
 }
 
