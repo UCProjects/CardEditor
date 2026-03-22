@@ -74,7 +74,7 @@ export default class ImageModule extends Module {
         const [upload] = input.files;
         if (!upload) return;
         const data = await (async () => {
-          const options = this.compressionOptions();
+          const options = this.compressionOptions(); // TODO compression MUST be a backup method
           if (options) {
             const compressed = await compress(upload, {
               ...options,
