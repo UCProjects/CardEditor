@@ -12,7 +12,7 @@ document.adoptedStyleSheets.push(style);
 const menuHTML = document.querySelector('template#menu').innerHTML;
 
 /**
- * @param {Renderer} renderer
+ * @param {BaseRenderer} renderer
  * @param {HTMLDivElement} menu
  */
 function bindMenu(renderer, menu) {
@@ -31,12 +31,6 @@ function bindMenu(renderer, menu) {
   menu.querySelectorAll('[data-type]').forEach((el) => {
     if (el.dataset.type !== type) el.remove();
   });
-
-  if (type === Elements.Group) {
-    menu.querySelector(`[data-tip="Group"]`).addEventListener('click', () => {
-      renderer.emit(Elements.Group);
-    });
-  }
 
   // Edit button
   menu.querySelector('[data-tip="Edit"]').addEventListener('click', () => {
@@ -127,8 +121,12 @@ export default class BaseRenderer extends EventEmitter {
     // Create menu
     this.container.insertAdjacentHTML('beforeend', menuHTML);
     const container = this.query('.menu');
-    bindMenu(this, container);
+    this.bindMenu(container);
     return container;
+  }
+
+  bindMenu(menu) {
+    bindMenu(this, menu);
   }
 
   update(key, value) {
