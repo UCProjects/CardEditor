@@ -16,11 +16,11 @@ export default class CardRenderer extends Renderer {
   }
 
   attack() {
-    this.query('.attack').textContent = this.element.attack;
+    this.query('.bottom .attack').textContent = this.element.attack;
   }
 
   cost() {
-    this.query('.cost').textContent = this.element.cost;
+    this.query('.top .cost').textContent = this.element.cost;
   }
 
   description() {
@@ -42,21 +42,21 @@ export default class CardRenderer extends Renderer {
       span.append(img);
       return span;
     });
-    this.query('.status').replaceChildren(...effects);
+    this.query('.middle .status').replaceChildren(...effects);
   }
 
   health() {
-    this.query('.health').textContent = this.element.health;
+    this.query('.bottom .health').textContent = this.element.health;
   }
 
   name() {
     super.name();
-    resize(this.query('.name'), { height: false, size: 16 });
+    resize(this.query('.top .name'), { height: false, size: 16 });
   }
 
   rarity() {
     const { rarity } = this.element;
-    this.query('.rarity img').src = `/rarity/${rarity || 'COMMON'}.png`;
+    this.query('.bottom .rarity img').src = `/rarity/${rarity || 'COMMON'}.png`;
 
     // TODO Allow custom
   }
