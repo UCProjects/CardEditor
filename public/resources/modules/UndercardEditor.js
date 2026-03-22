@@ -29,7 +29,7 @@ class UndercardEditor {
 
 
   init() {
-    this.versionToast();
+    this.versionToast(true);
 
     const groups = tryOrErrorSync(() => JSON.parse(localStorage.getItem('groups')));
     if (Array.isArray(groups)) {
@@ -41,7 +41,6 @@ class UndercardEditor {
               const renderer = getElement(id).renderer();
               this.addGroup(renderer);
               return renderer;
-
             },
             `Error adding Group[${id}]`
           ));
