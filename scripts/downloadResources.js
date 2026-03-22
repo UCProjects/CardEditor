@@ -19,7 +19,7 @@ fetch('https://undercards.net/translation/en.json')
        * @type {String}
        */
       const val = lang[key];
-      if (key.startsWith('kw-')) {
+      if (key.startsWith('kw-') || key.startsWith('artifact-name-')) {
         if (key.endsWith('-desc')) return;
         keywords.push(val);
       } else if (key.startsWith('tribe-')) {
