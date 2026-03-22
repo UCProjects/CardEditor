@@ -6,8 +6,8 @@
   position: fixed;
   white-space: pre-wrap;
   bottom: 5px;
-  right: 0;
-  right: anchor(right);
+  left: 0;
+  left: anchor(left);
   z-index: 100;
   overflow-y: auto;
   max-height: 100%;
