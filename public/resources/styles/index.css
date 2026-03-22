@@ -30,6 +30,10 @@ a, a:visited {
   color: var(--text);
 }
 
+.element {
+  background-color: var(--background);
+}
+
 .hidden,
 img[src=""] {
     display: none;
