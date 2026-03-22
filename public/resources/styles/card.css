@@ -121,8 +121,8 @@
   height: 100%;
 }
 
-.card.spell .health,
-.card.spell .attack {
+.card.spell .bottom .health,
+.card.spell .bottom .attack {
   display: none;
 }
 
