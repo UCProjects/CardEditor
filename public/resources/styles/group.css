@@ -5,10 +5,9 @@
 .group > header {
   position: sticky;
   top: 0px;
-  border: 2px solid #fff;
+  border: 2px solid var(--border);
   padding: 0 10px;
   z-index: 50;
-  background-color: black;
   flex-wrap: nowrap;
   display: flex;
   align-items: center;
