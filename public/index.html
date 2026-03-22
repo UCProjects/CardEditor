@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="./resources/undercards.css" rel="stylesheet"/>
     <link href="./resources/description.css" rel="stylesheet"/>
-    <link href="./resources/legacy.css" rel="stylesheet"/>
     <link href="./resources/loading.css" rel="stylesheet"/>
 
     <!-- update the version number as needed -->
@@ -20,10 +19,6 @@
     <!--<script defer src="/__/firebase/init.js"></script>-->
 
     <script type="module" src="./resources/modules/index.js"></script>
-    <script defer nomodule src="./resources/script.js"></script>
-    <script nomodule>
-      window.onbeforeunload = () => 'Are you sure?';
-    </script>
   </head>
   <body>
     <div id="loading">
@@ -43,17 +38,6 @@
       &bullet;
       <a href="https://github.com/UCProjects/CardEditor" title="Source" target="_blank"><img src="./resources/social/github.svg" class="social" title="Source" alt="Source" data-tip="View Source"></a>
     </footer>
-    <div id="buttons" class="template" legacy>
-      <span class="add">+</span>
-      <button onclick="generate();">Monster</button>
-      <button onclick="generate(false);">Spell</button>
-    </div>
-    <div id="cards" legacy></div>
-    <div class="context template">
-      <li class="close">Close</li>
-      <li class="download">Download Card</li>
-      <li class="delete">Delete Card</li>
-    </div>
     <div id="descriptionTip" class="template">
       <fieldset>
         <legend>Keywords</legend>

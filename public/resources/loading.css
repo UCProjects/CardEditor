@@ -20,6 +20,7 @@ body > footer {
   border-radius: 30px;
   opacity: 0.3;
   z-index: 1000;
+  right: calc(50% - 128px);
 }
 
 body > footer:hover {
@@ -43,6 +44,10 @@ body > footer img {
 #loading > span {
   height: 300px;
   display: inline-flex;
+}
+
+.template {
+  display: none;
 }
 
 @keyframes loading {
