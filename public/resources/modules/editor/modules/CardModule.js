@@ -42,9 +42,10 @@ export default class CardModule extends Module {
     });
 
     // Extras
-    const hideExtra = element.isSpell(); // TODO extras override
+    const hideExtra = String(element.isSpell()); // TODO extras override
     container.querySelectorAll('[data-extra]').forEach((el) => {
-      el.classList.toggle('hidden', hideExtra);
+      const { extra = 'true' } = el.dataset;
+      el.classList.toggle('hidden', hideExtra === extra);
     });
 
     updateActive(
