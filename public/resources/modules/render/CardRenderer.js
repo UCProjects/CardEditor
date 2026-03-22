@@ -1,7 +1,7 @@
 import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './ImageRenderer.js';
 import { asArray, filter } from '../utils/array.js';
-import resize from '../resize.js';
+import resize from '../utils/resize.js';
 import { getURL, ImageType } from '../imageBank.js';
 
 document.adoptedStyleSheets.push(style);
