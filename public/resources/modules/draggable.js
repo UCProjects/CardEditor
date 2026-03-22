@@ -1,6 +1,4 @@
-//
 import { Draggable, Sortable } from 'https://ga.jspm.io/npm:@shopify/draggable@1.2.1/build/esm/index.mjs';
-import { editing } from './card.js';
 
 const instance = new Sortable([], {
   draggable: '.element',
@@ -11,7 +9,7 @@ const instance = new Sortable([], {
 }).removePlugin(Draggable.Plugins.Focusable, Draggable.Plugins.Announcement)
   // .removeSensor(Sensors.TouchSensor)
   .on('drag:start', (e) => {
-    if (editing || !e.sourceContainer.parentElement.classList.contains('sortmode')) e.cancel();
+    // if (!e.sourceContainer.parentElement.classList.contains('sortmode')) e.cancel();
   });
 
 export default function setup(group) {
@@ -22,5 +20,5 @@ export default function setup(group) {
 }
 
 export function isDragging() {
-  return instance?.isDragging();
+  return instance.isDragging();
 }
