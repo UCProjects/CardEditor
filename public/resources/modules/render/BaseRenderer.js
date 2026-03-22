@@ -16,16 +16,15 @@ const menuHTML = document.querySelector('template#menu').innerHTML;
  * @param {HTMLDivElement} menu
  */
 function bindMenu(renderer, menu) {
+  function show(source) {
+    menu.showPopover({ source });
+  }
   const { type } = renderer.element;
   if (type === Elements.Group) {
-    renderer.query('header').addEventListener('mouseenter', (e) => {
-      menu.showPopover({ source: e.target });
-    });
+    renderer.query('header').addEventListener('mouseenter', (e) => show(e.target));
   } else {
     const el = renderer.container;
-    el.addEventListener('mouseenter', () => {
-      menu.showPopover({ source: el });
-    });
+    el.addEventListener('mouseenter', () => show(el));
   }
 
   menu.querySelectorAll('[data-type]').forEach((el) => {
