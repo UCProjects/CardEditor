@@ -44,6 +44,14 @@ export default class GroupRenderer extends Renderer {
     this.query('.content').append(wrapper);
   }
 
+  /** @param {HTMLDivElement} menu  */
+  bindMenu(menu) {
+    super.bindMenu(menu);
+    menu.querySelector('[data-tip="Group"]').addEventListener('click', () => {
+      this.emit(Elements.Group);
+    });
+  }
+
   /** @param {import('../elements/BaseElement.js').default} element */
   #newElement(element) {
     const { content } = this.element;

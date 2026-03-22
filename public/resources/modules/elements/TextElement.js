@@ -1,11 +1,5 @@
 import BaseElement from './ImageElement.js';
-import { Elements } from './types.js';
-
-export const TextSizes = Object.freeze({
-  Normal: '',
-  Stretch: 'stretch',
-  Short: 'short',
-});
+import { Elements, TextSizes } from './types.js';
 
 export default class TextElement extends BaseElement {
   /** @type {TextSizes[keyof TextSizes]} */

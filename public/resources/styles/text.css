@@ -1,24 +1,32 @@
-.artifact {
+.element.text.short {
+  grid-column: span 2;
+}
+
+.element.text.stretch {
+  grid-column: 1 / -1;
+}
+
+.element.text .artifact {
   border: 2px solid white;
   height: stretch;
 }
 
-.artifact > header {
+.element.text .artifact > header {
   background-color: #428bca;
   padding: 15px;
 }
 
-.artifact .content {
+.element.text .artifact .content {
   padding: 15px;
   min-height: 180px;
 }
 
-.artifact .image {
+.element.text .artifact .image {
   float: left;
   margin-right: 5px;
 }
 
-.artifact img {
+.element.text .artifact img {
   max-width: 40px;
   max-height: 40px;
 }
