@@ -3,6 +3,7 @@ import { add as addImage } from './imageBank.js';
 import { get as getElement, init, load as loadElement } from './elements/registry.js';
 import './editor/editor.js';
 import './tip/index.js';
+import './archive.js';
 import style from '../styles/index.css' with { type: 'css' };
 import { toast, tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
