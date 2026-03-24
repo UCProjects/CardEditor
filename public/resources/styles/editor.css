@@ -225,3 +225,7 @@ fieldset.soul {
   width: 3px;
   background: var(--accent);
 }
+
+#editor .group header {
+  position: relative;
+}
