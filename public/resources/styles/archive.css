@@ -1,0 +1,63 @@
+.archive-button {
+  position-anchor: --app;
+  position: fixed;
+  right: 0;
+  right: anchor(right);
+  bottom: 5px;
+  font-size: 100px;
+}
+
+.archive-button:hover {
+  color: var(--hover-color);
+}
+
+.archive {
+  position-anchor: --app;
+  position: fixed;
+  inset: unset;
+  top: 0;
+  bottom: 0;
+  right: 0; /* Maybe anchor to app? */
+  width: 300px;
+  z-index: 100;
+  color: var(--text);
+  background-color: var(--background);
+  height: auto;
+  border: 0;
+  padding: 0;
+}
+
+.archive header {
+  display: flex;
+  text-align: center;
+  background-color: #1f1f1f;
+}
+
+.archive header input {
+  display: none;
+}
+
+.archive header label {
+  flex: 1;
+  line-height: 2;
+  border-bottom: 2px solid var(--border);
+}
+
+.archive header input:checked+label {
+  border: 2px solid var(--border);
+  background-color: var(--background);
+  border-bottom: 0;
+}
+
+.archive [data-page] {
+  border: 2px solid var(--border);
+  border-top: 0;
+  display: none;
+  height: calc(100% - 50px);
+  overflow: auto;
+  padding: 10px;
+}
+
+.archive [data-page].active {
+  display: block;
+}
