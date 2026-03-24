@@ -98,7 +98,7 @@ input, textarea {
   width: 40px;
 }
 
-#editor [data-type="text"] .description {
+#editor:not([data-type="card"]) .description {
   min-height: 150px;
 }
 
@@ -130,6 +130,7 @@ input, textarea {
 }
 
 #editor[data-type="group"] .content,
+#editor[data-type="group"] .handle,
 #editor [data-editing],
 #editor [data-type] {
   display: none;

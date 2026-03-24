@@ -12,10 +12,16 @@ const commands = {
   stats(args) {
     return ['COST', 'attack', 'health']
       .slice(Math.max(0, 3 - args.length))
-      .map((clazz, i) => args[i].replace(/\d+/, `<span class="${clazz}">$&</span>`))
+      .map((clazz, i) => {
+        const text = args[i];
+        if (text.trim()) return text.replace(/\d+/, `<span class="${clazz}">$&</span>`);
+        return '';
+      })
+      .filter(_ => _)
       .join('/');
   },
   switch([text, direction = 'left']) {
+    if (!text) return '';
     return `<span class="switch${direction.startsWith('r') ? 'Right' : 'Left'}">${text}</span>`;
   }
 };
@@ -35,7 +41,7 @@ export function getHTMLDescription(description = '') {
 }
 
 function process(text = '') {
-  const [first = '', ...args] = text.split('|').filter(_ => _);
+  const [first = '', ...args] = text.split('|');
   const [command, ...rest] = first.split(':');
   if (rest.length) {
     const add = rest.join(':');
