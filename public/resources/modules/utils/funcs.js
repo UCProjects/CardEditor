@@ -24,9 +24,10 @@ export function getProps(obj, ...ignore) {
     .map(([prop]) => prop);
 }
 
-export function isBase64(string) {
+export function isBase64(string = '', checkPrefix = false) {
   const [prefix, data=prefix] = string.split(',');
-  return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}=)|([0-9a-zA-Z+/]{3}))?=$/.test(data);
+  const pass = !checkPrefix || (prefix !== data && prefix.startsWith('data:image/') && prefix.endsWith(';base64'));
+  return pass && /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}=)|([0-9a-zA-Z+/]{3}))?=$/.test(data);
 }
 
 /** @param {HTMLElement} el  */
