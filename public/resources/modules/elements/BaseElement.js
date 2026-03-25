@@ -12,6 +12,8 @@ export default class BaseElement extends EventEmitter {
   /** @type {string} */
   #id;
   name;
+  /** @type {import('../render/BaseRenderer.js').default} */
+  #renderer;
   /** @type {Elements[keyof Elements]} */
   #type;
 
@@ -43,8 +45,12 @@ export default class BaseElement extends EventEmitter {
     return new Element(this.toJSON());
   }
 
-  /** @returns {import('../render/BaseRenderer.js').default} */
   renderer() {
+    this.#renderer ||= this.#makeRenderer();
+    return this.#renderer;
+  }
+
+  #makeRenderer() {
     switch (this.type) {
       case Elements.Card: return new CardRenderer(this);
       case Elements.Group: return new GroupRenderer(this);
