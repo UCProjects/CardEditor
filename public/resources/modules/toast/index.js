@@ -58,7 +58,10 @@ export async function tryOrError(callback, message = '') {
     return await callback();
   } catch (err) {
     console.error(err);
-    if (message) error({ body: message });
+    if (message) {
+      const body = typeof message === 'function' ? message() : message;
+      error({ body });
+    }
   }
   return undefined;
 }
@@ -68,7 +71,10 @@ export function tryOrErrorSync(callback, message = '') {
     return callback();
   } catch (err) {
     console.error(err);
-    if (message) error({ body: message });
+    if (message) {
+      const body = typeof message === 'function' ? message() : message;
+      if (body) error({ body });
+    }
   }
   return undefined;
 }
