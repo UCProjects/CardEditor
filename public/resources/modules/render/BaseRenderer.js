@@ -16,19 +16,15 @@ const menuHTML = document.querySelector('template#menu').innerHTML;
  * @param {HTMLDivElement} menu
  */
 function bindMenu(renderer, menu) {
-  function show(source) {
-    menu.showPopover({ source });
-  }
   const { type } = renderer.element;
-  if (type === Elements.Group) {
-    renderer.query('header').addEventListener('mouseenter', (e) => show(e.target));
-  } else {
-    const el = renderer.container;
-    el.addEventListener('mouseenter', () => show(el));
-  }
 
+  // Open menu
+  const source = type === Elements.Group ? renderer.query('header') : renderer.container;
+  source.addEventListener('mouseenter', () => menu.showPopover({ source }));
+
+  // Remove mismatched buttons
   menu.querySelectorAll('[data-type]').forEach((el) => {
-    if (el.dataset.type !== type) el.remove();
+    if (!el.dataset.type.split(',').includes(type)) el.remove();
   });
 
   // Edit button
