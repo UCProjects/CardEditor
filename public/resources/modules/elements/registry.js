@@ -9,8 +9,6 @@ import { Elements } from './types.js';
  */
 const data = new Map();
 
-// TODO make an archive that holds unowned elements
-
 export function get(id) {
   return data.get(id);
 }
