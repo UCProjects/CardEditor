@@ -1,4 +1,4 @@
-import style from '../styles/archive.css' with { type: 'css' };
+import style from '../../styles/archive.css' with { type: 'css' };
 
 document.adoptedStyleSheets.push(style);
 
