@@ -7,6 +7,8 @@ import './archive/index.js';
 import style from '../styles/index.css' with { type: 'css' };
 import { toast, tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
+import setup, { sortGroup } from './draggable.js';
+import { swap } from './utils/array.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -25,6 +27,10 @@ class UndercardEditor {
   constructor() {
     window.addEventListener('beforeunload', () => {
       this.save();
+    });
+
+    sortGroup.on('sortable:stop', (e) => {
+      swap(this.#groups, e.oldIndex, e.newIndex);
     });
   }
 
@@ -76,6 +82,7 @@ class UndercardEditor {
       this.#groups.push(renderer);
     }
     renderer.content();
+    setup(renderer);
     // renderer.one('save', () => this.save());
   }
 

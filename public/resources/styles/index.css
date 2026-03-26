@@ -68,3 +68,11 @@ img[src=""] {
 .material-symbols-outlined.fill {
   font-variation-settings: 'FILL' 1;
 }
+
+.draggable-mirror {
+  z-index: 100;
+}
+
+.draggable--over {
+  --border: rgb(68, 202, 27);
+}
