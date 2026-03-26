@@ -6,6 +6,7 @@ import style from '../../styles/menu.css' with { type: 'css' };
 import { match } from '../utils/array.js';
 import saveImage from '../save.js';
 import { register, remove, save } from '../elements/registry.js';
+import { isOpen as isArchiveOpen } from '../archive/index.js';
 
 document.adoptedStyleSheets.push(style);
 
@@ -20,7 +21,7 @@ function bindMenu(renderer, menu) {
 
   // Open menu
   const source = type === Elements.Group ? renderer.query('header') : renderer.container;
-  source.addEventListener('mouseenter', () => menu.showPopover({ source }));
+  source.addEventListener('mouseenter', () => isArchiveOpen() || menu.showPopover({ source }));
 
   // Remove mismatched buttons
   menu.querySelectorAll('[data-type]').forEach((el) => {
