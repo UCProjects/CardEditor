@@ -7,6 +7,14 @@ const button = document.querySelector('.archive-button');
 /** @type {HTMLDivElement} */
 const archive = document.querySelector('.archive');
 
+export function isOpen() {
+  return archive.matches(':popover-open');
+}
+
+archive.addEventListener('toggle', () => {
+  button.classList.toggle('hidden', archive.matches(':popover-open'));
+});
+
 button.addEventListener('click', () => {
   archive.showPopover();
 });

@@ -49,7 +49,7 @@ input, textarea {
 }
 
 .editor-wrapper > header button:hover {
-  color: var(--accent);
+  color: var(--hover-color);
 }
 
 .editor-wrapper > .helper {
