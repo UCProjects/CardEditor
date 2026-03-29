@@ -1,3 +1,7 @@
+export function removeClass(...classes) {
+  document.querySelectorAll(`.${classes[0]}`).forEach((e) => e.classList.remove(...classes));
+}
+
 export function setClasses(container, selector, ...classes) {
   const classList = container.querySelector(selector)?.classList;
   if (!classList) throw new Error(`Failed to find class list '${selector}'`);
