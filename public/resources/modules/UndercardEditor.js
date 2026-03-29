@@ -111,7 +111,8 @@ class UndercardEditor {
 
 // Async to prevent locking main
 export async function loadStorage() {
-  Object.entries(localStorage).forEach(([id, data]) => {
+  for (let i = 0; i < localStorage.length; i++) {
+    const id = localStorage.key(i);
     if (!uuidValidate(id)) return;
     if (uuidValidateV4(id)) {
       tryOrErrorSync(
@@ -119,6 +120,7 @@ export async function loadStorage() {
         `Error loading Element[${id}]`,
       );
     } else if (uuidValidateV6(id)) {
+      const data = localStorage.getItem(id);
       tryOrErrorSync(
         () => addImage({
           ...JSON.parse(data),
@@ -127,7 +129,7 @@ export async function loadStorage() {
         `Error loading Image[${id}]`,
       );
     } // else if (uuidValidateV7(id)) {}
-  });
+  }
 }
 
 export default new UndercardEditor();
