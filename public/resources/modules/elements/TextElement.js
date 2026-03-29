@@ -1,3 +1,4 @@
+import TextRenderer from '../render/TextRenderer.js';
 import BaseElement from './ImageElement.js';
 import { Elements, TextSizes } from './types.js';
 
@@ -24,6 +25,10 @@ export default class TextElement extends BaseElement {
   set size(size = '') {
     if (!Object.values(TextSizes).includes(size)) return;
     this.#size = size;
+  }
+
+  newRenderer() {
+    return new TextRenderer(this);
   }
 
   toJSON() {

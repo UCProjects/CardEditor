@@ -1,9 +1,5 @@
 import { uuidV4 } from '../3rdparty/uuid.js';
 import EventEmitter from '../eventManager.js';
-import CardRenderer from '../render/CardRenderer.js';
-import GroupRenderer from '../render/GroupRenderer.js';
-import TextRenderer from '../render/TextRenderer.js';
-import { Elements } from './types.js';
 
 /** @typedef {typeof import('./types.js').Elements} Elements */
 
@@ -46,17 +42,12 @@ export default class BaseElement extends EventEmitter {
   }
 
   renderer() {
-    this.#renderer ||= this.#makeRenderer();
+    this.#renderer ||= this.newRenderer();
     return this.#renderer;
   }
 
-  #makeRenderer() {
-    switch (this.type) {
-      case Elements.Card: return new CardRenderer(this);
-      case Elements.Group: return new GroupRenderer(this);
-      case Elements.Text: return new TextRenderer(this);
-      default: throw new Error(`Unknown element: ${this.id} [${this.type}]`);
-    }
+  newRenderer() {
+    throw new Error('Must be overridden');
   }
 
   toJSON() {
