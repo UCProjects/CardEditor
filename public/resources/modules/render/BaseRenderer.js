@@ -7,8 +7,9 @@ import { match } from '../utils/array.js';
 import saveImage from '../save.js';
 import { register, remove, save } from '../elements/registry.js';
 import { isOpen as isArchiveOpen } from '../archive/index.js';
+import { adoptStyle } from '../utils/funcs.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 const menuHTML = document.querySelector('template#menu').innerHTML;
 

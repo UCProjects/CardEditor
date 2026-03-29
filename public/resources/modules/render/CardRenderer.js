@@ -3,8 +3,9 @@ import Renderer from './ImageRenderer.js';
 import { asArray, filter } from '../utils/array.js';
 import resize from '../utils/resize.js';
 import { getURL, ImageType } from '../imageBank.js';
+import { adoptStyle } from '../utils/funcs.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 /** @type {HTMLTemplateElement} */
 const tribeTemplate = document.querySelector('template#selectTribe');
