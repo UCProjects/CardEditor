@@ -144,7 +144,7 @@ input, textarea {
   display: inline;
 }
 
-.extra {
+#editor .extra {
   display: none;
 }
 

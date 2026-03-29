@@ -24,6 +24,7 @@
   margin: 0 auto;
   position: relative;
   anchor-name: --app;
+  min-height: 100vh;
 }
 
 a, a:visited {
@@ -75,4 +76,9 @@ img[src=""] {
 
 .draggable--over {
   --border: rgb(68, 202, 27);
+}
+
+.ghost {
+  position: absolute;
+  top: -9999px;
 }
