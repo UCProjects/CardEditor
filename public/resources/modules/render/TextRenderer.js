@@ -1,9 +1,10 @@
 import style from '../../styles/text.css' with { type: 'css' };
 import { save as saveElement } from '../elements/registry.js';
 import { TextSizes } from '../elements/types.js';
+import { adoptStyle } from '../utils/funcs.js';
 import Renderer from './ImageRenderer.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 const NextSize = {
   [TextSizes.Normal]: TextSizes.Stretch,

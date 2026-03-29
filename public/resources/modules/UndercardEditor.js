@@ -9,8 +9,9 @@ import { toast, tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
 import setup, { sortGroup } from './draggable.js';
 import { swap } from './utils/array.js';
+import { adoptStyle } from './utils/funcs.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 const app = document.getElementById('app');
 const version = document.querySelector('template#version').innerHTML;
@@ -43,7 +44,6 @@ class UndercardEditor {
       tryOrErrorSync(
         () => {
           const loaded = groups.map((id) => tryOrErrorSync(
-            // FIXME if load errors, group is lost to the void.
             () => {
               const renderer = getElement(id).renderer();
               this.addGroup(renderer);
