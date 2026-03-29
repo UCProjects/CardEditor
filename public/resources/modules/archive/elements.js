@@ -139,7 +139,7 @@ function render(item, {
   });
   const name = container.querySelector('.name');
   name.dataset.tip = item.name;
-  name.textContent = item.name;
+  name.textContent = item.name || '(blank)';
   initButtons(li, item);
   initDrag(li, item);
   li.dataset.id = item.id;
@@ -206,7 +206,7 @@ function initButtons(container, item) {
       }
       function cancel() {
         input.setSelectionRange(0, 0);
-        name.textContent = item.name;
+        name.textContent = item.name || '(blank)';
         name.dataset.tip = item.name;
       }
       input.addEventListener('keydown', (e) => {
