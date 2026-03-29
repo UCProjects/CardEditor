@@ -4,30 +4,28 @@ import { swap } from './utils/array.js';
 
 /** @typedef {import('./elements/GroupElement.js').default} GroupElement */
 
-const exclude = {
-  plugins: [Draggable.Plugins.Focusable, Draggable.Plugins.Announcement],
+const options = {
+  mirror: { constrainDimensions: true },
+  exclude: { plugins: [Draggable.Plugins.Focusable, Draggable.Plugins.Announcement] },
 };
 
 export const sortGroup = new Sortable([document.getElementById('app')], {
+  ...options,
   draggable: '.element.group',
   handle: '.element.group .handle',
   classes: {
     'body:dragging': 'group-dragging',
     'source:dragging': 'dragging',
   },
-  mirror: {
-    constrainDimensions: true,
-  },
-  exclude,
 });
 
 const sortElement = new Sortable([], {
+  ...options,
   draggable: '.element',
   handle: '.handlee',
   classes: {
     'source:dragging': 'dragging',
   },
-  exclude,
 }).on('sortable:stop', (e) => {
   /** @type {GroupElement} */
   const from = get(e.oldContainer.closest('[data-id]').dataset.id);

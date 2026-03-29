@@ -1,4 +1,11 @@
 import style from '../../styles/archive.css' with { type: 'css' };
+import { load as loadItems } from './elements.js';
+import { load as loadImages } from './images.js';
+
+export function load() {
+  loadItems();
+  loadImages();
+}
 
 document.adoptedStyleSheets.push(style);
 
@@ -29,10 +36,3 @@ function setActive(page) {
 archive.querySelectorAll('input[name="page"]').forEach((el) => {
   el.addEventListener('change', () => setActive(el.id));
 });
-
-// Get all items
-// hide items being used
-// add new items, hidden
-// Add delete button
-// Drag onto group?
-// Drag into archive?
