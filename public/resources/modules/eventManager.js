@@ -65,9 +65,7 @@ export default class EventEmitter {
   off(event, fn) {
     const events = this.#events[event];
     if (!events?.length) return;
-    while (events.includes(fn)) {
-      events.splice(events.indexOf(fn), 1);
-    }
+    this.#events[event] = events.filter(f => f !== fn);
   }
 
   /** @param {string} event */
