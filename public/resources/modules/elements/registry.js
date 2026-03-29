@@ -3,6 +3,9 @@ import Text from './TextElement.js';
 import Card from './CardElement.js';
 import Group from './GroupElement.js';
 import { Elements } from './types.js';
+import EventEmitter from '../eventManager.js';
+
+export const events = new EventEmitter();
 
 /**
  * @type {Map<string, import('./BaseElement.js').default>}
@@ -42,13 +45,17 @@ export function load(id) {
 
 /** @param {Group | Card | Text} element  */
 export function register(element) {
+  if (data.has(element.id)) return;
   data.set(element.id, element);
+  events.emit('add', element);
 }
 
 export function remove(idOrElement) {
   const key = idOrElement.id || idOrElement;
   localStorage.removeItem(key);
-  return data.delete(key);
+  const removed = data.delete(key);
+  if (removed) events.emit('remove', key);
+  return removed;
 }
 
 export function save(key) {

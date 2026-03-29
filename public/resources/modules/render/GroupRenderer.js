@@ -68,7 +68,7 @@ export default class GroupRenderer extends Renderer {
     }, { signal: editController.signal });
     editor.on('close', () => {
       editController.abort();
-      render.emit('archived');
+      render.emit('delete');
       this.emit('save');
     }, { signal: editController.signal });
 
@@ -87,7 +87,7 @@ export default class GroupRenderer extends Renderer {
       if (!~index) return;
       this.element.content.splice(index, 1);
       render.unload();
-      render.emit('delete'); // TODO replace with archive
+      render.element.emit('archived');
       this.emit('save');
       archivedController.abort();
     }, { signal: archivedController.signal });
@@ -104,7 +104,8 @@ export default class GroupRenderer extends Renderer {
     this.on(Elements.Text, () => this.#newElement(init({ type: Elements.Text })));
     this.on('archived', () => {
       this.unload();
-      this.emit('delete'); // TODO replace with archive
+      this.element.content.forEach((id) => get(id).emit('archived'));
+      this.element.emit('archived');
       this.#deleteController.abort();
     });
 

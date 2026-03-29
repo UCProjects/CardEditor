@@ -17,8 +17,10 @@ function ready() {
 
   document.querySelectorAll('[data-template]').forEach((el) => {
     const template = el.dataset.template;
-    el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load ${template}`;
+    el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load '${template}'`;
   });
+
+  document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
 
   app.init();
 }

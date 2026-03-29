@@ -7,7 +7,7 @@
 
     <link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=package_2,resize&display=block" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=folder_delete,package_2,resize&display=block" />
     <link href="./resources/undercards.css" rel="stylesheet"/>
     <link href="./resources/description.css" rel="stylesheet"/>
     <link href="./resources/loading.css" rel="stylesheet"/>
@@ -47,7 +47,7 @@
       <fieldset>
         <legend>Custom</legend>
         <div>
-          <span>_<span class="underline">Words to underline</span>_</span>
+          <span>_Words to underline_</span>
           <span>{<span class="cardName">Card name</span>}</span>
           <span>{color|Text}</span>
           <span>{{stats|<span class="COST">cost</span>|<span class="attack">attack</span>|<span class="health">health</span>}}</span>
@@ -171,24 +171,28 @@
         <button class="btn cancel">Cancel</button>
       </div>
     </div>
-    <div class="material-symbols-outlined archive-button hidden" data-tip="Open Archive">package_2</div>
+    <div class="material-symbols-outlined archive-button" data-tip="Open Archive">package_2</div>
     <div class="archive" popover="auto">
       <header>
         <input type="radio" name="page" id="elements" checked />
         <label for="elements" class="material-symbols-outlined fill">package_2</label>
         <input type="radio" name="page" id="images" />
-        <label for="images" class="material-icons">image_search</label>
+        <label for="images" class="material-icons hidden">image_search</label>
         <input type="radio" name="page" id="settings" />
         <label for="settings" class="material-icons">settings</label>
       </header>
       <div data-page="elements" class="active">
-        Elements go here
+        <ul>
+          <li class="hidden" data-insert="groups"></li>
+          <li class="hidden" data-insert="items"></li>
+        </ul>
       </div>
       <div data-page="images">
-        Images go here
+        <input type="text" placeholder="Search..." />
+        <ul></ul>
       </div>
       <div data-page="settings">
-        Settings go here
+        <button id="changelog-toggle">Show Changelog</button>
       </div>
     </div>
     <div id="breadbox"></div>
@@ -319,6 +323,24 @@
         </div>
       </div>
     </template>
+    <template id="elementItem">
+      <li data-id draggable="true">
+        <div class="wrapper">
+          <div class="info">
+            <span data-action="expand" data-type="trashFolder" class="material-symbols-outlined fill">folder_delete</span>
+            <span data-action="expand" data-type="group" class="material-icons">folder</span>
+            <span class="name"></span>
+          </div>
+          <div class="actions">
+            <button name="edit" data-type="normal" class="material-icons" data-tip="Rename">edit</button>
+            <button name="delete" data-type="normal" class="material-icons" data-tip="Trash">delete</button>
+            <button name="restore" data-type="trash" class="material-icons" data-tip="Restore">restore_from_trash</button>
+            <button name="delete" data-type="trash" class="material-icons" data-tip="Delete">delete_forever</button>
+          </div>
+        </div>
+        <ul class="extra hidden" data-type="trash,group"></ul>
+      </li>
+    </template>
     <template id="version">3.0.0</template>
     <template id="versionText">
       <div>
@@ -326,13 +348,12 @@
         <ul>
           <li>Interactive Editor</li>
           <li>Saving</li>
+          <li>Archive</li>
           <li>Artifacts</li>
           <li>Multi-Tribes</li>
           <li>Effects</li>
           <li>Switch <span class="switchLeft">left</span> and <span class="switchRight">right</span></li>
-          <li class="strike">Archive</li>
         </ul>
-        <p class="warn">Please note: Archiving currently deletes the item(s)</p>
       </div>
     </template>
   </body>

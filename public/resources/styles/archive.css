@@ -30,7 +30,7 @@
 .archive header {
   display: flex;
   text-align: center;
-  background-color: #1f1f1f;
+  background-color: rgb(31, 31, 31);
 }
 
 .archive header input {
@@ -56,8 +56,56 @@
   height: calc(100% - 50px);
   overflow: auto;
   padding: 10px;
+  text-align: center;
 }
 
 .archive [data-page].active {
   display: block;
+}
+
+.archive ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.archive  div > ul > li {
+  border-bottom: 1px solid var(--border);
+}
+
+.archive li:not(.hidden) > .wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.archive div > ul > li:nth-child(even of :not(.hidden)) {
+  background-color: rgb(31, 31, 31);
+}
+
+.archive .info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.archive .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.archive .actions {
+  flex-shrink: 0;
+}
+
+.archive .extra {
+  width: 100%;
+  padding-left: 20px;
+  border-left: 1px dotted var(--border);
+}
+
+.archive .stretch {
+  width: max-content;
 }

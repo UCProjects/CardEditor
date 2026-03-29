@@ -3,7 +3,7 @@ import { add as addImage } from './imageBank.js';
 import { get as getElement, init, load as loadElement } from './elements/registry.js';
 import './editor/editor.js';
 import './tip/index.js';
-import './archive/index.js';
+import { load as loadArchive } from './archive/index.js';
 import style from '../styles/index.css' with { type: 'css' };
 import { toast, tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
@@ -36,7 +36,7 @@ class UndercardEditor {
 
 
   init() {
-    this.versionToast(true);
+    this.versionToast();
 
     const groups = tryOrErrorSync(() => JSON.parse(localStorage.getItem('groups')));
     if (Array.isArray(groups)) {
@@ -59,6 +59,8 @@ class UndercardEditor {
     }
 
     if (!this.#groups.length) this.newGroup();
+
+    loadArchive();
   }
 
   newGroup(index) {
@@ -72,6 +74,7 @@ class UndercardEditor {
     renderer.on('archive', () => {
       const index = this.#groups.indexOf(renderer);
       if (!~index || this.#groups.length === 1) return;
+      this.#groups.splice(index, 1);
       renderer.emit('archived');
     });
     if (after) {
