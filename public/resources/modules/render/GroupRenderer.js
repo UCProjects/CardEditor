@@ -105,7 +105,7 @@ export default class GroupRenderer extends Renderer {
     this.on(Elements.Text, () => this.#newElement(init({ type: Elements.Text })));
     this.on('archived', () => {
       this.unload();
-      this.element.content.forEach((id) => get(id).emit('archived'));
+      this.element.content.forEach((id) => get(id)?.emit('archived'));
       this.element.emit('archived');
       this.#deleteController.abort();
     });
