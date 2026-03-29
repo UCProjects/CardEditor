@@ -1,7 +1,8 @@
 import style from '../../styles/toast.css' with { type: 'css' };
 import EventEmitter from '../eventManager.js';
+import { adoptStyle } from '../utils/funcs.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 const breadbox = document.querySelector('#breadbox');
 const template = document.querySelector('template#toast').innerHTML;

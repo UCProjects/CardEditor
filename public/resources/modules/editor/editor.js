@@ -3,8 +3,9 @@ import EventEmitter from '../eventManager.js';
 import CardModule from './modules/CardModule.js';
 import TextModule from './modules/TextModule.js';
 import GroupModule from './modules/GroupModule.js';
+import { adoptStyle } from '../utils/funcs.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 /** @typedef {import('../render/BaseRenderer.js').default} Renderer */
 
