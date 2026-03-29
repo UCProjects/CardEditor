@@ -1,3 +1,4 @@
+import CardRenderer from '../render/CardRenderer.js';
 import BaseElement from './ImageElement.js';
 import { Elements } from './types.js';
 
@@ -65,6 +66,10 @@ export default class CardElement extends BaseElement {
 
   isSpell() {
     return this.#health === undefined;
+  }
+
+  newRenderer() {
+    return new CardRenderer(this);
   }
 
   toJSON() {
