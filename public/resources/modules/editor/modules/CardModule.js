@@ -24,8 +24,6 @@ export default class CardModule extends Module {
 
     const { container, instance: editor, element, signal } = this;
 
-    // TODO: simplify events
-
     // Stats
     container.querySelectorAll('input[type="number"]:not(.external > input)').forEach((input) => {
       const key = input.name;
