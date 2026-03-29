@@ -4,8 +4,9 @@ import { get, init } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
 import editor from '../editor/editor.js';
 import { tryOrErrorSync } from '../toast/index.js';
+import { adoptStyle } from '../utils/funcs.js';
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 const buttonHTML = document.querySelector('#groupButtons').innerHTML;
 

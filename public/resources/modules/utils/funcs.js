@@ -1,3 +1,8 @@
+export function adoptStyle(sheet) {
+  const styles = document.adoptedStyleSheets;
+  if (!styles.includes(sheet)) styles.push(sheet);
+}
+
 export function removeClass(...classes) {
   document.querySelectorAll(`.${classes[0]}`).forEach((e) => e.classList.remove(...classes));
 }
@@ -37,8 +42,7 @@ export function isBase64(string = '', checkPrefix = false) {
 /** @param {HTMLElement} el  */
 export function isElementInViewport(el) {
   var rect = el.getBoundingClientRect();
-  return rect.y > rect.height && rect.x > rect.width && // Below top of viewport
-    rect.top >= 0 && rect.left >= 0 &&
+  return rect.top >= rect.height && rect.left >= rect.width &&
     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 }

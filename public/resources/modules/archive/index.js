@@ -1,4 +1,5 @@
 import style from '../../styles/archive.css' with { type: 'css' };
+import { adoptStyle } from '../utils/funcs.js';
 import { load as loadItems } from './elements.js';
 import { load as loadImages } from './images.js';
 
@@ -7,7 +8,7 @@ export function load() {
   loadImages();
 }
 
-document.adoptedStyleSheets.push(style);
+adoptStyle(style);
 
 /** @type {HTMLDivElement} */
 const button = document.querySelector('.archive-button');
