@@ -1,4 +1,4 @@
-import { compress, read as readFile } from '../../utils/file.js';
+import { read as readFile } from '../../utils/file.js';
 import { isBase64 } from '../../utils/funcs.js';
 import Module from '../Module.js';
 
@@ -73,18 +73,7 @@ export default class ImageModule extends Module {
         warn.add('hidden');
         const [upload] = input.files;
         if (!upload) return;
-        const data = await (async () => {
-          const options = this.compressionOptions(); // TODO compression MUST be a backup method
-          if (options) {
-            const compressed = await compress(upload, {
-              ...options,
-              signal,
-            });
-            if (signal.aborted) return '';
-            return readFile(compressed);
-          }
-          return readFile(upload);
-        })() || '';
+        const data = await readFile(upload);
         if (!data) warn.remove('hidden');
         else link.querySelector('input').value = data;
         update(data);
@@ -97,9 +86,5 @@ export default class ImageModule extends Module {
       if (type !== 'image' || select.value !== 'url') return;
       link.querySelector('input').focus();
     });
-  }
-
-  compressionOptions() {
-    return undefined;
   }
 }
