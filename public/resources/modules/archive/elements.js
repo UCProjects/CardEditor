@@ -1,8 +1,10 @@
 import { events, getAll, register, remove, save } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
+import { close as closeTip } from '../tip/index.js';
 import { contains } from '../utils/array.js';
 import { removeClass } from '../utils/funcs.js';
 import Item from './Item.js';
+import App from '../UndercardEditor.js';
 
 /** @type {HTMLDivElement} */
 const page = document.querySelector('.archive div[data-page="elements"]');
@@ -41,14 +43,15 @@ let dragSrc;
 export function load() {
   function add(el) {
     const item = new Item(el);
-    const map = el.type === Elements.Group ? groups : items;
+    const isGroup = el.type === Elements.Group;
+    const map = isGroup ? groups : items;
     map.set(item.id, item);
 
     item.on('archived', () => {
       if (item.group && !groups.get(item.group)?.element.content.includes(item.id)) {
         item.group = undefined;
       }
-      item.emit('refresh');
+      addItem(item);
     });
     item.on('restore', () => {
       register(item.element);
@@ -66,14 +69,22 @@ export function load() {
       trashRef.emit('refresh');
     });
 
-    // TODO group containers allow drop
+    if (isGroup) {
+      item.on('drop', (i) => {
+        item.element.renderer().emit('drop', i.element);
+        save(item.id);
+        i.emit('dropped');
+        i.group = item.id;
+      });
+      initDrop(item.element.renderer().container);
+    }
 
     return item;
   }
 
   getAll().forEach(add);
 
-  groups.forEach(i => addGroup(i));
+  groups.forEach(i => addItem(i));
 
   items.forEach(i => addItem(i));
 
@@ -85,29 +96,17 @@ export function load() {
     if (item.type !== Elements.Group) {
       item.group = element.renderer().container.closest('.element.group').dataset.id;
     }
-    addItem(item);
   });
 
   const app = document.getElementById('app');
-  app.addEventListener('dragover', (e) => {
-    if (!dragSrc || dragSrc.dataset.type !== Elements.Group) return;
-    e.preventDefault();
-    removeClass('drag-over');
-    app.classList.add('drag-over');
-  });
-  app.addEventListener('dragleave', () => {
-    app.classList.remove('drag-over');
-  });
-  app.addEventListener('drop', () => {
-    // TODO Add to page (group only)
-  });
+  initDrop(app, true);
 
-  page.addEventListener('dragleave', () => {
-    if (!dragSrc) return;
+  page.addEventListener('dragleave', (e) => {
+    if (!dragSrc || e.fromElement !== page) return;
     // TODO render ghost element
   });
-  page.addEventListener('dragenter', () => {
-    if (!dragSrc) return;
+  page.addEventListener('dragenter', (e) => {
+    if (!dragSrc || e.fromElement !== page) return;
     // TODO switch back to original element
   });
 }
@@ -128,13 +127,20 @@ function render(item, {
       map.delete(item.id);
       li.remove();
     });
+    item.on('dropped', () => {
+      if (item.group) {
+        const group = groups.get(item.group);
+        if (!group) return;
+        group.element.remove(item.id);
+        save(item.group);
+      }
+      li.remove();
+    });
   }
   container.querySelectorAll('[data-type]').forEach((el) => {
     const types = el.dataset.type.split(',');
-    const needle = [
-      item.type,
-      isTrashFolder || inTrash || item.trashed ? 'trash' : 'normal'
-    ];
+    const needle = [item.type];
+    if (!isTrashFolder) needle.push(inTrash || item.trashed ? 'trash' : 'normal');
     if (!contains(types, needle)) el.remove();
   });
   const name = container.querySelector('.name');
@@ -169,12 +175,13 @@ function addGroup(group, trash = false) {
 
 /** @param {Item} item  */
 function addItem(item, trash = false) {
+  if (item.isActive()) return;
   if (item.type === Elements.Group) {
     addGroup(item, trash);
   } else if (trash) {
     if (groups.get(item.group)?.trashed) return;
     list.trash.append(render(item, { inTrash: true }));
-  } else {
+  } else if (!item.group) { // TODO or if group trashed
     list.items.before(render(item));
   }
 }
@@ -239,7 +246,7 @@ function initButtons(container, item) {
           destroy(item);
           if (isGroup) forEach(item, destroy);
         } else {
-          // if (item.group) item.group = undefined; // TODO
+          // if (item.group) item.group = undefined; // TODO is this needed?
           mark(item);
           if (isGroup) forEach(item, mark);
         }
@@ -274,6 +281,7 @@ function initDrag(container, item) {
     container.classList.add('dragging');
     e.stopPropagation();
     e.dataTransfer.effectAllowed = 'move';
+    closeTip();
   });
 
   container.addEventListener('dragend', () => {
@@ -284,7 +292,41 @@ function initDrag(container, item) {
 
   if (item.element.type !== Elements.Group) return;
 
-  // Allow moving to/between groups?
+  // TODO Allow moving between groups?
+}
+
+/** @param {HTMLElement} container */
+function initDrop(container, allowGroups = false) {
+  container.addEventListener('dragover', (e) => {
+    if (!dragSrc) return;
+    const isGroup = dragSrc.dataset.type === Elements.Group;
+    if (allowGroups !== isGroup) return;
+    e.preventDefault();
+    e.stopPropagation();
+    removeClass('drag-over');
+    container.classList.add('drag-over');
+  });
+  container.addEventListener('dragleave', () => {
+    container.classList.remove('drag-over');
+  });
+  container.addEventListener('drop', (e) => {
+    e.stopPropagation();
+    const { id, type } = dragSrc.dataset;
+    const isGroup = type === Elements.Group;
+    const item = isGroup ? groups.get(id) : items.get(id);
+    if (isGroup) {
+      App.addGroup(item.element.renderer());
+      item.emit('dropped');
+    } else {
+      const groupId = container.dataset.id;
+      const group = groups.get(groupId);
+      if (!group) {
+        console.error(`Group not found ${groupId}`);
+        return;
+      }
+      group.emit('drop', item);
+    }
+  });
 }
 
 function initTrash() {
