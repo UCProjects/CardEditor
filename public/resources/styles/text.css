@@ -1,3 +1,8 @@
+.group .element.text {
+  grid-column: span 4;
+  justify-self: stretch;
+}
+
 .element.text.short {
   grid-column: span 2;
 }

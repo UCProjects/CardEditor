@@ -79,3 +79,16 @@ img[src=""] {
   position: absolute;
   top: -9999px;
 }
+
+.drag-over {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--background) 0,
+    var(--background) 40%,
+    rgb(44, 47, 241) 0,
+    rgb(44, 47, 241) 50%,
+    var(--background) 0
+  );
+  background-size: .8rem .8rem;
+  outline: 1px solid white;
+}
