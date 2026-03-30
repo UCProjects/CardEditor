@@ -61,6 +61,8 @@ export default class GroupRenderer extends Renderer {
     this.#addElementEvents(render);
     this.query('.buttons').before(render.container);
 
+    if (!edit) return;
+
     const editController = new AbortController();
     editor.on('save', () => {
       editController.abort();
@@ -72,7 +74,7 @@ export default class GroupRenderer extends Renderer {
       this.emit('save');
     }, { signal: editController.signal });
 
-    if (edit) editor.open(render);
+    editor.open(render);
   }
 
   /** @param {import('./BaseRenderer.js').default} render */
