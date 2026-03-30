@@ -5,6 +5,7 @@ import { contains } from '../utils/array.js';
 import { removeClass } from '../utils/funcs.js';
 import Item from './Item.js';
 import App from '../UndercardEditor.js';
+import editor from '../editor/editor.js';
 
 /** @type {HTMLDivElement} */
 const page = document.querySelector('.archive div[data-page="elements"]');
@@ -120,12 +121,26 @@ function render(item, {
   const isTrashFolder = item.type === 'trashFolder';
   const li = container.querySelector('li');
   li.draggable = !isTrashFolder;
+  container.querySelectorAll('[data-type]').forEach((el) => {
+    const types = el.dataset.type.split(',');
+    const needle = [item.type];
+    if (!isTrashFolder) needle.push(inTrash || item.trashed ? 'trash' : 'normal');
+    if (!contains(types, needle)) el.remove();
+  });
+  const name = container.querySelector('.name');
+  function setName() {
+    name.dataset.tip = item.name;
+    name.textContent = item.name || '(blank)';
+  }
+  setName();
   if (!isTrashFolder) {
+    const EOL = new AbortController();
     item.on('refresh', () => li.classList.toggle('hidden', !inTrash && !inGroup && item.isHidden()));
     item.on('destroy', () => {
       const map = item.type === Elements.Group ? groups : items;
       map.delete(item.id);
       li.remove();
+      EOL.abort();
     });
     item.on('dropped', () => {
       if (item.group) {
@@ -135,17 +150,14 @@ function render(item, {
         save(item.group);
       }
       li.remove();
+      EOL.abort();
     });
+    item.on('update', () => {
+      if (!li.isConnected) return true;
+      setName();
+      return false;
+    }, { signal: EOL.signal });
   }
-  container.querySelectorAll('[data-type]').forEach((el) => {
-    const types = el.dataset.type.split(',');
-    const needle = [item.type];
-    if (!isTrashFolder) needle.push(inTrash || item.trashed ? 'trash' : 'normal');
-    if (!contains(types, needle)) el.remove();
-  });
-  const name = container.querySelector('.name');
-  name.dataset.tip = item.name;
-  name.textContent = item.name || '(blank)';
   initButtons(li, item);
   initDrag(li, item);
   li.dataset.id = item.id;
@@ -193,41 +205,18 @@ function addItem(item, trash = false) {
 function initButtons(container, item) {
   const isGroup = item.type === Elements.Group;
   const isTrashFolder = item.type === 'trashFolder';
-  const name = container.querySelector('.name');
   container.querySelectorAll('button').forEach((button) => {
     if (button.name === 'edit') {
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.classList.add('stretch');
-      function update() {
-        const value = input.value.trim();
-        if (!value || value === item.name) {
-          cancel();
-          return;
-        }
-        item.name = value;
-        input.setSelectionRange(0, 0);
-        name.textContent = value;
-        name.dataset.tip = value;
-        save(item.id);
-      }
-      function cancel() {
-        input.setSelectionRange(0, 0);
-        name.textContent = item.name || '(blank)';
-        name.dataset.tip = item.name;
-      }
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') update();
-        if (e.key === 'Escape') cancel();
-        e.stopPropagation();
-      });
-      input.addEventListener('blur', update);
       button.addEventListener('click', () => {
-        input.value = item.name;
-        name.replaceChildren(input); // TODO Maybe do a modal?
-        delete name.dataset.tip;
-        input.focus();
-        input.select();
+        const editController = new AbortController();
+        editor.on('save', () => {
+          item.emit('update');
+        }, { signal: editController.signal });
+        editor.on('close', () => {
+          editController.abort();
+          document.querySelector('.archive').showPopover();
+        }, { signal: editController.signal });
+        editor.open(item.element.renderer());
       });
     } else if (button.name === 'delete') {
       button.addEventListener('click', () => {
