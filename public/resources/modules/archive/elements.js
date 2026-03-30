@@ -9,6 +9,7 @@ import editor from '../editor/editor.js';
 
 /** @type {HTMLDivElement} */
 const page = document.querySelector('.archive div[data-page="elements"]');
+const empty = page.querySelector('div');
 /**
  * @type {{
  *  groups: HTMLLIElement;
@@ -110,6 +111,8 @@ export function load() {
     if (!dragSrc || e.fromElement !== page) return;
     // TODO switch back to original element
   });
+
+  refreshEmptyMessage();
 }
 
 /** @param {Item} item  */
@@ -141,6 +144,7 @@ function render(item, {
       map.delete(item.id);
       li.remove();
       EOL.abort();
+      refreshEmptyMessage();
     });
     item.on('dropped', () => {
       if (item.group) {
@@ -151,6 +155,7 @@ function render(item, {
       }
       li.remove();
       EOL.abort();
+      refreshEmptyMessage();
     });
     item.on('update', () => {
       if (!li.isConnected) return true;
@@ -162,6 +167,7 @@ function render(item, {
   initDrag(li, item);
   li.dataset.id = item.id;
   li.dataset.type = item.element.type;
+  if (item.element.type === Elements.Card && item.element.isSpell()) li.dataset.spell = '';
   item.emit('refresh');
   return container;
 }
@@ -196,6 +202,7 @@ function addItem(item, trash = false) {
   } else if (!item.group) { // TODO or if group trashed
     list.items.before(render(item));
   }
+  refreshEmptyMessage();
 }
 
 /**
@@ -337,6 +344,7 @@ function initTrash() {
       extra.classList.add('hidden');
       button.classList.add('fill');
     }
+    refreshEmptyMessage();
   }).emit('refresh');
 
   list.items.after(container);
@@ -356,4 +364,8 @@ function forEach(group, callback) {
     if (!item) return;
     callback(item);
   });
+}
+
+function refreshEmptyMessage() {
+  empty.classList.toggle('hidden', !!list.groups.parentElement.querySelector(':scope > li:not(.hidden)'));
 }
