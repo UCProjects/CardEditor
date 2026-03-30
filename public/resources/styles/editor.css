@@ -93,16 +93,13 @@ input, textarea {
   min-width: 16px;
 }
 
-#editor .artifact .image {
-  height: 40px;
-  width: 40px;
-}
-
 #editor:not([data-type="card"]) .description {
   min-height: 150px;
 }
 
 #editor .artifact .image:has(> img[src=""]) {
+  height: 40px;
+  width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
