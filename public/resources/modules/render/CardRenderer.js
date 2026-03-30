@@ -76,10 +76,9 @@ export default class CardRenderer extends Renderer {
       if (element) {
         element.classList.remove('selectable');
         return element;
-      } else {
-        // TODO Custom?
-        return undefined;
       }
+      // TODO Custom?
+      return undefined;
     }).filter(_ => _);
     this.query('.tribes').replaceChildren(...elements);
   }
