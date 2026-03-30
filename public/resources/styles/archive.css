@@ -96,13 +96,34 @@
   text-overflow: ellipsis;
 }
 
+.archive [data-type]:not([data-type="group"]) .name::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  margin-right: 5px;
+}
+
+.archive [data-type="card"] .name::before {
+  background-image: url('/resources/tribes/MONSTER.png');
+}
+
+.archive [data-spell] .name::before {
+  background-image: url('/resources/images/SPELL.png');
+}
+
+.archive [data-type="text"] .name::before {
+  background-image: url('/resources/images/TEXT.png');
+}
+
 .archive .actions {
   flex-shrink: 0;
 }
 
 .archive .extra {
   width: 100%;
-  padding-left: 20px;
+  padding-left: 10px;
   border-left: 1px dotted var(--border);
 }
 
