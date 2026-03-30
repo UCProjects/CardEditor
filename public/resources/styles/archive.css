@@ -109,3 +109,8 @@
 .archive .stretch {
   width: max-content;
 }
+
+.archive label,
+.archive button {
+  cursor: pointer;
+}

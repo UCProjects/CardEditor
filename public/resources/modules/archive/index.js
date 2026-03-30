@@ -2,10 +2,12 @@ import style from '../../styles/archive.css' with { type: 'css' };
 import { adoptStyle } from '../utils/funcs.js';
 import { load as loadItems } from './elements.js';
 import { load as loadImages } from './images.js';
+import { load as loadSettings } from './settings.js';
 
 export function load() {
   loadItems();
   loadImages();
+  loadSettings();
 }
 
 adoptStyle(style);
