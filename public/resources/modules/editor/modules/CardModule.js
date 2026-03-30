@@ -1,6 +1,5 @@
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
-import { object } from '../../utils/smart.js';
 import Module from './ImageModule.js';
 
 function updateActive(from, to) {
@@ -115,17 +114,20 @@ export default class CardModule extends Module {
     });
 
     // effects
-    const effects = object();
+    const effects = new Map();
     const effectList = document.getElementById('effects');
     const activeList = document.querySelector('[data-editing="effects"] .activeList');
     const effectSet = activeList.parentElement;
     const empty = effectSet.querySelector('.empty');
 
     function updateEffects() {
-      const data = effects.entries().map((entry) => {
-        const [key, value] = entry;
-        if (!value) return key;
-        return entry;
+      const data = [];
+      effects.forEach((value, key) => {
+        if (!value) {
+          data.push(key);
+        } else {
+          data.push([key, value]);
+        }
       });
       editor.update(data, 'effects');
     }
@@ -146,7 +148,7 @@ export default class CardModule extends Module {
       input.addEventListener('input', (e) => {
         const value = clampNumber(input.value, 99);
         input.value = value;
-        effects[effect] = value;
+        effects.set(effect, value);
         updateEffects();
       });
 
@@ -155,14 +157,14 @@ export default class CardModule extends Module {
       remove.addEventListener('click', () => {
         effectList.querySelector(`[data-value="${effect}"]`).classList.remove('hidden');
         wrapper.remove();
-        delete effects[effect];
+        effects.delete(effect);
         empty.classList.toggle('hidden', effects.size);
         updateEffects();
       });
 
       // It's new
       if (!effects.has(effect)) {
-        effects[effect] = count;
+        effects.set(effect, count);
         updateEffects();
       }
 
@@ -171,7 +173,7 @@ export default class CardModule extends Module {
 
     element.effects.forEach((data) => {
       const [effect, count = 0] = asArray(data);
-      effects[effect] = count;
+      effects.set(effect, count);
       addActive(effect, count);
     });
 
