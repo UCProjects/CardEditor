@@ -1,0 +1,17 @@
+.settings {
+  margin-bottom: 5px;
+}
+
+.settings label {
+  display: flex;
+  gap: 5px;
+}
+
+.setting::after {
+  font-family: 'Material Icons';
+  content: 'check_box_outline_blank';
+}
+
+input:checked + .setting::after {
+  content: 'check_box';
+}

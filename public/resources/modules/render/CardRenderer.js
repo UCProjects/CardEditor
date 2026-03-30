@@ -4,13 +4,20 @@ import { asArray, filter } from '../utils/array.js';
 import resize from '../utils/resize.js';
 import { getURL, ImageType } from '../imageBank.js';
 import { adoptStyle } from '../utils/funcs.js';
+import settings from '../settings.js';
 
 adoptStyle(style);
 
+const monsterSoul = settings.get('monsterSoul');
 /** @type {HTMLTemplateElement} */
 const tribeTemplate = document.querySelector('template#selectTribe');
 
 export default class CardRenderer extends Renderer {
+  constructor(...args) {
+    super(...args);
+    if (!this.element.isSpell()) settings.on(monsterSoul.key, () => this.soul());
+  }
+
   /** @type {import('../elements/CardElement.js').default} */
   get element() {
     return super.element;
@@ -66,7 +73,7 @@ export default class CardRenderer extends Renderer {
     const list = this.query('.name').classList;
     list.remove(...filter(list, 'name'));
     const { soul } = this.element;
-    if (soul) list.add(soul);
+    if (soul && (this.element.isSpell() || monsterSoul.enabled)) list.add(soul);
   }
 
   tribes() {
