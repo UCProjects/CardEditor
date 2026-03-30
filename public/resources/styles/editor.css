@@ -102,6 +102,18 @@ input, textarea {
   min-height: 150px;
 }
 
+#editor .artifact .image:has(> img[src=""]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#editor .artifact .image:has(> img[src=""])::after {
+  content: '?';
+  font-size: 25px;
+  opacity: 0.3;
+}
+
 #editor [data-editable]:hover,
 .editable {
   border: 1px solid red;
