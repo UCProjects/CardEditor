@@ -19,8 +19,9 @@ function show(event) {
   if (!text && !editorText) return;
   tip.textContent = text || `Edit ${editorText}`;
   tip.hidePopover();
+  tip.classList.remove('flip');
   tip.showPopover({ source });
-  tip.classList.toggle('flip', !isElementInViewport(source));
+  tip.classList.toggle('flip', !isElementInViewport(tip));
 }
 
 /** @param {MouseEvent} event  */
