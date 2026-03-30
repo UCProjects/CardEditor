@@ -73,9 +73,10 @@ class UndercardEditor {
     renderer.on(Elements.Group, () => this.newGroup(this.#groups.indexOf(renderer) + 1));
     renderer.on('archive', () => {
       const index = this.#groups.indexOf(renderer);
-      if (!~index || this.#groups.length === 1) return;
+      if (!~index) return;
       this.#groups.splice(index, 1);
       renderer.emit('archived');
+      if (!this.#groups.length) this.newGroup();
     });
     if (after) {
       this.#groups[after - 1].container.after(renderer.container);
