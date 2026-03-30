@@ -22,7 +22,7 @@ class UndercardEditor {
   /** @type {Array<GroupRenderer>} */
   #groups = [];
 
-  /** @type {Readonly<{isOpen: boolean }>} */
+  /** @type {Readonly<{ isOpen: boolean; }>} */
   #toast;
 
   constructor() {
@@ -113,7 +113,7 @@ class UndercardEditor {
 export async function loadStorage() {
   for (let i = 0; i < localStorage.length; i++) {
     const id = localStorage.key(i);
-    if (!uuidValidate(id)) return;
+    if (!uuidValidate(id)) continue;
     if (uuidValidateV4(id)) {
       tryOrErrorSync(
         () => loadElement(id),
