@@ -63,6 +63,7 @@ export default class BaseRenderer extends EventEmitter {
         return updated || update;
       }, false);
       if (modified) {
+        element.emit('updated');
         this.emit('save');
       }
     });
