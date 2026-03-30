@@ -37,11 +37,6 @@
   row-gap: 10px;
 }
 
-.group .content > .text {
-  grid-column: span 4;
-  justify-self: stretch;
-}
-
 .group .content .buttons {
   max-width: 180px;
   display: flex;

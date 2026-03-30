@@ -36,6 +36,10 @@ function hide(event) {
   tip.hidePopover();
 }
 
+export function close() {
+  tip.hidePopover();
+}
+
 document.addEventListener('mouseover', show);
 document.addEventListener('focus', show);
 document.addEventListener('mouseout', hide);

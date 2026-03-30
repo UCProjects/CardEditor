@@ -45,7 +45,9 @@ const sortElement = new Sortable([], {
 
 /** @param {import('./render/GroupRenderer.js').default} group */
 export default function setup({ container, element }) {
-  sortElement.addContainer(container.querySelector('.content'));
+  const content = container.querySelector('.content');
+  if (sortElement.containers.includes(content)) return;
+  sortElement.addContainer(content);
   sortElement.on('sortable:sorted', () => {
     if (get(element.id)) return;
     register(element);
