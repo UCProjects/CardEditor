@@ -10,7 +10,6 @@ adoptStyle(style);
 
 const buttonHTML = document.querySelector('#groupButtons').innerHTML;
 
-// TODO how to support "sorting/dragging"
 export default class GroupRenderer extends Renderer {
   #deleteController = new AbortController();
 
@@ -54,7 +53,7 @@ export default class GroupRenderer extends Renderer {
   }
 
   /** @param {import('../elements/BaseElement.js').default} element */
-  #newElement(element) {
+  #newElement(element, edit = true) {
     const { content } = this.element;
     content.push(element.id);
 
@@ -73,7 +72,7 @@ export default class GroupRenderer extends Renderer {
       this.emit('save');
     }, { signal: editController.signal });
 
-    editor.open(render);
+    if (edit) editor.open(render);
   }
 
   /** @param {import('./BaseRenderer.js').default} render */
@@ -109,6 +108,7 @@ export default class GroupRenderer extends Renderer {
       this.element.emit('archived');
       this.#deleteController.abort();
     });
+    this.on('drop', (element) => this.#newElement(element, false));
 
     this.query('.buttons button.monster').addEventListener('click', () => this.emit(Elements.Card, true));
     this.query('.buttons button.spell').addEventListener('click', () => this.emit(Elements.Card));

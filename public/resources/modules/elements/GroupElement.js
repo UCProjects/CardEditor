@@ -23,6 +23,13 @@ export default class GroupElement extends BaseElement {
     return new GroupRenderer(this);
   }
 
+  remove(id) {
+    const { content } = this;
+    const index = content.indexOf(id);
+    if (index === -1) return;
+    content.splice(index, 1);
+  }
+
   toJSON() {
     return {
       ...super.toJSON(),
