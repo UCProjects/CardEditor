@@ -192,6 +192,7 @@
         <ul></ul>
       </div>
       <div data-page="settings">
+        <div class="settings"></div>
         <button id="changelog-toggle">Show Changelog</button>
       </div>
     </div>
@@ -342,6 +343,15 @@
         </div>
         <ul class="extra hidden" data-type="trashFolder,group"></ul>
       </li>
+    </template>
+    <template id="setting">
+      <div>
+        <label>
+          <input type="checkbox" class="hidden">
+          <span class="setting"></span>
+          <span class="setting-name"></span>
+        </label>
+      </div>
     </template>
     <template id="version">3.0.0</template>
     <template id="versionText">
