@@ -42,7 +42,7 @@ export function isBase64(string = '', checkPrefix = false) {
 /** @param {HTMLElement} el  */
 export function isElementInViewport(el) {
   var rect = el.getBoundingClientRect();
-  return rect.top >= rect.height && rect.left >= rect.width &&
+  return rect.top >= 0 && rect.left >= 0 &&
     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 }
