@@ -10,6 +10,7 @@ import { Elements } from './elements/types.js';
 import setup, { sortGroup } from './draggable.js';
 import { swap } from './utils/array.js';
 import { adoptStyle } from './utils/funcs.js';
+import settings from './settings.js';
 
 adoptStyle(style);
 
@@ -28,6 +29,7 @@ class UndercardEditor {
   constructor() {
     window.addEventListener('beforeunload', () => {
       this.save();
+      settings.save();
     });
 
     sortGroup.on('sortable:stop', (e) => {
@@ -37,6 +39,7 @@ class UndercardEditor {
 
 
   init() {
+    settings.load();
     this.versionToast();
 
     const groups = tryOrErrorSync(() => JSON.parse(localStorage.getItem('groups')));

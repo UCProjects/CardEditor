@@ -1,3 +1,4 @@
+import settings from '../../settings.js';
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
 import Module from './ImageModule.js';
@@ -10,12 +11,14 @@ function updateActive(from, to) {
 
 /** @type {HTMLTemplateElement} */
 const effectRow = document.getElementById('effectRow');
+const monsterSoul = settings.get('monsterSoul');
 
 /** @param {InputEvent} e  */
 function positiveInputListener(e) {
   if (e.inputType.startsWith('deleteContent')) return;
   if (!/^\d+$/.test(e.data)) e.preventDefault();
 }
+
 
 export default class CardModule extends Module {
   init() {
@@ -39,7 +42,7 @@ export default class CardModule extends Module {
     });
 
     // Extras
-    const hideExtra = String(element.isSpell()); // TODO extras override
+    const hideExtra = String(element.isSpell() || (monsterSoul.enabled ?? false));
     container.querySelectorAll('[data-extra]').forEach((el) => {
       const { extra = 'true' } = el.dataset;
       el.classList.toggle('hidden', hideExtra === extra);
