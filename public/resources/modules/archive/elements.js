@@ -304,8 +304,10 @@ function initDrop(container, allowGroups = false) {
     const isGroup = type === Elements.Group;
     const item = isGroup ? groups.get(id) : items.get(id);
     if (isGroup) {
-      App.addGroup(item.element.renderer());
+      const renderer = item.element.renderer();
+      App.addGroup(renderer);
       item.emit('dropped');
+      renderer.emit('loaded');
     } else {
       const groupId = container.dataset.id;
       const group = groups.get(groupId);
