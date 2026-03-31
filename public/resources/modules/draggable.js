@@ -21,7 +21,7 @@ export const sortGroup = new Sortable([document.getElementById('app')], {
 
 const sortElement = new Sortable([], {
   ...options,
-  draggable: '.element',
+  draggable: '.element:not(.group)',
   handle: '.handlee',
   classes: {
     'source:dragging': 'dragging',
