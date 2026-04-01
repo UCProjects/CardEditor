@@ -1,5 +1,3 @@
-import { uuidValidate, uuidValidateV4, uuidValidateV6 } from './3rdparty/uuid.js';
-import { add as addImage } from './imageBank.js';
 import { get as getElement, init, load as loadElement } from './elements/registry.js';
 import './editor/editor.js';
 import './tip/index.js';
@@ -11,6 +9,7 @@ import setup, { sortGroup } from './draggable.js';
 import { swap } from './utils/array.js';
 import { adoptStyle } from './utils/funcs.js';
 import settings from './settings.js';
+import { getGroups, getVersion, setGroups, setVersion, getKeys } from './utils/storage.js';
 
 adoptStyle(style);
 
@@ -33,6 +32,7 @@ class UndercardEditor {
     });
 
     sortGroup.on('sortable:stop', (e) => {
+      if (e.oldIndex === e.newIndex) return;
       swap(this.#groups, e.oldIndex, e.newIndex);
     });
   }
@@ -42,24 +42,16 @@ class UndercardEditor {
     settings.load();
     this.versionToast();
 
-    const groups = tryOrErrorSync(() => JSON.parse(localStorage.getItem('groups')));
-    if (Array.isArray(groups)) {
-      tryOrErrorSync(
-        () => {
-          const loaded = groups.map((id) => tryOrErrorSync(
-            () => {
-              const renderer = getElement(id).renderer();
-              this.addGroup(renderer);
-              return renderer;
-            },
-            `Error adding Group[${id}]`
-          ));
+    const loaded = getGroups().map((id) => tryOrErrorSync(
+      () => {
+        const renderer = getElement(id).renderer();
+        this.addGroup(renderer);
+        return renderer;
+      },
+      `Error adding Group[${id}]`
+    ));
 
-          setTimeout(() => requestAnimationFrame(() => loaded.forEach((el) => el?.emit('loaded'))), 100);
-        },
-        'Error loading groups'
-      );
-    }
+    setTimeout(() => requestAnimationFrame(() => loaded.forEach((el) => el?.emit('loaded'))), 100);
 
     if (!this.#groups.length) this.newGroup();
 
@@ -97,42 +89,30 @@ class UndercardEditor {
     const groups = this.#groups
       .filter(({ element: { id } }) => getElement(id)) // Only save groups that are registered
       .map(({ element: { id } }) => id); // Convert to IDs
-    localStorage.setItem('groups', JSON.stringify(groups));
+    setGroups(groups);
   }
 
   versionToast(force = false) {
     if (this.#toast?.isOpen || (
-      !force && localStorage.getItem('version') === version
+      !force && getVersion() === version
     )) return;
     this.#toast = toast({
       title: `Editor v${version}`,
       body: document.querySelector('#versionText').innerHTML,
-    }).on('close', () => {
-      localStorage.setItem('version', version);
-    });
+    }).on('close', () => setVersion(version));
   }
 }
 
 // Async to prevent locking main
 export async function loadStorage() {
-  for (let i = 0; i < localStorage.length; i++) {
-    const id = localStorage.key(i);
-    if (!uuidValidate(id)) continue;
-    if (uuidValidateV4(id)) {
+  for (const key of getKeys()) {
+    const [, prefix, id] = key.split(':');
+    if (prefix === 'el') {
       tryOrErrorSync(
         () => loadElement(id),
         `Error loading Element[${id}]`,
       );
-    } else if (uuidValidateV6(id)) {
-      const data = localStorage.getItem(id);
-      tryOrErrorSync(
-        () => addImage({
-          ...JSON.parse(data),
-          id,
-        }),
-        `Error loading Image[${id}]`,
-      );
-    } // else if (uuidValidateV7(id)) {}
+    }
   }
 }
 
