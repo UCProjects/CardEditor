@@ -1,18 +1,18 @@
 import { uuidV6, uuidValidate, uuidValidateV6 } from './3rdparty/uuid.js';
+import { hasValue } from './utils/funcs.js';
 import { set as setImage } from './utils/imageDB.js';
-import { object } from './utils/smart.js';
 
 export const ready = Promise.all([
   fetchAvatars(),
 ]);
 
-export const ImageType = object(Object.freeze({
+export const ImageType = Object.freeze({
   Avatar: 'avatar',
   Artifact: 'artifact',
   Effect: 'effect',
   // Rarity: 'rarity',
   // Tribe: 'tribe',
-}));
+});
 
 /**
  * @typedef {typeof ImageType[keyof ImageType]} ImageTypes
@@ -50,7 +50,7 @@ export function add(data) {
   if (images.has(id)) return false;
   if (uuidValidate(id) && !uuidValidateV6(id)) throw new Error(`Invalid ID: ${JSON.stringify(data)}`);
   if (!(store.src || store.file)) throw new Error(`Malformed data: ${JSON.stringify(data)}`);
-  if (data.type && !ImageType.hasValue(data.type)) throw new Error(`Unknown data type: ${data.type}`);
+  if (data.type && !hasValue(ImageType,data.type)) throw new Error(`Unknown data type: ${data.type}`);
   images.set(id, store);
   return id;
 }
