@@ -88,21 +88,21 @@ export function getAll(type, strict = false) {
  * @returns {string | undefined}
  */
 export function getURL(id, ofType, strict = false) {
-  if (!id) return undefined;
+  if (!id) return '';
   if (id.startsWith('http')) return id;
   if (avatars.has(id) && (!ofType || ofType === ImageType.Avatar)) {
     return `/resources/avatar/${avatars.get(id)}.png`;
   }
   const store = images.get(id) || {};
   const { src = '', type, file } = store || {};
-  if (ofType && (type ? type !== ofType : strict)) return undefined;
+  if (ofType && (type ? type !== ofType : strict)) return '';
   if (src) return src;
   if (file) {
     const url = URL.createObjectURL(file);
     store.src = url;
     return url;
   }
-  return undefined;
+  return '';
 }
 
 export function hasFile(id, file) {
