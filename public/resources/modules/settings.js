@@ -1,5 +1,5 @@
 import EventEmitter from './eventManager.js';
-import { tryOrErrorSync } from './toast/index.js';
+import { getSettings, setSettings } from './utils/storage.js';
 
 /**
  * @typedef {{
@@ -18,8 +18,6 @@ const baseSettings = [{
   name: 'Enable monster souls',
 }];
 
-const Key = 'settings';
-
 class Settings extends EventEmitter {
   /** @type {Map<Setting['key'], Setting>} */
   #settings = new Map(baseSettings.map((setting) => [setting.key, setting]));
@@ -36,9 +34,7 @@ class Settings extends EventEmitter {
   }
 
   load() {
-    /** @type {String[]} */
-    const settings = tryOrErrorSync(() => JSON.parse(localStorage.getItem(Key))) || [];
-    this.#settings.forEach((setting) => this.set(setting.key, settings.includes(setting.key)));
+    this.#settings.forEach((setting) => this.set(setting.key, getSettings().includes(setting.key)));
   }
 
   save() {
@@ -46,7 +42,7 @@ class Settings extends EventEmitter {
     this.#settings.forEach((setting) => {
       if (setting.enabled) settings.push(setting.key);
     });
-    localStorage.setItem(Key, JSON.stringify(settings));
+    setSettings(settings);
   }
 
   set(key, enabled = false) {

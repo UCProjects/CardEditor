@@ -4,6 +4,7 @@ import Card from './CardElement.js';
 import Group from './GroupElement.js';
 import { Elements } from './types.js';
 import EventEmitter from '../eventManager.js';
+import { getElement, removeElement, setElement } from '../utils/storage.js';
 
 export const events = new EventEmitter();
 
@@ -35,10 +36,10 @@ export function init(props) {
 export function load(id) {
   if (!id) throw new Error('Must provide ID');
   if (!uuidValidateV4(id)) throw new Error(`Invalid ID: ${id}`);
-  const item = localStorage.getItem(id);
+  const item = getElement(id);
   if (!item) throw new Error(`Invalid Item: ${id}`);
   data.set(id, init({
-    ...JSON.parse(item),
+    ...item,
     id,
   }));
 }
@@ -52,7 +53,7 @@ export function register(element) {
 
 export function remove(idOrElement) {
   const key = idOrElement.id || idOrElement;
-  localStorage.removeItem(key);
+  removeElement(key);
   const removed = data.delete(key);
   if (removed) events.emit('remove', key);
   return removed;
@@ -62,19 +63,8 @@ export function save(key) {
   if (key) {
     const element = data.get(key);
     if (element) {
-      const {
-        id,
-        ...rest
-      } = element.toJSON();
-
-      localStorage.setItem(id, JSON.stringify(rest, (_, value) => {
-        if (Array.isArray(value)) {
-          if (!value.length) return undefined;
-        } else if (typeof value === 'string') {
-          return value.trim() || undefined;
-        }
-        return value;
-      }));
+      const { id, ...rest } = element.toJSON();
+      setElement(id, rest);
     }
   } else {
     [...data.keys()].forEach(save);

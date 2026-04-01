@@ -5,7 +5,7 @@ import EventEmitter from '../eventManager.js';
 export default class Item extends EventEmitter {
   /** @type {Element} */
   element;
-  /** @type {String | undefined} */
+  /** @type {string | undefined} */
   group;
   trashed = false;
 
