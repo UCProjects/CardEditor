@@ -59,7 +59,7 @@
   padding: 2px 1px;
   height: 80px;
   overflow: hidden;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .card .middle,
