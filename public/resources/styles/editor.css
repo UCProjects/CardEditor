@@ -238,3 +238,12 @@ fieldset.soul {
 #editor .group header {
   position: relative;
 }
+
+#editor .keywords > span {
+  cursor: pointer;
+}
+
+#editor .keywords > span:not(:last-child)::after {
+  content: ';';
+  color: rgb(128, 128, 128);
+}
