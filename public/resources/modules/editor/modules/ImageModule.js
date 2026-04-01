@@ -1,5 +1,5 @@
-import { read as readFile } from '../../utils/file.js';
-import { isBase64 } from '../../utils/funcs.js';
+import { Elements } from '../../elements/types.js';
+import { add, hasFile, getURL, ImageType, save } from '../../imageBank.js';
 import Module from '../Module.js';
 
 export default class ImageModule extends Module {
@@ -12,12 +12,14 @@ export default class ImageModule extends Module {
       instance.update(value, 'image');
     }
 
+    // TODO load images from bank
     const select = container.querySelector('select[name="image"]');
     const blank = select.querySelector('[value=""]');
     const file = container.querySelector('fieldset[name="upload"]');
     const link = container.querySelector('fieldset[name="url"]');
 
-    const isURL = element.image.startsWith('http') || isBase64(element.image);
+    const isBlob = getURL(element.image).startsWith('blob:');
+    const isURL = element.image.startsWith('http') || isBlob;
 
     select.value = isURL ? 'url' : element.image || '';
 
@@ -40,7 +42,7 @@ export default class ImageModule extends Module {
         const input = container.querySelector(`[data-editing="image"] input[name="${value}"]`);
         input.focus();
         if (isLink) update(input.value);
-        else input.value = ''; // TODO load image?
+        else input.value = '';
       } else {
         update(value);
       }
@@ -48,7 +50,7 @@ export default class ImageModule extends Module {
 
     {
       const input = link.querySelector('input');
-      input.value = isURL ? element.image : '';
+      input.value = isURL ? getURL(element.image) : '';
       if (isURL) input.focus();
       input.addEventListener('change', () => {
         link.querySelector('.warn').classList.add('hidden');
@@ -67,20 +69,32 @@ export default class ImageModule extends Module {
 
     // File handling
     {
+      const abort = new AbortController();
       const input = file.querySelector('input');
       const warn = file.querySelector('.warn').classList;
+      let pendingFile = false;
       input.addEventListener('change', async () => {
         warn.add('hidden');
         const [upload] = input.files;
         if (!upload) return;
-        const data = await readFile(upload);
-        if (!data) warn.remove('hidden');
-        else link.querySelector('input').value = data;
-        update(data);
+        const id = add({
+          file: upload,
+          name: upload.name,
+          type: element.type === Elements.Card ? ImageType.Avatar : ImageType.Artifact,
+        });
+        link.querySelector('input').value = getURL(id);
+        update(id);
+        pendingFile = upload;
       }, { signal });
+      instance.on('save', () => {
+        abort.abort();
+        if (!pendingFile) return;
+        const id = element.image;
+        if (!hasFile(id, pendingFile)) return;
+        save(id);
+      }, { signal: abort.signal });
+      instance.on('close', () => abort.abort(), { signal: abort.signal });
     }
-
-    // On save, if new upload, save image to image bank and update element value...?
 
     this.on('click', (type) => {
       if (type !== 'image' || select.value !== 'url') return;
