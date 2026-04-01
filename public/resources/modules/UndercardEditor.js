@@ -117,7 +117,7 @@ export async function loadStorage() {
     }
   }
   const images = await getAllImages();
-  images.forEach(({ src, ...image }) => {
+  images.forEach((image) => {
     tryOrErrorSync(() => {
       addImage(image);
     }, `Error loading Image[${image.id}]`);
