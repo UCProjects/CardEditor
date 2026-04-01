@@ -41,11 +41,11 @@ export default class CardModule extends Module {
       }, { signal });
     });
 
-    // Extras
-    const hideExtra = String(element.isSpell() || (monsterSoul.enabled ?? false));
+    // Stats
+    const enableSoul = element.isSpell() || monsterSoul.enabled;
     container.querySelectorAll('[data-extra]').forEach((el) => {
-      const { extra = 'true' } = el.dataset;
-      el.classList.toggle('hidden', hideExtra === extra);
+      const { extra } = el.dataset;
+      el.classList.toggle('hidden', extra === 'soul' ? !enableSoul : element.isSpell());
     });
 
     updateActive(
