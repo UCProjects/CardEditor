@@ -27,7 +27,7 @@ export function setVersion(version) {
   localStorage.setItem(keys.version, version);
 }
 
-/** @returns {object | undefined} */
+/** @returns {import('../elements/BaseElement.js').default | undefined} */
 export function getElement(id) {
   const item = localStorage.getItem(keys.element(id));
   return item ? JSON.parse(item) : undefined;
