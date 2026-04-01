@@ -10,6 +10,8 @@ import { swap } from './utils/array.js';
 import { adoptStyle } from './utils/funcs.js';
 import settings from './settings.js';
 import { getGroups, getVersion, setGroups, setVersion, getKeys } from './utils/storage.js';
+import { getAll as getAllImages } from './utils/imageDB.js';
+import { add as addImage } from './imageBank.js';
 
 adoptStyle(style);
 
@@ -114,6 +116,12 @@ export async function loadStorage() {
       );
     }
   }
+  const images = await getAllImages();
+  images.forEach(({ src, ...image }) => {
+    tryOrErrorSync(() => {
+      addImage(image);
+    }, `Error loading Image[${image.id}]`);
+  });
 }
 
 export default new UndercardEditor();

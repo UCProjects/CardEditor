@@ -1,5 +1,5 @@
 import { uuidV6, uuidValidate, uuidValidateV6 } from './3rdparty/uuid.js';
-import { isBase64 } from './utils/funcs.js';
+import { set as setImage } from './utils/imageDB.js';
 import { object } from './utils/smart.js';
 
 export const ready = Promise.all([
@@ -15,11 +15,14 @@ export const ImageType = object(Object.freeze({
 }));
 
 /**
+ * @typedef {typeof ImageType[keyof ImageType]} ImageTypes
+ *
  * @typedef {{
  *  id?: string;
+ *  file?: File;
  *  name?: string;
  *  src: string;
- *  type?: string;
+ *  type?: ImageTypes;
  * }} ImageStore
  */
 
@@ -46,7 +49,7 @@ export function add(data) {
   // Images are "frozen"
   if (images.has(id)) return false;
   if (uuidValidate(id) && !uuidValidateV6(id)) throw new Error(`Invalid ID: ${JSON.stringify(data)}`);
-  if (!store.src) throw new Error(`Malformed data: ${JSON.stringify(data)}`);
+  if (!(store.src || store.file)) throw new Error(`Malformed data: ${JSON.stringify(data)}`);
   if (data.type && !ImageType.hasValue(data.type)) throw new Error(`Unknown data type: ${data.type}`);
   images.set(id, store);
   return id;
@@ -54,16 +57,15 @@ export function add(data) {
 
 export function rename(id, name) {
   const image = images.get(id);
-  if (image) {
-    const changed = image.name !== name;
+  if (image && image.name !== name) {
     image.name = name;
-    return changed;
+    return true;
   }
   return false;
 }
 
 /**
- * @param {typeof ImageType[keyof ImageType]} type
+ * @param {ImageTypes} type
  * @param {boolean} [strict]
  * @returns {Record<string, ImageStore>}
  */
@@ -81,7 +83,7 @@ export function getAll(type, strict = false) {
 
 /**
  * @param {string} id
- * @param {typeof ImageType[keyof ImageType]} [ofType]
+ * @param {ImageTypes} [ofType]
  * @param {boolean} [strict=false]
  * @returns {string | undefined}
  */
@@ -91,16 +93,30 @@ export function getURL(id, ofType, strict = false) {
   if (avatars.has(id) && (!ofType || ofType === ImageType.Avatar)) {
     return `/resources/avatar/${avatars.get(id)}.png`;
   }
-  const { src = '', type } = images.get(id) || {};
-  if (!src && isBase64(id)) return id;
+  const store = images.get(id) || {};
+  const { src = '', type, file } = store || {};
   if (ofType && (type ? type !== ofType : strict)) return undefined;
-  return src || undefined;
+  if (src) return src;
+  if (file) {
+    const url = URL.createObjectURL(file);
+    store.src = url;
+    return url;
+  }
+  return undefined;
 }
 
-export function save(id) {
+export function hasFile(id, file) {
+  const saved = images.get(id)?.file;
+  return saved instanceof File && (!file || saved === file);
+}
+
+export async function save(id) {
   const image = images.get(id);
   if (!image) throw new Error('Failed to find image');
-  localStorage.setItem(id, JSON.stringify(image));
+  if (!(image.file instanceof File)) throw new Error('Tried to save generic image');
+  // eslint-disable-next-line no-unused-vars
+  const { src, ...data } = image;
+  await setImage(id, data);
 }
 
 async function fetchAvatars() {

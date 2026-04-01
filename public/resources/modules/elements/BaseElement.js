@@ -41,13 +41,17 @@ export default class BaseElement extends EventEmitter {
     return new Element(this.toJSON());
   }
 
+  newRenderer() {
+    throw new Error('Must be overridden');
+  }
+
   renderer() {
     this.#renderer ||= this.newRenderer();
     return this.#renderer;
   }
 
-  newRenderer() {
-    throw new Error('Must be overridden');
+  isActive() {
+    return this.renderer().container.isConnected;
   }
 
   toJSON() {
