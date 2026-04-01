@@ -39,24 +39,6 @@
       &bullet;
       <a href="https://github.com/UCProjects/CardEditor" title="Source" target="_blank"><img src="./resources/social/github.svg" class="social" title="Source" alt="Source" data-tip="View Source"></a>
     </footer>
-    <div id="descriptionTip" class="template">
-      <fieldset>
-        <legend>Keywords</legend>
-        <div></div>
-      </fieldset>
-      <fieldset>
-        <legend>Custom</legend>
-        <div>
-          <span>_Words to underline_</span>
-          <span>{<span class="cardName">Card name</span>}</span>
-          <span>{color|Text}</span>
-          <span>{{stats|<span class="COST">cost</span>|<span class="attack">attack</span>|<span class="health">health</span>}}</span>
-          <span>{{switch|<span class="switchLeft">text</span>|left}}</span>
-          <span>{{switch|<span class="switchRight">text</span>|right}}</span>
-          <span>\bypass</span>
-        </div>
-      </fieldset>
-    </div>
     <article id="app"></article>
     <!-- Editor -->
     <dialog id="editor" closedby="any">
@@ -85,7 +67,24 @@
               <div data-template="selectSoul"></div>
             </fieldset>
           </div>
-          <div data-editing="description" data-template="descriptionTip"></div>
+          <div id="descriptionTip" data-editing="description">
+            <fieldset>
+              <legend>Keywords</legend>
+              <div class="keywords"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Custom</legend>
+              <div class="keywords">
+                <span data-insert="_[]_">_Words to underline_</span>
+                <span data-insert="{[]}">{<span class="cardName">Card name</span>}</span>
+                <span data-insert="{#|[]}">{color|Text}</span>
+                <span data-insert="{{stats|[]}}">{{stats|<span class="COST" data-extra="||">cost</span>|<span class="attack" data-extra="|">attack</span>|<span class="health">health</span>}}</span>
+                <span data-insert="{{switch|[]}}">{{switch|<span class="switchLeft">text</span>|left}}</span>
+                <span data-insert="{{switch|[]|right}}">{{switch|<span class="switchRight">text</span>|right}}</span>
+                <span>\bypass</span>
+              </div>
+            </fieldset>
+          </div>
           <div data-editing="number">
             <fieldset>
               <legend>Cost</legend>
@@ -365,6 +364,7 @@
           <li>Artifacts</li>
           <li>Multi-Tribes</li>
           <li>Effects</li>
+          <li>Click-2-Insert Keywords</li>
           <li>Switch <span class="switchLeft">left</span> and <span class="switchRight">right</span></li>
         </ul>
       </div>

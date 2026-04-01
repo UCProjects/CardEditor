@@ -43,12 +43,14 @@ export default class Module extends EventEmitter {
       }, { signal });
     });
 
+    /** @type {HTMLTextAreaElement} */
     const descriptionInput = container.querySelector('textarea[name="description"]');
     descriptionInput.value = element.description;
-    descriptionInput.addEventListener('input', (event) => {
+    function updateDescription() {
       // TODO strip open ended brackets from value?
-      instance.update(event.currentTarget.value, 'description');
-    }, { signal });
+      instance.update(descriptionInput.value, 'description');
+    }
+    descriptionInput.addEventListener('input', updateDescription, { signal });
 
     // Generic hide soul
     container.querySelector('fieldset.soul').classList.add('hidden');
@@ -62,6 +64,41 @@ export default class Module extends EventEmitter {
       el.focus();
       if (el.type === 'number') el.select();
     }, { signal });
+
+    // Keywords
+    container.querySelectorAll('.keywords > span').forEach(
+      /** @param {HTMLSpanElement} el  */
+      (el) => {
+        el.addEventListener('click', (e) => {
+          const { selectionEnd: end, selectionStart: start, value } = descriptionInput;
+          const { insert = el.textContent } = el.dataset;
+          const before = value.substring(0, start);
+          const after = value.substring(end);
+          const open = insert.indexOf('[');
+          if (!~open) {
+            descriptionInput.value = `${before}${insert}${after}`;
+            const pos = start + insert.length;
+            descriptionInput.selectionStart = pos;
+            descriptionInput.selectionEnd = pos;
+          } else {
+            const { extra = '' } = e.target.dataset;
+            const close = insert.indexOf(']');
+            const first = insert.substring(0, open);
+            const last = insert.substring(close + 1);
+            const text = insert.substring(open + 1, close) || value.substring(start, end);
+            descriptionInput.value = `${before}${first}${text}${extra}${last}${after}`;
+            const offset = start + open;
+            descriptionInput.selectionStart = offset;
+            descriptionInput.selectionEnd = offset + text.length;
+            if (insert.includes('#')) {
+              // TODO color picker
+            }
+          }
+          updateDescription();
+          descriptionInput.focus();
+        });
+      },
+    );
   }
 
   unload() {
