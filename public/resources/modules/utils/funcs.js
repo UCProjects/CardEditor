@@ -33,6 +33,10 @@ export function getProps(obj, ...ignore) {
     .map(([prop]) => prop);
 }
 
+export function hasValue(obj, value) {
+  return Object.values(obj).includes(value);
+}
+
 export function isBase64(string = '', checkPrefix = false) {
   const [prefix, data=prefix] = string.split(',');
   const pass = !checkPrefix || (prefix !== data && prefix.startsWith('data:image/') && prefix.endsWith(';base64'));
