@@ -80,7 +80,7 @@ export default class CardModule extends Module {
 
       el.addEventListener('click', () => {
         const { tribe } = el.dataset;
-        const { tribes } = element;
+        const tribes = [...element.tribes];
         const index = tribes.indexOf(tribe);
         if (!~index) { // Doesn't exist
           if (tribe === 'all' || tribe === 'none') {
@@ -95,8 +95,8 @@ export default class CardModule extends Module {
         } else {
           tribes.splice(index, 1);
         }
-        refreshTribes(...container.querySelectorAll('[data-tribe].selectable'));
         editor.update(tribes, 'tribes');
+        refreshTribes(...container.querySelectorAll('[data-tribe].selectable'));
       }, { signal });
     });
 

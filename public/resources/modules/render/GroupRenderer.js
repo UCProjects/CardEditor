@@ -1,6 +1,6 @@
 import style from '../../styles/group.css' with { type: 'css' };
 import Renderer from './BaseRenderer.js';
-import { get, init } from '../elements/registry.js';
+import { events, get, init } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
 import editor from '../editor/editor.js';
 import { tryOrErrorSync } from '../toast/index.js';
@@ -62,6 +62,7 @@ export default class GroupRenderer extends Renderer {
     this.query('.buttons').before(render.container);
 
     if (!edit) return;
+    events.emit('add', element);
 
     const editController = new AbortController();
     editor.on('save', () => {
@@ -70,7 +71,7 @@ export default class GroupRenderer extends Renderer {
     }, { signal: editController.signal });
     editor.on('close', () => {
       editController.abort();
-      render.emit('delete');
+      element.emit('delete');
       this.emit('save');
     }, { signal: editController.signal });
 
@@ -85,11 +86,12 @@ export default class GroupRenderer extends Renderer {
 
     render.on('archive', () => render.emit('archived'), { signal: archivedController.signal });
     render.on('archived', () => {
-      const index = this.element.content.indexOf(render.element.id);
+      const { id } = render.element;
+      const index = this.element.content.indexOf(id);
       if (!~index) return;
       this.element.content.splice(index, 1);
       render.unload();
-      render.element.emit('archived');
+      render.element.emit(get(id) ? 'archived' : 'delete');
       this.emit('save');
       archivedController.abort();
     }, { signal: archivedController.signal });
@@ -106,8 +108,7 @@ export default class GroupRenderer extends Renderer {
     this.on(Elements.Text, () => this.#newElement(init({ type: Elements.Text })));
     this.on('archived', () => {
       this.unload();
-      this.element.content.forEach((id) => get(id)?.emit('archived'));
-      this.element.emit('archived');
+      this.element.emit(get(this.element.id) ? 'archived' : 'delete');
       this.#deleteController.abort();
     });
     this.on('drop', (element) => this.#newElement(element, false));

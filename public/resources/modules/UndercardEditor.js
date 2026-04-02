@@ -1,4 +1,4 @@
-import { get as getElement, init, load as loadElement } from './elements/registry.js';
+import { events, get as getElement, init, load as loadElement } from './elements/registry.js';
 import './editor/editor.js';
 import './tip/index.js';
 import { load as loadArchive } from './archive/index.js';
@@ -63,6 +63,7 @@ class UndercardEditor {
   newGroup(index) {
     const group = init({ type: Elements.Group });
     this.addGroup(group.renderer(), index);
+    events.emit('add', group);
   }
 
   /** @param {GroupRenderer} renderer  */
@@ -105,7 +106,6 @@ class UndercardEditor {
   }
 }
 
-// Async to prevent locking main
 export async function loadStorage() {
   for (const key of getKeys()) {
     const [, prefix, id] = key.split(':');

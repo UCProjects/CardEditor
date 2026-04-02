@@ -39,8 +39,8 @@ export default class TextRenderer extends Renderer {
     super.bindMenu(menu);
     menu.querySelector('[data-tip="Resize"]').addEventListener('click', () => {
       const { size = TextSizes.Normal } = this.element;
-      this.update('size', NextSize[size]);
-      saveElement(this.element.id);
+      this.element.emit('update', { size: NextSize[size] });
+      saveElement(this.element);
     });
   }
 }

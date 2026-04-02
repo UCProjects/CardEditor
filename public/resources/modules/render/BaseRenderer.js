@@ -3,11 +3,12 @@ import { Elements } from '../elements/types.js';
 import EventEmitter from '../eventManager.js';
 import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
-import { match } from '../utils/array.js';
 import saveImage from '../save.js';
-import { register, remove, save } from '../elements/registry.js';
+import { register, save } from '../elements/registry.js';
 import { isOpen as isArchiveOpen } from '../archive/index.js';
 import { adoptStyle } from '../utils/funcs.js';
+
+/** @typedef {import('../elements/BaseElement.js').default} BaseElement */
 
 adoptStyle(style);
 
@@ -45,36 +46,24 @@ function bindMenu(renderer, menu) {
 
 export default class BaseRenderer extends EventEmitter {
   #container;
-  /** @type {import('../elements/BaseElement.js').default} */
+  /** @type {BaseElement} */
   #element;
 
-  /** @param {import('../elements/BaseElement.js').default} element  */
+  /** @param {BaseElement} element  */
   constructor(element) {
     super();
     this.#element = element;
     this.#container = this.getElement();
     this.render();
 
-    this.on('update', (data) => {
-      const modified = Object.entries(data).reduce((updated, [k, v]) => {
-        const val = element[k];
-        const update = Array.isArray(v) ? !match(v, val) : val !== v;
-        if (update) this.update(k, v);
-        return updated || update;
-      }, false);
-      if (modified) {
-        element.emit('updated');
-        this.emit('save');
-      }
+    this.element.on('updated', (keys) => {
+      keys.forEach((key) => this[key]?.());
+      this.emit('save');
     });
 
     this.on('save', () => {
       register(element);
-      save(element.id);
-    });
-
-    this.on('delete', () => {
-      remove(this.element);
+      save(element);
     });
   }
 
@@ -127,10 +116,9 @@ export default class BaseRenderer extends EventEmitter {
     bindMenu(this, menu);
   }
 
-  update(key, value) {
-    if (!key) throw new Error('Updating without key');
-    if (value !== undefined) this.element[key] = value;
-    this[key]?.();
+  /** @param {BaseElement} element */
+  update(element) {
+    this.element.emit('update', element.toJSON());
   }
 
   getElement(id = `template#${this.element.type}`) {

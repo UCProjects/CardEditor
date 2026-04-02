@@ -1,5 +1,6 @@
 import { uuidV4 } from '../3rdparty/uuid.js';
 import EventEmitter from '../eventManager.js';
+import { match } from '../utils/array.js';
 
 /** @typedef {typeof import('./types.js').Elements} Elements */
 
@@ -25,6 +26,19 @@ export default class BaseElement extends EventEmitter {
     this.#id = id;
     this.name = name;
     this.#type = type;
+
+    this.on('update', (data) => {
+      const modified = Object.entries(data).reduce((acc, [key, value]) => {
+        const current = this[key];
+        const update = Array.isArray(value) ? !match(value, current) : current !== value;
+        if (update) {
+          this[key] = value;
+          acc.push(key);
+        }
+        return acc;
+      }, []);
+      if (modified.length) this.emit('updated', modified);
+    });
   }
 
   get id() {
