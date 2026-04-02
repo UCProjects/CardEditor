@@ -51,7 +51,7 @@ class Editor extends EventEmitter {
       const save = reason !== 'cancel';
       if (save) {
         this.emit('save'); // Allow listeners to make modifications
-        this.#original.emit('update', this.element.toJSON());
+        this.#original.element.emit('update', this.element.toJSON());
         this.emit('saved');
       }
 
@@ -59,7 +59,7 @@ class Editor extends EventEmitter {
     });
 
     this.on('close', () => {
-      this.#module[this.#renderer.element.type].unload();
+      this.#module[this.element.type].unload();
       delete editor.dataset.editing;
       this.#renderer = null;
       this.#original = null;
@@ -118,7 +118,7 @@ class Editor extends EventEmitter {
   }
 
   update(value, key = this.#prop) {
-    this.#renderer?.update(key, value);
+    this.element.emit('update', { [key]: value });
   }
 }
 
