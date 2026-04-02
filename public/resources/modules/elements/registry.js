@@ -1,12 +1,13 @@
 import { uuidValidateV4 } from '../3rdparty/uuid.js';
+import BaseElement from './BaseElement.js';
 import Text from './TextElement.js';
 import Card from './CardElement.js';
 import Group from './GroupElement.js';
 import { Elements } from './types.js';
-import EventEmitter from '../eventManager.js';
 import { getElement, removeElement, setElement } from '../utils/storage.js';
+import events from './registryEvents.js';
 
-export const events = new EventEmitter();
+export { events };
 
 /**
  * @type {Map<string, import('./BaseElement.js').default>}
@@ -51,22 +52,21 @@ export function register(element) {
   events.emit('add', element);
 }
 
-export function remove(idOrElement) {
-  const key = idOrElement.id || idOrElement;
+/** @param {Group | Card | Text} element  */
+export function remove(element) {
+  const key = element.id;
   removeElement(key);
-  const removed = data.delete(key);
-  if (removed) events.emit('remove', key);
-  return removed;
+  data.delete(key);
+  events.emit('remove', element);
 }
 
-export function save(key) {
-  if (key) {
-    const element = data.get(key);
-    if (element) {
-      const { id, ...rest } = element.toJSON();
-      setElement(id, rest);
-    }
+export function save(keyOrElement) {
+  if (typeof keyOrElement === 'string') {
+    save(get(keyOrElement));
+  } else if (keyOrElement instanceof BaseElement) {
+    const { id, ...rest } = keyOrElement.toJSON();
+    setElement(id, rest);
   } else {
-    [...data.keys()].forEach(save);
+    throw new Error(`Failed to save [${JSON.stringify(keyOrElement)}]`);
   }
 }

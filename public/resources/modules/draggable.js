@@ -48,10 +48,7 @@ export default function setup({ container, element }) {
   const content = container.querySelector('.content');
   if (sortElement.containers.includes(content)) return;
   sortElement.addContainer(content);
-  sortElement.on('sortable:sorted', () => {
-    if (get(element.id)) return;
-    register(element);
-  });
+  sortElement.on('sortable:sorted', () => register(element));
 }
 
 export function isDragging() {

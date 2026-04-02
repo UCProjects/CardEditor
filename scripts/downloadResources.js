@@ -16,7 +16,7 @@ fetch('https://undercards.net/translation/en.json')
   .then((lang) => {
     Object.keys(lang).forEach((key) => {
       /**
-       * @type {String}
+       * @type {string}
        */
       const val = lang[key];
       if (key.startsWith('kw-') || key.startsWith('artifact-name-')) {

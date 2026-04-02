@@ -1,4 +1,5 @@
-import { events, getAll, register, remove, save } from '../elements/registry.js';
+import { getAll, register, remove, save } from '../elements/registry.js';
+import events from '../elements/registryEvents.js';
 import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
 import { contains } from '../utils/array.js';
@@ -41,49 +42,58 @@ const trashRef = new Item({
 let dragSrc;
 
 // TODO search
+function add(el) {
+  const item = new Item(el);
+  const isGroup = el.type === Elements.Group;
+  const map = isGroup ? groups : items;
+  map.set(item.id, item);
 
-export function load() {
-  function add(el) {
-    const item = new Item(el);
-    const isGroup = el.type === Elements.Group;
-    const map = isGroup ? groups : items;
-    map.set(item.id, item);
-
-    item.on('archived', () => {
-      if (item.group && !groups.get(item.group)?.element.content.includes(item.id)) {
-        item.group = undefined;
-      }
-      addItem(item);
-    });
-    item.on('restore', () => {
-      register(item.element);
-      save(item.id);
-      item.trashed = false;
-      item.emit('refresh');
-      trashRef.emit('refresh');
-    });
-    item.on('trash', () => {
-      if (item.trashed) return;
-      remove(item.id);
-      item.trashed = true;
-      item.emit('refresh');
-      addItem(item, true);
-      trashRef.emit('refresh');
-    });
-
-    if (isGroup) {
-      item.on('drop', (i) => {
-        item.element.renderer().emit('drop', i.element);
-        save(item.id);
-        i.emit('dropped');
-        i.group = item.id;
-      });
-      initDrop(item.element.renderer().container);
+  item.on('archived', () => {
+    if (item.group && !groups.get(item.group)?.element.content.includes(item.id)) {
+      item.group = undefined;
     }
+    addItem(item);
+  });
+  item.on('restore', () => {
+    register(item.element);
+    save(item.element);
+    item.trashed = false;
+    item.emit('refresh');
+    trashRef.emit('refresh');
+  });
+  item.on('trash', () => {
+    if (item.trashed) return;
+    remove(item);
+    item.trashed = true;
+    addItem(item, true);
+    item.emit('refresh');
+    trashRef.emit('refresh');
+  });
 
-    return item;
+  if (isGroup) {
+    item.on('drop', (i) => {
+      item.element.renderer().emit('drop', i.element);
+      save(item.element);
+      i.emit('dropped');
+      i.group = item.id;
+    });
+    initDrop(item.element.renderer().container);
   }
 
+  return item;
+}
+
+events.on('add', (element) => {
+  if (element.type === Elements.Group ? groups.has(element.id) : items.has(element.id)) return;
+  const item = add(element);
+  if (item.type !== Elements.Group) {
+    item.group = element.renderer().container.closest('.element.group').dataset.id;
+  }
+}).on('remove', (element) => {
+  // TODO this is technically a centralized archive/trash location
+});
+
+export function load() {
   getAll().forEach(add);
 
   groups.forEach(i => addItem(i));
@@ -91,14 +101,6 @@ export function load() {
   items.forEach(i => addItem(i));
 
   initTrash();
-
-  events.on('add', (element) => {
-    if (element.type === Elements.Group ? groups.has(element.id) : items.has(element.id)) return;
-    const item = add(element);
-    if (item.type !== Elements.Group) {
-      item.group = element.renderer().container.closest('.element.group').dataset.id;
-    }
-  });
 
   const app = document.getElementById('app');
   initDrop(app, true);
@@ -151,7 +153,7 @@ function render(item, {
         const group = groups.get(item.group);
         if (!group) return;
         group.element.remove(item.id);
-        save(item.group);
+        save(group);
       }
       li.remove();
       EOL.abort();
