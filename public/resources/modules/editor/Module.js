@@ -96,7 +96,7 @@ export default class Module extends EventEmitter {
           }
           updateDescription();
           descriptionInput.focus();
-        });
+        }, { signal });
       },
     );
   }
