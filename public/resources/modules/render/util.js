@@ -3,8 +3,8 @@ import Builder from '../utils/builder.js';
 
 const underlineRegex = new Builder(() => new RegExp(`(?<!\\\\)(${keywords.join('|')})(?![^{]*})|_([^_]+)_`, 'g'));
 const specialRegex = new RegExp(`(?<!{|"|>|\\w|\\\\)(${specials.join('|')})(?![\\w}])`, 'g');
-const colorRegex = /(?<!{|\\){(?!{)([^;|}]*)[^}]*[;|]([^}]*)}/g; // /\{color:([^}]+)}(.*){\/color}/g;
-const highlightRegex = /(?<!{|\\){(?!{)([^|}]+)}/g;
+const colorRegex = /(?<!{){(?!{)([^;|}]*)[^}]*[;|]([^}]*)}/g; // /\{color:([^}]+)}(.*){\/color}/g;
+const highlightRegex = /(?<!{){(?!{)([^|}]+)}/g;
 const commandRegex = /{{([^}]*)}}/g;
 
 const commands = {
@@ -48,7 +48,7 @@ function process(text = '') {
     if (add) args.unshift(add);
   }
   const handler = commands[command.toLowerCase()];
-  if (typeof handler !== 'function' || !args.length) return '';
+  if (typeof handler !== 'function') return '';
   return handler(args);
 }
 
