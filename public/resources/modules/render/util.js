@@ -3,8 +3,8 @@ import Builder from '../utils/builder.js';
 
 const underlineRegex = new Builder(() => new RegExp(`(?<!\\\\)(${keywords.join('|')})(?![^{]*})|_([^_]+)_`, 'g'));
 const specialRegex = new RegExp(`(?<!{|"|>|\\w|\\\\)(${specials.join('|')})(?![\\w}])`, 'g');
-const colorRegex = /(?<!{|\\){(?!{)([^;|}]*)[^}]*[;|]([^}]+)}/g; // /\{color:([^}]+)}(.*){\/color}/g;
-const highlightRegex = /(?<!{|\\){(?!{)([^}]+)}/g;
+const colorRegex = /(?<!{|\\){(?!{)([^;|}]*)[^}]*[;|]([^}]*)}/g; // /\{color:([^}]+)}(.*){\/color}/g;
+const highlightRegex = /(?<!{|\\){(?!{)([^|}]+)}/g;
 const commandRegex = /{{([^}]*)}}/g;
 
 const commands = {
