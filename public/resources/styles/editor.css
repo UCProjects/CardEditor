@@ -239,7 +239,7 @@ fieldset.soul {
   position: relative;
 }
 
-#editor .keywords > span {
+#editor .keywords > span:not([data-ignore]) {
   cursor: pointer;
 }
 
