@@ -114,12 +114,12 @@
             </fieldset>
             <fieldset name="upload" class="hidden external" >
               <legend>File</legend>
-              <input name="upload" type="file" accept="image/*" />
+              <input name="upload" type="file" accept="image/*" autocomplete="off" />
               <div class="warn hidden">Failed to load image</div>
             </fieldset>
             <fieldset name="url" class="hidden external">
               <legend>Link</legend>
-              <input name="url" type="url" pattern="https?://.*|blob:" placeholder="https://example.com" />
+              <input name="url" type="url" pattern="https?://.*|blob:" placeholder="https://example.com" autocomplete="off" />
               <div class="warn hidden">Failed to load image</div>
             </fieldset>
           </div>
@@ -158,11 +158,11 @@
     <div id="picker" popover="manual">
       <div class="picker-preview">
         <div class="picker-preview-fill"></div>
-        <input class="picker-native" type="color" tabindex="-1">
+        <input name="color" class="picker-native" type="color" tabindex="-1" />
       </div>
       <div class="picker-hex">
         <span class="picker-hash">#</span>
-        <input class="picker-input" type="text" maxlength="6" spellcheck="false" autocomplete="off" />
+        <input name="hex" class="picker-input" type="text" maxlength="6" spellcheck="false" autocomplete="off" />
       </div>
       <div class="picker-recent"></div>
       <div class="picker-actions">
@@ -188,7 +188,7 @@
         </ul>
       </div>
       <div data-page="images">
-        <input type="text" placeholder="Search..." />
+        <input name="image_search" type="search" placeholder="Search..." />
         <ul></ul>
       </div>
       <div data-page="settings">
