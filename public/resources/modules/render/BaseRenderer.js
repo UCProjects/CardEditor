@@ -21,9 +21,30 @@ const menuHTML = document.querySelector('template#menu').innerHTML;
 function bindMenu(renderer, menu) {
   const { type } = renderer.element;
 
+  menu.addEventListener('toggle', (e) => {
+    if (e.newState === 'closed') return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    document.addEventListener('keydown', (event) => {
+      if (menu.classList.contains('shift')) return;
+      if (event.key === 'Shift') menu.classList.add('shift');
+    }, { signal });
+    document.addEventListener('keyup', (event) => {
+      if (event.key === 'Shift') menu.classList.remove('shift');
+    }, { signal });
+
+    menu.addEventListener('toggle', () => controller.abort(), { once: true });
+  });
+
   // Open menu
   const source = type === Elements.Group ? renderer.query('header') : renderer.container;
-  source.addEventListener('mouseenter', () => isArchiveOpen() || menu.showPopover({ source }));
+  source.addEventListener('mouseenter', (e) => {
+    if (isArchiveOpen()) return;
+    menu.classList.toggle('shift', e.shiftKey);
+    menu.showPopover({ source });
+  });
 
   // Remove mismatched buttons
   menu.querySelectorAll('[data-type]').forEach((el) => {
@@ -42,6 +63,9 @@ function bindMenu(renderer, menu) {
 
   // Archive
   menu.querySelector('[data-tip="Archive"]').addEventListener('click', () => renderer.emit('archive'));
+
+  // Trash
+  menu.querySelector('[data-tip="Trash"]').addEventListener('click', () => renderer.emit('archive', true));
 }
 
 export default class BaseRenderer extends EventEmitter {

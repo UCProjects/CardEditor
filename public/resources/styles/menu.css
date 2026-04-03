@@ -48,3 +48,15 @@
 .menu button:hover img {
   filter: var(--shadow-filter);
 }
+
+.menu [data-shift] {
+  display: none;
+}
+
+.menu.shift [data-shift] {
+  display: block;
+}
+
+.menu.shift [data-no-shift] {
+  display: none;
+}
