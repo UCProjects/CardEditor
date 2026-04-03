@@ -8,16 +8,10 @@ workbox.core.setCacheNameDetails({
   prefix: 'undercard-editor',
 });
 
-// Cache index
-workbox.routing.registerRoute(
-  /index\.html$|\/$/,
-  new workbox.strategies.NetworkFirst(),
-);
-
 // Cache local files
 workbox.routing.registerRoute(
-  /\.(?:js|css|json)$/,
-  new workbox.strategies.StaleWhileRevalidate(),
+  /\.(?:js|css|json|html)$/,
+  new workbox.strategies.NetworkFirst(),
 );
 
 // Cache 3rd party files
