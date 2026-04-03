@@ -84,19 +84,17 @@ export default class GroupRenderer extends Renderer {
     const archivedController = new AbortController();
     render.one('save', () => this.emit('save'), { signal: archivedController.signal });
 
-    render.on('archive', () => render.emit('archived'), { signal: archivedController.signal });
-    render.on('archived', () => {
+    render.on('archive', (trash = false) => render.emit('archived', trash), { signal: archivedController.signal });
+    render.on('archived', (trash = false) => {
       const { id } = render.element;
       const index = this.element.content.indexOf(id);
       if (!~index) return;
       this.element.content.splice(index, 1);
       render.unload();
-      render.element.emit(get(id) ? 'archived' : 'delete');
+      render.element.emit(get(id) && !trash ? 'archived' : 'delete');
       this.emit('save');
       archivedController.abort();
     }, { signal: archivedController.signal });
-
-    this.on('delete', () => render.emit('delete'), { signal: this.#deleteController.signal });
   }
 
   #addGroupEvents() {
@@ -106,9 +104,9 @@ export default class GroupRenderer extends Renderer {
       this.#newElement(card);
     });
     this.on(Elements.Text, () => this.#newElement(init({ type: Elements.Text })));
-    this.on('archived', () => {
+    this.on('archived', (trash = false) => {
       this.unload();
-      this.element.emit(get(this.element.id) ? 'archived' : 'delete');
+      this.element.emit(get(this.element.id) && !trash ? 'archived' : 'delete');
       this.#deleteController.abort();
     });
     this.on('drop', (element) => this.#newElement(element, false));
