@@ -11,17 +11,35 @@ tip.classList.add('tooltip');
 
 document.body.append(tip);
 
+let currentObserver;
+
 function show(event) {
   const source = event.target;
-  if (!source.dataset) return;
+  if (!source.dataset || tip.matches(':popover-open')) return;
   const editorText = editor.isOpen && (source.dataset.editableFor || source.dataset.editable);
   const text = source.dataset.tip;
   if (!text && !editorText) return;
-  tip.textContent = text || `Edit ${editorText}`;
+  const currentText = text || `Edit ${editorText}`;
+  tip.textContent = currentText;
   tip.hidePopover();
   tip.classList.remove('flip');
   tip.showPopover({ source });
   tip.classList.toggle('flip', !isElementInViewport(tip));
+
+  currentObserver?.disconnect();
+  const observer = new MutationObserver(() => {
+    if (!source.isConnected || !source.offsetParent) {
+      tip.hidePopover();
+      observer.disconnect();
+      currentObserver = null;
+    } else if (tip.textContent !== currentText) {
+      observer.disconnect();
+      currentObserver = null;
+    }
+  });
+  observer.observe(source, { attributes: true, attributeFilter: ['style', 'class'] });
+  observer.observe(source.parentElement, { attributes: true, attributeFilter: ['style', 'class'] });
+  currentObserver = observer;
 }
 
 /** @param {MouseEvent} event  */
@@ -33,10 +51,12 @@ function hide(event) {
     !event.target.dataset ||
     !contains(keys, Object.keys(event.target.dataset))
   ) return;
-  tip.hidePopover();
+  close();
 }
 
 export function close() {
+  currentObserver?.disconnect();
+  currentObserver = null;
   tip.hidePopover();
 }
 
