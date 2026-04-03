@@ -60,7 +60,7 @@
           <div data-editing="name">
             <fieldset>
               <legend>Name</legend>
-              <input type="text" name="name" />
+              <input type="text" name="name" autocomplete="off" />
             </fieldset>
             <fieldset class="soul" data-extra="soul">
               <legend>Soul</legend>
@@ -73,7 +73,7 @@
               <div class="keywords"></div>
             </fieldset>
             <fieldset>
-              <legend>Custom</legend>
+              <legend>Advanced</legend>
               <div class="keywords">
                 <span data-insert="_[]_">_Words to underline_</span>
                 <span data-insert="{[]}">{<span class="cardName">Card name</span>}</span>
@@ -81,7 +81,7 @@
                 <span data-insert="{{stats|[]}}">{{stats|<span class="COST" data-extra="||">cost</span>|<span class="attack" data-extra="|">attack</span>|<span class="health">health</span>}}</span>
                 <span data-insert="{{switch|[]}}">{{switch|<span class="switchLeft">text</span>|left}}</span>
                 <span data-insert="{{switch|[]|right}}">{{switch|<span class="switchRight">text</span>|right}}</span>
-                <span>\bypass</span>
+                <span data-ignore>\bypass</span>
               </div>
             </fieldset>
           </div>

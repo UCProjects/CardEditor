@@ -4,11 +4,12 @@ export default class Module extends EventEmitter {
   /** @type {import('./editor.js').default} */
   #editor;
   /** @type {AbortController?} */
-  #controller;
+  #controller = new AbortController();
 
   constructor(instance) {
     super();
     this.#editor = instance;
+    this.#controller.signal.addEventListener('abort', () => this.#controller = new AbortController());
   }
 
   get container() {
@@ -29,9 +30,6 @@ export default class Module extends EventEmitter {
 
   // TODO: simplify this?
   init() {
-    this.#controller?.abort();
-    this.#controller = new AbortController();
-
     const { container, element, instance, signal } = this;
 
     // Bind generic events
@@ -66,7 +64,7 @@ export default class Module extends EventEmitter {
     }, { signal });
 
     // Keywords
-    container.querySelectorAll('.keywords > span').forEach(
+    container.querySelectorAll('.keywords > span:not([data-ignore])').forEach(
       /** @param {HTMLSpanElement} el  */
       (el) => {
         el.addEventListener('click', (e) => {
@@ -85,7 +83,7 @@ export default class Module extends EventEmitter {
             const close = insert.indexOf(']');
             const first = insert.substring(0, open);
             const last = insert.substring(close + 1);
-            const text = insert.substring(open + 1, close) || value.substring(start, end);
+            const text = value.substring(start, end) || insert.substring(open + 1, close);
             descriptionInput.value = `${before}${first}${text}${extra}${last}${after}`;
             const offset = start + open;
             descriptionInput.selectionStart = offset;
@@ -102,7 +100,6 @@ export default class Module extends EventEmitter {
   }
 
   unload() {
-    this.#controller?.abort();
-    this.#controller = null;
+    this.#controller.abort();
   }
 }
