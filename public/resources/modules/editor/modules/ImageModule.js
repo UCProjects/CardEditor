@@ -69,7 +69,6 @@ export default class ImageModule extends Module {
 
     // File handling
     {
-      const abort = new AbortController();
       const input = file.querySelector('input');
       const warn = file.querySelector('.warn').classList;
       let pendingFile = false;
@@ -79,7 +78,6 @@ export default class ImageModule extends Module {
         if (!upload) return;
         const id = add({
           file: upload,
-          name: upload.name,
           type: element.type === Elements.Card ? ImageType.Avatar : ImageType.Artifact,
         });
         link.querySelector('input').value = getURL(id);
@@ -87,13 +85,11 @@ export default class ImageModule extends Module {
         pendingFile = upload;
       }, { signal });
       instance.on('save', () => {
-        abort.abort();
         if (!pendingFile) return;
         const id = element.image;
         if (!hasFile(id, pendingFile)) return;
         save(id);
-      }, { signal: abort.signal });
-      instance.on('close', () => abort.abort(), { signal: abort.signal });
+      }, { signal });
     }
 
     this.on('click', (type) => {
