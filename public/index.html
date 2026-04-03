@@ -188,7 +188,7 @@
         </ul>
       </div>
       <div data-page="images">
-        <input name="image_search" type="search" placeholder="Search..." />
+        <input name="filter" type="search" placeholder="Search..." />
         <ul></ul>
       </div>
       <div data-page="settings">
@@ -352,6 +352,24 @@
           <span class="setting"></span>
           <span class="setting-name"></span>
         </label>
+      </div>
+    </template>
+    <template id="select">
+      <div class="select-wrapper">
+        <div class="select-field">
+          <input
+            name="select"
+            type="text"
+            class="select-input"
+            autocomplete="off"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-autocomplete="list"
+            aria-controls="select-list"
+          />
+          <button class="btn material-icons" tabindex="-1" aria-label="Toggle list">arrow_drop_down</button>
+        </div>
+        <ul class="select-list hidden" role="listbox"></ul>
       </div>
     </template>
     <template id="version">3.0.0</template>
