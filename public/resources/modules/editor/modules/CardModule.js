@@ -43,7 +43,7 @@ export default class CardModule extends Module {
 
     // Stats
     const enableSoul = element.isSpell() || monsterSoul.enabled;
-    container.querySelectorAll('[data-extra]').forEach((el) => {
+    container.querySelectorAll('[data-extra]:not([data-insert] > [data-extra])').forEach((el) => {
       const { extra } = el.dataset;
       el.classList.toggle('hidden', extra === 'soul' ? !enableSoul : element.isSpell());
     });
