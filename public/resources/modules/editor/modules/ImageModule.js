@@ -1,36 +1,62 @@
 import { Elements } from '../../elements/types.js';
-import { add, hasFile, getURL, ImageType, save } from '../../imageBank.js';
+import { add, hasFile, getURL, ImageType, save, getName } from '../../imageBank.js';
+import Select from '../../select/index.js';
 import Module from '../Module.js';
 
+function img(src) {
+  const ret = document.createElement('img');
+  ret.src = src;
+  return ret;
+}
+
+function span(text) {
+  const ret = document.createElement('span');
+  ret.textContent = text;
+  return ret;
+}
+
 export default class ImageModule extends Module {
+  static #select = new Select(document.querySelector('#editor [data-editing="image"] [data-select]'), {
+    renderer(opt, label) {
+      if (['url', 'upload'].includes(opt)) {
+        return span(label);
+      }
+      const div = document.createElement('div');
+      const url = getURL(opt);
+      if (url) div.append(img(url));
+      div.append(span(label));
+      return div;
+    },
+    getLabel(opt) {
+      if (opt === 'url') return 'Link';
+      if (opt === 'upload') return 'File';
+      return getName(opt) || opt;
+    }
+  });
+
   init() {
     super.init();
 
     const { container, instance, element, signal } = this;
+    const select = ImageModule.#select;
 
     function update(value) {
       instance.update(value, 'image');
     }
 
-    // TODO load images from bank
-    const select = container.querySelector('select[name="image"]');
-    const blank = select.querySelector('[value=""]');
     const file = container.querySelector('fieldset[name="upload"]');
     const link = container.querySelector('fieldset[name="url"]');
 
-    const isBlob = getURL(element.image).startsWith('blob:');
-    const isURL = element.image.startsWith('http') || isBlob;
-
-    select.value = isURL ? 'url' : element.image || '';
+    const isURL = element.image.startsWith('http');
 
     container.querySelectorAll('[data-editing="image"] .warn').forEach((el) => el.classList.add('hidden'));
     file.classList.add('hidden');
     link.classList.toggle('hidden', !isURL);
-    blank.classList.toggle('hidden', select.value !== '');
 
-    select.addEventListener('change', () => {
-      blank.classList.add('hidden');
-
+    select.options = this.#getOptions();
+    select.placeholder = 'Select an image...';
+    select.value = isURL ? 'url' : element.image || '';
+    select.on('change', () => {
       const { value } = select;
       const isFile = value === 'upload';
       const isLink = value === 'url';
@@ -80,7 +106,8 @@ export default class ImageModule extends Module {
           file: upload,
           type: element.type === Elements.Card ? ImageType.Avatar : ImageType.Artifact,
         });
-        link.querySelector('input').value = getURL(id);
+        select.options = this.#getOptions();
+        select.value = id;
         update(id);
         pendingFile = upload;
       }, { signal });
@@ -96,5 +123,13 @@ export default class ImageModule extends Module {
       if (type !== 'image' || select.value !== 'url') return;
       link.querySelector('input').focus();
     });
+  }
+
+  #getOptions() {
+    return ['url', 'upload', ...this.getImages()];
+  }
+
+  getImages() {
+    return [];
   }
 }

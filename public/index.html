@@ -103,14 +103,7 @@
             <fieldset>
               <legend data-type="card">Avatar</legend>
               <legend data-type="text">Image</legend>
-              <select name="image" class="stretch">
-                <option value=""></option>
-                <option value="url">Link</option>
-                <option value="upload">File</option>
-                <optgroup label="Vanilla" data-type="card"></optgroup>
-                <optgroup label="Images" data-type="card"></optgroup>
-                <optgroup label="Images" data-type="text"></optgroup>
-              </select>
+              <div data-select></div>
             </fieldset>
             <fieldset name="upload" class="hidden external" >
               <legend>File</legend>
@@ -367,9 +360,9 @@
             aria-autocomplete="list"
             aria-controls="select-list"
           />
-          <button class="btn material-icons" tabindex="-1" aria-label="Toggle list">arrow_drop_down</button>
+          <button class="btn material-icons" tabindex="-1" aria-label="Toggle list">keyboard_arrow_down</button>
         </div>
-        <ul class="select-list hidden" role="listbox"></ul>
+        <ul class="select-list" role="listbox" popover="manual"></ul>
       </div>
     </template>
     <template id="version">3.0.0</template>
