@@ -29,7 +29,7 @@ export default class ImageModule extends Module {
     },
     getLabel(opt) {
       if (opt === 'url') return 'Link';
-      if (opt === 'upload') return 'File';
+      if (opt === 'upload') return 'New File';
       return getName(opt) || opt;
     }
   });
