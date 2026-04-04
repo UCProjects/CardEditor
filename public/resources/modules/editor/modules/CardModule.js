@@ -1,3 +1,4 @@
+import { getAll, ImageType } from '../../imageBank.js';
 import settings from '../../settings.js';
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
@@ -37,7 +38,7 @@ export default class CardModule extends Module {
       input.addEventListener('input', () => {
         const value = clampNumber(input.value);
         input.value = value;
-        editor.update(value, input.name);
+        editor.update(value, key);
       }, { signal });
     });
 
@@ -191,5 +192,22 @@ export default class CardModule extends Module {
     });
 
     empty.classList.toggle('hidden', effects.size);
+  }
+
+  getImages() {
+    const images = Object.entries(getAll(ImageType.Avatar));
+    return [{
+      label: 'Your Avatars',
+      items: images.map(([key, item]) => {
+        if (typeof item === 'string') return null;
+        return key;
+      }).filter(Boolean),
+    }, {
+      label: 'Vanilla',
+      items: images.map(([key, item]) => {
+        if (typeof item === 'string') return key;
+        return null;
+      }).filter(Boolean),
+    }];
   }
 }

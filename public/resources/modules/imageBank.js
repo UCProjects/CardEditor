@@ -64,12 +64,19 @@ export function rename(id, name) {
   return false;
 }
 
+export function getName(id) {
+  const store = images.get(id);
+  if (!store) return store;
+  return store.name || store.file?.name;
+}
+
 /**
  * @param {ImageTypes} type
  * @param {boolean} [strict]
  * @returns {Record<string, ImageStore>}
  */
 export function getAll(type, strict = false) {
+  if (!type) return Object.fromEntries(images.entries());
   const includeAvatars = type === ImageType.Avatar;
   return Object.fromEntries([
     ...(includeAvatars ? avatars.entries() : []),
@@ -91,7 +98,7 @@ export function getURL(id, ofType, strict = false) {
   if (!id) return '';
   if (id.startsWith('http')) return id;
   if (avatars.has(id) && (!ofType || ofType === ImageType.Avatar)) {
-    return `/resources/avatar/${avatars.get(id)}.png`;
+    return `/resources/images/avatars/${avatars.get(id)}.png`;
   }
   const store = images.get(id) || {};
   const { src = '', type, file } = store || {};
