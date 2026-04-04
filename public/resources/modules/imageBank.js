@@ -50,7 +50,7 @@ export function add(data) {
   if (images.has(id)) return false;
   if (uuidValidate(id) && !uuidValidateV6(id)) throw new Error(`Invalid ID: ${JSON.stringify(data)}`);
   if (!(store.src || store.file)) throw new Error(`Malformed data: ${JSON.stringify(data)}`);
-  if (data.type && !hasValue(ImageType,data.type)) throw new Error(`Unknown data type: ${data.type}`);
+  if (data.type && !hasValue(ImageType, data.type)) throw new Error(`Unknown data type: ${data.type}`);
   images.set(id, store);
   return id;
 }
@@ -71,7 +71,7 @@ export function getName(id) {
 }
 
 /**
- * @param {ImageTypes} type
+ * @param {ImageTypes} [type]
  * @param {boolean} [strict]
  * @returns {Record<string, ImageStore>}
  */
