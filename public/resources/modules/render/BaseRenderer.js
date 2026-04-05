@@ -3,6 +3,7 @@ import { Elements } from '../elements/types.js';
 import EventEmitter from '../eventManager.js';
 import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
+import style2 from '../../styles/description.css' with { type: 'css' };
 import saveImage from '../save.js';
 import { register, save } from '../elements/registry.js';
 import { isOpen as isArchiveOpen } from '../archive/index.js';
@@ -10,7 +11,7 @@ import { adoptStyle } from '../utils/funcs.js';
 
 /** @typedef {import('../elements/BaseElement.js').default} BaseElement */
 
-adoptStyle(style);
+adoptStyle(style, style2);
 
 const menuHTML = document.querySelector('template#menu').innerHTML;
 

@@ -1,6 +1,8 @@
-export function adoptStyle(sheet) {
+export function adoptStyle(...sheets) {
   const styles = document.adoptedStyleSheets;
-  if (!styles.includes(sheet)) styles.push(sheet);
+  sheets.forEach((sheet) => {
+    if (!styles.includes(sheet)) styles.push(sheet);
+  });
 }
 
 export function removeClass(...classes) {
