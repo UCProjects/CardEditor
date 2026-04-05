@@ -1,5 +1,5 @@
 import { uuidV4 } from '../3rdparty/uuid.js';
-import EventEmitter from '../eventManager.js';
+import EventEmitter from '../utils/EventEmitter.js';
 import { match } from '../utils/array.js';
 
 /** @typedef {typeof import('./types.js').Elements} Elements */

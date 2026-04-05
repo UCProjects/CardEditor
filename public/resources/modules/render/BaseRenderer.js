@@ -1,6 +1,6 @@
 import editor from '../editor/editor.js';
 import { Elements } from '../elements/types.js';
-import EventEmitter from '../eventManager.js';
+import EventEmitter from '../utils/EventEmitter.js';
 import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
 import style2 from '../../styles/description.css' with { type: 'css' };
