@@ -1,4 +1,4 @@
-import EventEmitter from '../eventManager.js';
+import EventEmitter from '../utils/EventEmitter.js';
 
 export default class Module extends EventEmitter {
   /** @type {import('./editor.js').default} */

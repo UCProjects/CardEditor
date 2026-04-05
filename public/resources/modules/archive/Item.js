@@ -1,6 +1,6 @@
 /** @typedef {import('../elements/BaseElement.js').default} Element */
 
-import EventEmitter from '../eventManager.js';
+import EventEmitter from '../utils/EventEmitter.js';
 
 export default class Item extends EventEmitter {
   /** @type {Element} */

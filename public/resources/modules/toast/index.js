@@ -1,5 +1,5 @@
 import style from '../../styles/toast.css' with { type: 'css' };
-import EventEmitter from '../eventManager.js';
+import EventEmitter from '../utils/EventEmitter.js';
 import { adoptStyle } from '../utils/funcs.js';
 
 adoptStyle(style);
