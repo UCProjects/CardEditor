@@ -4,7 +4,7 @@ import EventEmitter from '../utils/EventEmitter.js';
 import { getHTMLDescription } from './util.js';
 import style from '../../styles/menu.css' with { type: 'css' };
 import style2 from '../../styles/description.css' with { type: 'css' };
-import saveImage from '../save.js';
+import saveImage from '../3rdparty/saveImage.js';
 import { register, save } from '../elements/registry.js';
 import { isOpen as isArchiveOpen } from '../archive/index.js';
 import { adoptStyle } from '../utils/funcs.js';
