@@ -1,3 +1,7 @@
+:root {
+  --ARTIFACT: rgb(66, 139, 202);
+}
+
 .group .element.text {
   grid-column: span 4;
   justify-self: stretch;
@@ -17,7 +21,7 @@
 }
 
 .element.text .artifact > header {
-  background-color: #428bca;
+  background-color: var(--ARTIFACT);
   padding: 15px;
 }
 
