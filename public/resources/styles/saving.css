@@ -1,6 +1,6 @@
 .group.saving {
   margin: 0;
-  background-color: #000;
+  background-color: var(--background);
 }
 
 .group.saving .content {

@@ -48,9 +48,9 @@
   padding: 10px;
   margin: 10px;
   background: none;
-  border: 2px solid white;
+  border: 2px solid var(--border);
   border-radius: 8px;
-  color: white;
+  color: var(--text);
   font-size: 20px;
 }
 

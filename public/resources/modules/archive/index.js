@@ -39,3 +39,8 @@ function setActive(page) {
 archive.querySelectorAll('input[name="page"]').forEach((el) => {
   el.addEventListener('change', () => setActive(el.id));
 });
+
+document.addEventListener('mousedown', (e) => {
+  if (!isOpen() || archive.contains(e.target) || e.target.closest('dialog')) return;
+  archive.hidePopover();
+});
