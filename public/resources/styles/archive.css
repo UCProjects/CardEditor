@@ -140,8 +140,8 @@
   font-size: 1rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 5px;
+  color: var(--BASE);
+  margin-top: 10px;
 }
 
 .archive li.group-label:first-child {
