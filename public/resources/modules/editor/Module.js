@@ -3,13 +3,12 @@ import EventEmitter from '../eventManager.js';
 export default class Module extends EventEmitter {
   /** @type {import('./editor.js').default} */
   #editor;
-  /** @type {AbortController?} */
+  /** @type {AbortController} */
   #controller = new AbortController();
 
   constructor(instance) {
     super();
     this.#editor = instance;
-    this.#controller.signal.addEventListener('abort', () => this.#controller = new AbortController());
   }
 
   get container() {
@@ -28,7 +27,6 @@ export default class Module extends EventEmitter {
     return this.#controller.signal;
   }
 
-  // TODO: simplify this?
   init() {
     const { container, element, instance, signal } = this;
 
@@ -101,5 +99,6 @@ export default class Module extends EventEmitter {
 
   unload() {
     this.#controller.abort();
+    this.#controller = new AbortController();
   }
 }
