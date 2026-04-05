@@ -1,4 +1,4 @@
-import EventEmitter from './eventManager.js';
+import EventEmitter from './utils/EventEmitter.js';
 import { getSettings, setSettings } from './utils/storage.js';
 
 /**

@@ -1,5 +1,5 @@
 import style from '../../styles/editor.css' with { type: 'css' };
-import EventEmitter from '../eventManager.js';
+import EventEmitter from '../utils/EventEmitter.js';
 import CardModule from './modules/CardModule.js';
 import TextModule from './modules/TextModule.js';
 import GroupModule from './modules/GroupModule.js';

@@ -1,5 +1,5 @@
 import { uuidV6, uuidValidate, uuidValidateV6 } from './3rdparty/uuid.js';
-import EventEmitter from './eventManager.js';
+import EventEmitter from './utils/EventEmitter.js';
 import { hasValue } from './utils/funcs.js';
 import { set as setImage, remove as removeImage } from './utils/imageDB.js';
 
