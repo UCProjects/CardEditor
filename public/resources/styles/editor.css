@@ -245,5 +245,5 @@ fieldset.soul {
 
 #editor .keywords > span:not(:last-child)::after {
   content: ';';
-  color: rgb(128, 128, 128);
+  color: var(--BASE);
 }
