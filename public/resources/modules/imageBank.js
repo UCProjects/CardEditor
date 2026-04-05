@@ -1,10 +1,13 @@
 import { uuidV6, uuidValidate, uuidValidateV6 } from './3rdparty/uuid.js';
+import EventEmitter from './eventManager.js';
 import { hasValue } from './utils/funcs.js';
-import { set as setImage } from './utils/imageDB.js';
+import { set as setImage, remove as removeImage } from './utils/imageDB.js';
 
 export const ready = Promise.all([
   fetchAvatars(),
 ]);
+
+export const events = new EventEmitter();
 
 export const ImageType = Object.freeze({
   Avatar: 'avatar',
@@ -52,7 +55,17 @@ export function add(data) {
   if (!(store.src || store.file)) throw new Error(`Malformed data: ${JSON.stringify(data)}`);
   if (data.type && !hasValue(ImageType, data.type)) throw new Error(`Unknown data type: ${data.type}`);
   images.set(id, store);
+  events.emit('new', { id, ...store });
   return id;
+}
+
+/**  @param {string} key */
+export async function remove(key) {
+  const store = images.get(key);
+  if (!store?.file || !images.delete(key)) return;
+  URL.revokeObjectURL(store.src);
+  await removeImage(key);
+  events.emit('remove', key);
 }
 
 export function rename(id, name) {
@@ -101,7 +114,7 @@ export function getURL(id, ofType, strict = false) {
     return `/resources/images/avatars/${avatars.get(id)}.png`;
   }
   const store = images.get(id) || {};
-  const { src = '', type, file } = store || {};
+  const { src = '', type, file } = store;
   if (ofType && (type ? type !== ofType : strict)) return '';
   if (src) return src;
   if (file) {
