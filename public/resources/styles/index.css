@@ -92,3 +92,17 @@ img[src=""] {
   background-size: .8rem .8rem;
   outline: 1px solid white;
 }
+
+.smallIcon, .smallerIcon {
+    margin: 2px;
+}
+
+.smallIcon {
+    max-height: 16px;
+    max-width: 16px;
+}
+
+.smallerIcon {
+    max-height: 14px;
+    max-width: 14px;
+}

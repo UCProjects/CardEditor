@@ -9,7 +9,7 @@ export default async function save(element, as) {
   element.classList.add('saving');
   const url = await tryOrError(
     () => toPng(element, { filter, backgroundColor: 'var(--background)' }),
-    'Failed to convert to image',
+    'Failed to generate image',
   );
   element.classList.remove('saving');
   if (!url) return;

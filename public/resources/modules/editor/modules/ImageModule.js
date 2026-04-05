@@ -1,19 +1,8 @@
 import { Elements } from '../../elements/types.js';
 import { add, hasFile, getURL, ImageType, save, getName } from '../../imageBank.js';
 import Select from '../../select/index.js';
+import { img, span } from '../../utils/html.js';
 import Module from '../Module.js';
-
-function img(src) {
-  const ret = document.createElement('img');
-  ret.src = src;
-  return ret;
-}
-
-function span(text) {
-  const ret = document.createElement('span');
-  ret.textContent = text;
-  return ret;
-}
 
 export default class ImageModule extends Module {
   static #select = new Select(document.querySelector('#editor [data-editing="image"] [data-select]'), {

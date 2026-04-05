@@ -2,6 +2,12 @@
   --background: rgb(0, 0, 0);
 }
 
+/* Undercards styling */
+@font-face {
+    font-family: 'DTM-Mono';
+    src: url('./DTM-Mono.otf') format('truetype');
+}
+
 body {
   background-color: var(--background);
   color: var(--text);
