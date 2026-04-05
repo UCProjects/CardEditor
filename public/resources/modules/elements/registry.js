@@ -56,7 +56,7 @@ export function register(element) {
 export function remove(element) {
   const key = element.id;
   removeElement(key);
-  data.delete(key);
+  if (!data.delete(key)) return;
   events.emit('remove', element);
 }
 

@@ -79,7 +79,7 @@
   gap: 10px;
 }
 
-.archive div > ul > li:nth-child(even of :not(.hidden)) {
+.archive div > ul > li:nth-child(even of :not(.hidden, .group-label)) {
   background-color: rgb(31, 31, 31);
 }
 
@@ -134,4 +134,16 @@
 .archive label,
 .archive button {
   cursor: pointer;
+}
+
+.archive li.group-label {
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.archive li.group-label:first-child {
+  margin-top: 0;
 }
