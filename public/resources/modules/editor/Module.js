@@ -1,14 +1,21 @@
+import Picker from '../color/picker.js';
+import { isFullHex } from '../utils/color.js';
 import EventEmitter from '../utils/EventEmitter.js';
+
+const NAV_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
 
 export default class Module extends EventEmitter {
   /** @type {import('./editor.js').default} */
   #editor;
   /** @type {AbortController} */
   #controller = new AbortController();
+  #picker;
 
   constructor(instance) {
     super();
     this.#editor = instance;
+
+    this.#picker = new Picker(this.container.querySelector('textarea[name="description"]'));
   }
 
   get container() {
@@ -29,6 +36,7 @@ export default class Module extends EventEmitter {
 
   init() {
     const { container, element, instance, signal } = this;
+    const picker = this.#picker;
 
     // Bind generic events
     container.querySelectorAll('input[name]:not([type="file"], [type="number"], .external > input)').forEach((input) => {
@@ -43,10 +51,59 @@ export default class Module extends EventEmitter {
     const descriptionInput = container.querySelector('textarea[name="description"]');
     descriptionInput.value = element.description;
     function updateDescription() {
-      // TODO strip open ended brackets from value?
       instance.update(descriptionInput.value, 'description');
+      if (picker.isOpen) return;
+      const pos = descriptionInput.selectionStart - 1;
+      if (descriptionInput.value[pos] === '#') picker.open({ pos });
     }
     descriptionInput.addEventListener('input', updateDescription, { signal });
+
+
+    function colorTokenAtCursor() {
+      const value = descriptionInput.value;
+      const pos = descriptionInput.selectionStart;
+      const start = value.lastIndexOf('{', pos) + 1;
+      if (!start) return null;
+      const close = value.indexOf('}', start);
+      if (!!~close && close < pos) return null;
+      const text = value.substring(start, pos);
+      const [color, ...rest] = text.split('|');
+      if (rest.length > 1) return null;
+      const hash = color[0] === '#';
+      const hex = color.substring(hash);
+      return {
+        pos: start,
+        hex: isFullHex(hex) ? hex : null,
+        focus: start + color.length >= pos,
+      };
+    }
+
+    descriptionInput.addEventListener('keyup', (e) => {
+      if (picker.isOpen || !NAV_KEYS.has(e.key)) return;
+      const token = colorTokenAtCursor();
+      if (token) picker.open(token);
+    }, { signal });
+
+    descriptionInput.addEventListener('keydown', (e) => {
+      if (!picker.isOpen) return;
+      if (e.key === 'ENTER' || e.key === 'TAB') {
+        e.preventDefault();
+        picker.close(true);
+      } else if (e.key === 'ESCAPE') {
+        e.preventDefault();
+        e.stopPropagation();
+        picker.close(false);
+      }
+    }, { signal });
+
+    descriptionInput.addEventListener('click', (e) => {
+      if (picker.isOpen) return;
+      setTimeout(() => {
+        if (picker.isOpen) return;
+        const token = colorTokenAtCursor();
+        if (token) picker.open(token);
+      });
+    }, { signal });
 
     // Generic hide soul
     container.querySelector('fieldset.soul').classList.add('hidden');
@@ -83,18 +140,23 @@ export default class Module extends EventEmitter {
             const last = insert.substring(close + 1);
             const text = value.substring(start, end) || insert.substring(open + 1, close);
             descriptionInput.value = `${before}${first}${text}${extra}${last}${after}`;
-            const offset = start + open;
-            descriptionInput.selectionStart = offset;
-            descriptionInput.selectionEnd = offset + text.length;
+            let offset = start + open;
             if (insert.includes('#')) {
-              // TODO color picker
+              picker.open({
+                pos: start + insert.indexOf('#'),
+                focus: false,
+              });
+              offset += 6;
             }
+            descriptionInput.setSelectionRange(offset, offset + text.length);
           }
           updateDescription();
           descriptionInput.focus();
         }, { signal });
       },
     );
+
+    picker.on('updated', updateDescription, { signal });
   }
 
   unload() {
