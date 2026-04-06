@@ -312,6 +312,7 @@ function initDrop(container, allowGroups = false) {
     const { id, type } = dragSrc.dataset;
     const isGroup = type === Elements.Group;
     const item = isGroup ? groups.get(id) : items.get(id);
+    if (item.trashed) item.emit('restore');
     if (isGroup) {
       const renderer = item.element.renderer();
       App.addGroup(renderer);
