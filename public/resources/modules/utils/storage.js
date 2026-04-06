@@ -3,11 +3,22 @@ const DATA = 'data:';
 
 const keys = {
   element: (id) => `${DATA}el:${id}`,
+  colors: `${APP}colors`,
   groups: `${APP}groups`,
   setting: (key) => `${APP}setting:${key}`, // TODO
   settings: `${APP}settings`,
   version: `${APP}version`,
 };
+
+/** @returns {string[]} */
+export function getColors() {
+  const data = localStorage.getItem(keys.colors);
+  return data ? JSON.parse(data) : [];
+}
+
+export function setColors(colors) {
+  localStorage.setItem(keys.colors, JSON.stringify(colors));
+}
 
 /** @returns {string[]} */
 export function getGroups() {
