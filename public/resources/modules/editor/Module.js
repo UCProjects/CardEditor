@@ -63,7 +63,7 @@ export default class Module extends EventEmitter {
       const value = descriptionInput.value;
       const pos = descriptionInput.selectionStart;
       const start = value.lastIndexOf('{', pos) + 1;
-      if (!start) return null;
+      if (!start || pos < start) return null;
       const close = value.indexOf('}', start);
       if (!!~close && close < pos) return null;
       const text = value.substring(start, pos);
@@ -86,10 +86,10 @@ export default class Module extends EventEmitter {
 
     descriptionInput.addEventListener('keydown', (e) => {
       if (!picker.isOpen) return;
-      if (e.key === 'ENTER' || e.key === 'TAB') {
+      if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
         picker.close(true);
-      } else if (e.key === 'ESCAPE') {
+      } else if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
         picker.close(false);
