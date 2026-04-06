@@ -64,7 +64,7 @@ function addSwatch(color, insert = false) {
 
 function buildSwatches() {
   recent.innerHTML = '';
-  for (let i = 0, count = 10 - swatches.length; i < PRESETS.length && count > 0; i++) {
+  for (let i = 0, count = 16 - swatches.length; i < PRESETS.length && count > 0; i++) {
     const color = PRESETS[i];
     if (swatches.includes(color)) continue;
     addSwatch(color);
@@ -139,9 +139,11 @@ export default class Picker extends EventEmitter {
 
     this.#controller.abort();
     this.#controller = new AbortController();
+
+    this.#editor.focus();
   }
 
-  apply(color, commit = true, focus = true) {
+  apply(color, commit = true, move = true) {
     if (color.length !== 6) return;
     input.value = color.toUpperCase();
     const current = color.toLowerCase();
@@ -150,21 +152,23 @@ export default class Picker extends EventEmitter {
     native.value = full;
     confirm.style.color = full;
     this.#current = current;
-    if (commit) this.commit(color, focus);
+    if (commit) this.commit(color, move);
   }
 
-  commit(color = '', focus = true) {
+  commit(color = '', move = this.#position === this.#editor.selectionStart) {
     if (this.#position < 0) return;
     const pos = this.#position;
     const text = this.#editor.value;
     const isHash = text[pos] === '#';
     const tail = text.substring(pos + isHash);
     const [written = ''] = tail.match(/^[^|]*/) || [];
-    this.#editor.value = `${text.substring(0, pos)}${color ? '#' : ''}${color}${tail.substring(written.length)}`;
+    const hasColor = !!color;
+    const isNotPipe = hasColor && tail[written.length] !== '|';
+    this.#editor.value = `${text.substring(0, pos)}${hasColor ? '#' : ''}${color}${isNotPipe ? '|}' : ''}${tail.substring(written.length)}`;
     const { isNew, button } = addSwatch(color);
     if (isNew) this.#initButton(button);
-    if (focus) {
-      const end = pos + color.length + (color !== '' && isHash);
+    const end = pos + color.length + (hasColor && isHash) + isNotPipe;
+    if (move || (this.#editor.selectionStart >= pos && this.#editor.selectionStart < end)) {
       this.#editor.setSelectionRange(end, end);
     }
     this.emit('updated');
@@ -194,7 +198,7 @@ export default class Picker extends EventEmitter {
     const opts = { signal: this.#controller.signal };
     confirm.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      this.close();
+      this.close(true);
     }, opts);
     cancel.addEventListener('mousedown', (e) => {
       e.preventDefault();
