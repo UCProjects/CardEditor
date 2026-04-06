@@ -18,7 +18,7 @@ export const ImageType = Object.freeze({
 });
 
 /**
- * @typedef {typeof ImageType[keyof ImageType]} ImageTypes
+ * @typedef {typeof ImageType[keyof typeof ImageType]} ImageTypes
  *
  * @typedef {{
  *  id?: string;
