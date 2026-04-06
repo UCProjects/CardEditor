@@ -15,7 +15,10 @@ export default class Item extends EventEmitter {
 
     this.element
       .on('archived', () => this.emit('archived'))
-      .on('delete', () => this.emit('trash'))
+      .on('delete', () => {
+        this.emit('archived');
+        this.emit('trash');
+      })
       .on('newGroup', (newGroup) => this.group = newGroup)
       .on('updated', () => this.emit('update'));
   }
