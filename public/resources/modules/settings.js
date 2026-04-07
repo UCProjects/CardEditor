@@ -5,6 +5,7 @@ import { getSettings, setSettings } from './utils/storage.js';
  * @typedef {{
  *  key: string;
  *  name: string;
+ *  checked?: boolean;
  * }} SettingInfo
  *
  * @typedef {SettingInfo & {
@@ -23,7 +24,8 @@ class Settings extends EventEmitter {
   #settings = new Map(baseSettings.map((setting) => [setting.key, setting]));
 
   get(key) {
-    return this.#settings.get(key);
+    const setting = this.#settings.get(key);
+    return setting ? { ...setting } : null;
   }
 
   getAll() {
@@ -34,13 +36,17 @@ class Settings extends EventEmitter {
   }
 
   load() {
-    this.#settings.forEach((setting) => this.set(setting.key, getSettings().includes(setting.key)));
+    const settings = getSettings();
+    this.#settings.forEach(({ checked = false, key }) => this.set(
+      key,
+      settings.includes(key) !== checked,
+    ));
   }
 
   save() {
     const settings = [];
-    this.#settings.forEach((setting) => {
-      if (setting.enabled) settings.push(setting.key);
+    this.#settings.forEach(({ checked = false, enabled = false, key }) => {
+      if (enabled !== checked) settings.push(key);
     });
     setSettings(settings);
   }
@@ -48,7 +54,7 @@ class Settings extends EventEmitter {
   set(key, enabled = false) {
     const setting = this.get(key);
     if (!setting) return;
-    const current = setting.enabled ?? false;
+    const { enabled: current = false } = setting;
     if (current === enabled) return;
     setting.enabled = enabled;
     this.emit(key, enabled, current);
