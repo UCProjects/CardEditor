@@ -26,10 +26,10 @@ async function updateFile(path, data) {
   const existing = JSON.parse(file.toString());
 
   // Combine with existing data
-  const newData = Array.isArray(existing) ? new Set([
+  const newData = Array.isArray(data) ? [...new Set([
     ...existing,
     ...data,
-  ]).values() : {
+  ]).values()] : {
     ...existing,
     ...data,
   };
