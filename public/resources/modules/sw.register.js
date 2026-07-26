@@ -1,11 +1,10 @@
 export default function register() {
   return new Promise((res) => {
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
       if ('serviceWorker' in navigator) {
-        res(navigator.serviceWorker.register('/service-worker.js'));
-      } else {
-        res();
+        await navigator.serviceWorker.register('/service-worker.js');
       }
+      res();
     });
   });
 }

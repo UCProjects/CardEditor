@@ -1,6 +1,6 @@
 name: Update resources
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   schedule:
     - cron: 5 4 2,16 * *
 jobs:
@@ -11,12 +11,12 @@ jobs:
       pushed: ${{ steps.push.outputs.pushed }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: master
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v5
         with:
-          node-version: 16
+          node-version: 24
       - run: npm clean-install
       - name: Download resources
         run: node scripts/downloadResources.js

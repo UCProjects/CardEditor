@@ -1,0 +1,127 @@
+#picker {
+  position: fixed;
+  inset: unset;
+  background-color: var(--background);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  flex-direction: column;
+  gap: 10px;
+  width: 224px;
+  bottom: anchor(top);
+}
+
+#picker:popover-open {
+  display: flex;
+}
+
+#picker .picker-preview {
+  width: 100%;
+  height: 54px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+#picker .picker-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(45deg,#444 25%,transparent 25%),
+    linear-gradient(-45deg,#444 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#444 75%),
+    linear-gradient(-45deg,transparent 75%,#444 75%);
+  background-size: 10px 10px;
+  background-position: 0 0,0 5px,5px -5px,-5px 0;
+}
+
+#picker .picker-preview-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+#picker .picker-native {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+}
+
+#picker .picker-hex {
+  display: flex;
+  align-items: center;
+  background: #111115;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0 10px;
+  gap: 5px;
+}
+
+#picker .picker-hash {
+   color: rgb(96, 96, 117);
+   font-size: .85rem;
+   user-select: none;
+}
+
+#picker .picker-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: .85rem;
+  width: 100%;
+  padding: 6px 0;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+#picker .picker-recent {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+#picker .swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.08);
+  cursor: pointer;
+}
+
+#picker .picker-actions {
+  display: flex;
+  gap: 6px;
+}
+
+#picker .btn {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: .75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+#picker .btn:focus,
+#picker .btn:hover {
+  filter: brightness(0.82);
+}
+#picker .btn.confirm {
+  background: var(--background);
+}
+#picker .btn.cancel {
+  background: rgb(42, 42, 50);
+  color: rgb(96, 96, 117);
+}

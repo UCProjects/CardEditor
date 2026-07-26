@@ -1,21 +1,17 @@
-/* eslint-env serviceworker */
-/* global workbox */
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.4.0/workbox-sw.js');
+
+workbox.setConfig({
+  debug: new URLSearchParams(location.search).has('debug'),
+});
 
 workbox.core.setCacheNameDetails({
   prefix: 'undercard-editor',
 });
 
-// Cache index
+// Cache local files
 workbox.routing.registerRoute(
-  /index\.html$|\/$/,
+  /\.(?:js|css|json|html)$/,
   new workbox.strategies.NetworkFirst(),
-);
-
-// Cache local js/css files
-workbox.routing.registerRoute(
-  /\.(?:js|css)$/,
-  new workbox.strategies.StaleWhileRevalidate(),
 );
 
 // Cache 3rd party files
@@ -29,23 +25,6 @@ workbox.routing.registerRoute(
     cacheName: 'external',
   }),
 );
-
-// Cache images
-workbox.routing.registerRoute(
-  /\.(?:png|gif|jpg|jpeg|svg)$/,
-  new workbox.strategies.CacheFirst({
-    cacheName: 'images',
-    plugins: [
-      new workbox.expiration.Plugin({
-        maxEntries: 60,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
-      }),
-    ],
-  }),
-);
-
-// Offline analytics
-workbox.googleAnalytics.initialize();
 
 // Cache the Google Fonts stylesheets with a stale while revalidate strategy.
 workbox.routing.registerRoute(
@@ -61,11 +40,12 @@ workbox.routing.registerRoute(
   new workbox.strategies.CacheFirst({
     cacheName: 'google-fonts-webfonts',
     plugins: [
-      new workbox.cacheableResponse.Plugin({
+      new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [0, 200],
       }),
-      new workbox.expiration.Plugin({
+      new workbox.expiration.ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 365,
+        purgeOnQuotaError: true,
       }),
     ],
   }),
@@ -76,11 +56,24 @@ workbox.routing.registerRoute(
   new workbox.strategies.CacheFirst({
     cacheName: 'undercards-webfonts',
     plugins: [
-      new workbox.cacheableResponse.Plugin({
+      new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [0, 200],
       }),
-      new workbox.expiration.Plugin({
+      new workbox.expiration.ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 365,
+      }),
+    ],
+  }),
+);
+
+// Cache images
+workbox.routing.registerRoute(
+  ({ request }) => request.destination === 'image',
+  new workbox.strategies.CacheFirst({
+    cacheName: 'images',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
       }),
     ],
   }),

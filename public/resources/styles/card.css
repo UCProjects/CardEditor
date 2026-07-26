@@ -1,0 +1,143 @@
+:root {
+  --attack: rgb(255, 0, 0);
+  --border: rgb(255, 255, 255);
+  --cost: rgb(52, 185, 254);
+  --health: rgb(107, 204, 0);
+}
+
+.element > .card {
+  border: 2px solid var(--border);
+  color: var(--text);
+  width: 162px;
+  overflow: hidden;
+  box-sizing: border-box;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.card * {
+  margin: 0;
+}
+
+.top,
+.bottom {
+  display: flex;
+  height: 30px;
+}
+
+.card .name {
+  flex-grow: 2;
+  padding-left: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  align-content: center;
+}
+
+.card .top .cost {
+  width: 40px;
+  border-left: 2px solid var(--border);
+  font-size: 1.2rem;
+  margin-top: -4px;
+  color: var(--cost);
+  flex-shrink: 0;
+}
+
+.card .middle {
+  position: relative;
+}
+
+.card .image {
+  height: 88px;
+  width: -moz-available;
+  width: stretch;
+}
+
+.card .description {
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 2px 1px;
+  height: 80px;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.card .middle,
+.card .description,
+.card .bottom > * {
+  border-top: 2px solid var(--border);
+}
+
+.card .bottom .attack {
+  width: 40px;
+  border-right: 2px solid var(--border);
+  color: var(--attack);
+  font-size: 20px;
+}
+
+.card .bottom .rarity {
+  flex-grow: 2;
+  padding: 5px 0;
+}
+
+.card .bottom .health {
+  width: 40px;
+  border-left: 2px solid var(--border);
+  color: var(--health);
+  font-size: 20px;
+}
+
+.card .status,
+.card .tribes {
+  position: absolute;
+  right: 2px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.card .status {
+  top: 4px;
+  flex-wrap: wrap;
+}
+
+.card .tribes {
+  bottom: 4px;
+  display: flex;
+  flex-wrap: wrap-reverse;
+}
+
+.card .status > img,
+.card .tribes > img,
+.card .status > span {
+  margin-left: 2px;
+}
+
+.card .status img,
+.card .tribes img {
+  width: 16px;
+}
+
+.card .avatar {
+  width: 100%;
+  height: 100%;
+}
+
+.card.spell .bottom .health,
+.card.spell .bottom .attack {
+  display: none;
+}
+
+[data-overlay] {
+  position: relative;
+  text-shadow: var(--text-shadow);
+}
+
+[data-overlay]:not([data-overlay="0"])::before {
+  content: attr(data-overlay);
+  position: absolute;
+  font-family: segoe ui, monospace;
+  bottom: 0;
+  left: 0;
+  font-size: 11px;
+  color: var(--font);
+}

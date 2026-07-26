@@ -1,0 +1,108 @@
+:root {
+  --background-alt: rgb(255, 255, 255);
+  --border: rgb(255, 255, 255);
+  --text: rgb(255, 255, 255);
+  --text-alt: rgb(0, 0, 0);
+  --shadow-color: var(--background);
+  --text-shadow: -1px -1px 0 var(--shadow-color),
+    1px 1px 0 var(--shadow-color),
+    -1px 1px 0 var(--shadow-color),
+    1px -1px 0 var(--shadow-color);
+}
+
+* {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#app {
+  font-family: 'DTM-Mono';
+  max-width: 1372px;
+  margin: 0 auto;
+  position: relative;
+  anchor-name: --app;
+  min-height: 100vh;
+}
+
+a, a:visited {
+  color: var(--text);
+}
+
+.hidden,
+img[src=""] {
+    display: none;
+}
+
+.middle {
+  display: flex;
+  align-items: center;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.strike {
+  text-decoration: line-through;
+}
+
+.warn {
+  color: red;
+  font-weight: bold;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.material-symbols-outlined.fill {
+  font-variation-settings: 'FILL' 1;
+}
+
+.draggable-mirror {
+  background-color: var(--background);
+  z-index: 100;
+}
+
+.draggable--over {
+  --border: rgb(68, 202, 27);
+}
+
+.ghost {
+  position: absolute;
+  top: -9999px;
+}
+
+.drag-over {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--background) 0,
+    var(--background) 40%,
+    rgb(44, 47, 241) 0,
+    rgb(44, 47, 241) 50%,
+    var(--background) 0
+  );
+  background-size: .8rem .8rem;
+  outline: 1px solid white;
+}
+
+.smallIcon, .smallerIcon {
+    margin: 2px;
+}
+
+.smallIcon {
+    max-height: 16px;
+    max-width: 16px;
+}
+
+.smallerIcon {
+    max-height: 14px;
+    max-width: 14px;
+}

@@ -7,27 +7,8 @@
 
     <link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="./resources/undercards.css" rel="stylesheet"/>
-    <link href="./resources/description.css" rel="stylesheet"/>
-    <link href="./resources/style.css" rel="stylesheet"/>
-    <link href="./resources/legacy.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=folder_delete,package_2,resize&display=block" />
     <link href="./resources/loading.css" rel="stylesheet"/>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9RQNLPJ49W"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-9RQNLPJ49W', {
-        'anonymize_ip': true,
-      });
-
-      function editEvent(type) {
-        gtag('event', `edit_${type}`);
-      }
-    </script>
 
     <!-- update the version number as needed -->
     <!--<script defer src="/__/firebase/6.0.2/firebase-app.js"></script>-->
@@ -36,13 +17,7 @@
     <!-- initialize the SDK after all desired features are loaded -->
     <!--<script defer src="/__/firebase/init.js"></script>-->
 
-    <script defer src="https://unpkg.com/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
-    <script defer src="./resources/simpletoast.js"></script>
     <script type="module" src="./resources/modules/index.js"></script>
-    <script defer nomodule src="./resources/script.js"></script>
-    <script>
-      window.onbeforeunload = () => 'Are you sure?';
-    </script>
   </head>
   <body>
     <div id="loading">
@@ -56,41 +31,166 @@
       <div>Loading...</div>
     </div>
     <footer class="transparent">
-      <a href="https://undercards.net/SignUp?ref=63068" title="Undercards" target="_blank">Undercards</a> Template Editor
+      <a href="https://undercards.net" title="Undercards" target="_blank">Undercards</a> Template Editor
       &bullet;
-      <a href="https://discord.gg/xgT3X9j" title="Discord" target="_blank">
-        <img src="./resources/social/discord.png" class="social">
-      </a>
+      <a href="https://discord.gg/xgT3X9j" title="Discord" target="_blank"><img src="./resources/social/discord.png" class="social" title="Discord" alt="Discord" data-tip="Discord"></a>
+      &bullet;
+      <a href="https://github.com/UCProjects/CardEditor" title="Source" target="_blank"><img src="./resources/social/github.svg" class="social" title="Source" alt="Source" data-tip="View Source"></a>
     </footer>
-    <div id="buttons" class="template" legacy>
-      <span class="add">+</span>
-      <button onclick="generate();">Monster</button>
-      <button onclick="generate(false);">Spell</button>
-    </div>
-    <div id="cards" legacy></div>
-    <div class="context template">
-      <li class="close">Close</li>
-      <li class="download">Download Card</li>
-      <li class="delete">Delete Card</li>
-    </div>
-    <div id="descriptionTip" class="template">
-      <h2>Keywords</h2>
-      <div></div>
-      <h2>Custom Keywords</h2>
-      <div>
-        <span>_Words to underline_</span>
-        <span>{Card name}</span>
-        <span>{color|Text}</span>
-        <span>\bypass</span>
+    <article id="app"></article>
+    <!-- Editor -->
+    <dialog id="editor" closedby="any">
+      <section class="editor-wrapper">
+        <header class="flex">
+          <span>
+            Editing <span data-type="group">Group</span><span data-type="card">Card</span><span data-type="text">Artifact</span>
+          </span>
+          <div class="flex">
+            <button class="material-icons" commandfor="editor" command="close" value="save" data-tip="Update">save</button>
+            <button class="material-icons" commandfor="editor" command="close" value="cancel" data-tip="Cancel">cancel</button>
+          </div>
+        </header>
+        <div class="preview"></div>
+        <div class="helper">
+          <div data-editing="none">
+            Click on an <span class="editable">area</span> to get started.
+          </div>
+          <div data-editing="name">
+            <fieldset>
+              <legend>Name</legend>
+              <input type="text" name="name" autocomplete="off" />
+            </fieldset>
+            <fieldset class="soul" data-extra="soul">
+              <legend>Soul</legend>
+              <div data-template="selectSoul"></div>
+            </fieldset>
+          </div>
+          <div id="descriptionTip" data-editing="description">
+            <fieldset>
+              <legend>Keywords</legend>
+              <div class="keywords"></div>
+            </fieldset>
+            <fieldset>
+              <legend>Advanced</legend>
+              <div class="keywords">
+                <span data-insert="_[]_">_Words to underline_</span>
+                <span data-insert="{[]}">{<span class="cardName">Card name</span>}</span>
+                <span data-insert="{#|[]}">{color|Text}</span>
+                <span data-insert="{{stats|[]}}">{{stats|<span class="COST" data-extra="||">cost</span>|<span class="attack" data-extra="|">attack</span>|<span class="health">health</span>}}</span>
+                <span data-insert="{{switch|[]}}">{{switch|<span class="switchLeft">text</span>|left}}</span>
+                <span data-insert="{{switch|[]|right}}">{{switch|<span class="switchRight">text</span>|right}}</span>
+                <span data-ignore>\bypass</span>
+              </div>
+            </fieldset>
+          </div>
+          <div data-editing="number">
+            <fieldset>
+              <legend>Cost</legend>
+              <input type="number" name="cost" min="0" max="999" />
+            </fieldset>
+            <fieldset data-extra>
+              <legend>Attack</legend>
+              <input type="number" name="attack" min="0" max="999" />
+            </fieldset>
+            <fieldset data-extra>
+              <legend>Health</legend>
+              <input type="number" name="health" min="0" max="999" />
+            </fieldset>
+          </div>
+          <div data-editing="image">
+            <fieldset>
+              <legend data-type="card">Avatar</legend>
+              <legend data-type="text">Image</legend>
+              <div data-select></div>
+            </fieldset>
+            <fieldset name="upload" class="hidden external" >
+              <legend>File</legend>
+              <input name="upload" type="file" accept="image/*" autocomplete="off" />
+              <div class="warn hidden">Failed to load image</div>
+            </fieldset>
+            <fieldset name="url" class="hidden external">
+              <legend>Link</legend>
+              <input name="url" type="url" pattern="https?://.*|blob:" placeholder="https://example.com" autocomplete="off" />
+              <div class="warn hidden">Failed to load image</div>
+            </fieldset>
+          </div>
+          <div data-editing="effects">
+            <fieldset>
+              <legend>Effects</legend>
+              <div id="effects" class="grid"></div>
+            </fieldset>
+            <fieldset name="effects">
+              <legend>Applied</legend>
+              <div class="activeList"></div>
+              <div class="empty">Add effects from above</div>
+            </fieldset>
+          </div>
+          <div data-editing="tribes">
+            <fieldset>
+              <legend>Tribes</legend>
+              <div data-template="selectTribe" class="grid"></div>
+            </fieldset>
+          </div>
+          <div data-editing="rarity">
+            <fieldset>
+              <legend>Rarity</legend>
+              <div data-template="selectRarity"></div>
+            </fieldset>
+          </div>
+        </div>
+        <div class="extended" data-editing="description">
+          <fieldset>
+            <legend>Description</legend>
+            <textarea name="description"></textarea>
+          </fieldset>
+        </div>
+      </section>
+    </dialog>
+    <!-- Color Picker -->
+    <div id="picker" popover="manual">
+      <div class="picker-preview">
+        <div class="picker-preview-fill"></div>
+        <input name="color" class="picker-native" type="color" tabindex="-1" />
+      </div>
+      <div class="picker-hex">
+        <span class="picker-hash">#</span>
+        <input name="hex" class="picker-input" type="text" maxlength="6" spellcheck="false" autocomplete="off" />
+      </div>
+      <div class="picker-recent"></div>
+      <div class="picker-actions">
+        <button class="btn confirm">Insert ↵</button>
+        <button class="btn cancel">Cancel</button>
       </div>
     </div>
-    <dialog id="editor">
-      <div class="helper"></div>
-      <div class="preview"></div>
-      <div class="input"></div>
-    </dialog>
+    <!-- Archive -->
+    <div class="material-symbols-outlined archive-button" data-tip="Open Archive">package_2</div>
+    <div class="archive" popover="manual">
+      <header>
+        <input type="radio" name="page" id="elements" checked />
+        <label for="elements" class="material-symbols-outlined fill">package_2</label>
+        <input type="radio" name="page" id="images" />
+        <label for="images" class="material-icons">image_search</label>
+        <input type="radio" name="page" id="settings" />
+        <label for="settings" class="material-icons">settings</label>
+      </header>
+      <div data-page="elements" class="active">
+        <div>Empty, archive something</div>
+        <ul>
+          <li class="hidden" data-insert="groups"></li>
+          <li class="hidden" data-insert="items"></li>
+        </ul>
+      </div>
+      <div data-page="images">
+        <input name="filter" type="search" placeholder="Search..." />
+        <ul></ul>
+      </div>
+      <div data-page="settings">
+        <div class="settings"></div>
+        <button id="changelog-toggle">Show Changelog</button>
+      </div>
+    </div>
+    <div id="breadbox"></div>
     <template id="selectSoul">
-      <h2>Change Soul</h2>
       <span class="selectable active">NONE</span>
       <span class="selectable KINDNESS">KINDNESS</span>
       <span class="selectable INTEGRITY">INTEGRITY</span>
@@ -101,93 +201,196 @@
       <span class="selectable DETERMINATION">DETERMINATION</span>
     </template>
     <template id="selectRarity">
-      <h2>Select Rarity</h2>
       <div>
-        <img class="selectable" src="./rarity/BASE.png">
-        <img class="selectable extra" src="./rarity/BASE_DR.png">
-        <img class="selectable extra" src="./rarity/BASE_UTY.png">
-        <br class="extra">
-        <img class="selectable" src="./rarity/TOKEN.png">
-        <img class="selectable" src="./rarity/TOKEN_DR.png">
-        <img class="selectable" src="./rarity/TOKEN_UTY.png">
+        <img src="./rarity/BASE.png" class="selectable" data-rarity="BASE" draggable="false">
+        <img src="./rarity/BASE_DR.png" class="selectable" data-rarity="BASE_DR" draggable="false">
+        <img src="./rarity/BASE_UTY.png" class="selectable" data-rarity="BASE_UTY" draggable="false">
       </div>
       <div>
-        <img class="selectable active" src="./rarity/COMMON.png">
-        <img class="selectable" src="./rarity/RARE.png">
-        <img class="selectable" src="./rarity/EPIC.png">
-        <img class="selectable" src="./rarity/LEGENDARY.png">
-        <img class="selectable" src="./rarity/DETERMINATION.png">
+        <img src="./rarity/TOKEN.png" class="selectable" data-rarity="TOKEN" draggable="false">
+        <img src="./rarity/TOKEN_DR.png" class="selectable" data-rarity="TOKEN_DR" draggable="false">
+        <img src="./rarity/TOKEN_UTY.png" class="selectable" data-rarity="TOKEN_UTY" draggable="false">
       </div>
       <div>
-        <img class="selectable" src="./rarity/COMMON_DR.png">
-        <img class="selectable" src="./rarity/RARE_DR.png">
-        <img class="selectable" src="./rarity/EPIC_DR.png">
-        <img class="selectable" src="./rarity/LEGENDARY_DR.png">
-        <img class="selectable" src="./rarity/DETERMINATION_DR.png">
+        <img src="./rarity/COMMON.png" class="selectable active" data-rarity="COMMON" draggable="false">
+        <img src="./rarity/RARE.png" class="selectable" data-rarity="RARE" draggable="false">
+        <img src="./rarity/EPIC.png" class="selectable" data-rarity="EPIC" draggable="false">
+        <img src="./rarity/LEGENDARY.png" class="selectable" data-rarity="LEGENDARY" draggable="false">
+        <img src="./rarity/DETERMINATION.png" class="selectable" data-rarity="DETERMINATION" draggable="false">
       </div>
       <div>
-        <img class="selectable" src="./rarity/COMMON_UTY.png">
-        <img class="selectable" src="./rarity/RARE_UTY.png">
-        <img class="selectable" src="./rarity/EPIC_UTY.png">
-        <img class="selectable" src="./rarity/LEGENDARY_UTY.png">
-        <img class="selectable" src="./rarity/DETERMINATION_UTY.png">
+        <img src="./rarity/COMMON_DR.png" class="selectable" data-rarity="COMMON_DR" draggable="false">
+        <img src="./rarity/RARE_DR.png" class="selectable" data-rarity="RARE_DR" draggable="false">
+        <img src="./rarity/EPIC_DR.png" class="selectable" data-rarity="EPIC_DR" draggable="false">
+        <img src="./rarity/LEGENDARY_DR.png" class="selectable" data-rarity="LEGENDARY_DR" draggable="false">
+        <img src="./rarity/DETERMINATION_DR.png" class="selectable" data-rarity="DETERMINATION_DR" draggable="false">
+      </div>
+      <div>
+        <img src="./rarity/COMMON_UTY.png" class="selectable" data-rarity="COMMON_UTY" draggable="false">
+        <img src="./rarity/RARE_UTY.png" class="selectable" data-rarity="RARE_UTY" draggable="false">
+        <img src="./rarity/EPIC_UTY.png" class="selectable" data-rarity="EPIC_UTY" draggable="false">
+        <img src="./rarity/LEGENDARY_UTY.png" class="selectable" data-rarity="LEGENDARY_UTY" draggable="false">
+        <img src="./rarity/DETERMINATION_UTY.png" class="selectable" data-rarity="DETERMINATION_UTY" draggable="false">
       </div>
     </template>
     <template id="selectTribe">
-      <!-- <h2>Select Tribe</h2> -->
-      <img class="selectable smallerIcon active" src="./resources/tribes/MONSTER.png">
-      <img class="selectable smallIcon"  title="All" src="./resources/tribes/ALL.png">
-    </template>
-    <template id="selectTribeImg">
-      <img class="selectable smallIcon" src="">
+      <img src="./resources/tribes/MONSTER.png" class="selectable smallerIcon active" alt="none" data-tribe="none" data-tip="None" draggable="false">
+      <img src="./resources/tribes/ALL.png" class="selectable smallIcon" alt="all" data-tribe="all" data-tip="All" draggable="false">
     </template>
     <template id="groupButtons">
-      <button>Monster</button>
-      <button>Spell</button>
-    </template>
-    <template id="group">
-      <header>
-        <span class="group-name">Default Group</span><input>
-        <span class="sidebar no-save">
-          <span><img class="monster" src="./resources/tribes/MONSTER.png"></span>
-          <span><img class="spell" src="./resources/images/SPELL.png"></span>
-          <span><img class="book" src="./resources/images/GROUP.png"></span>
-          <span><img class="text" src="./resources/images/TEXT.png"></span>
-          <span><i class="sort material-icons">import_export</i></span>
-          <span><i class="save material-icons">save_alt</i></span>
-        </span>
-      </header>
-      <div class="cards"></div>
+      <button class="monster"><img src="./resources/tribes/MONSTER.png" alt="Monster" draggable="false"> Monster</button>
+      <button class="spell"><img src="./resources/images/SPELL.png" alt="Spell" draggable="false"> Spell</button>
+      <button class="text"><img src="./resources/images/TEXT.png" alt="Artifact" draggable="false"> Artifact</button>
     </template>
     <template id="menu">
-      <div class="menu" popover="auto" onclick="this.hidePopover();">
-        <button class="menu-button material-icons" commandfor="editor" command="show-modal">edit_square</button>
-        <button class="menu-button material-icons">save_alt</button>
-        <button class="menu-button material-icons">delete</button>
+      <div class="menu no-save" popover="auto" onclick="this.hidePopover();" onmouseleave="this.hidePopover();">
+        <button class="menu-button material-symbols-outlined" data-type="text" data-tip="Resize">resize</button>
+        <button class="menu-button" data-type="group" data-tip="Group"><img src="./resources/images/GROUP.png" alt="Group" draggable="false"></button>
+        <button class="menu-button material-icons" data-tip="Edit">edit_square</button>
+        <button class="menu-button material-icons" data-tip="Download">save_alt</button>
+        <button class="menu-button material-icons" data-tip="Archive" data-no-shift>archive</button>
+        <button class="menu-button material-icons" data-tip="Trash" data-shift>delete</button>
+      </div>
+    </template>
+    <template id="group">
+      <div class="group">
+        <header>
+          <span class="handle material-icons no-save">drag_handle</span>
+          <span class="name" data-editable="name"></span>
+        </header>
+        <div class="description" data-editable="description">Test</div>
+        <div class="content"></div>
       </div>
     </template>
     <template id="card">
-      <div class="card">
+      <div class="card handlee">
         <div class="top row">
-          <div class="name center-v"></div>
-          <div class="cost center-v center-h"></div>
+          <div class="name middle" data-editable="name"></div>
+          <div class="cost center" data-editable="number" data-editable-for="cost"></div>
         </div>
-        <div class="image">
-          <img class="avatar" src="" />
-          <div class="status"></div>
-          <div class="tribes"></div>
-        </div>
-        <div class="description center-v center-h"></div>
-        <div class="bottom row">
-          <div class="attack center-v center-h"></div>
-          <div class="rarity center-v center-h">
-            <img>
+        <div class="middle">
+          <div class="image" data-editable="image">
+            <img src="" class="avatar" draggable="false" />
           </div>
-          <div class="health center-v center-h"></div>
+          <div class="status" data-editable="effects"></div>
+          <div class="tribes" data-editable="tribes" data-template="selectTribe"></div>
+        </div>
+        <div class="description center" data-editable="description">
+          <div></div>
+        </div>
+        <div class="bottom row">
+          <div class="attack center" data-editable="number" data-editable-for="attack"></div>
+          <div class="rarity center" data-editable="rarity">
+            <img src="" draggable="false">
+          </div>
+          <div class="health center" data-editable="number" data-editable-for="health"></div>
+        </div>
+      </div>
+      <footer>undercard.feildmaster.com</footer>
+    </template>
+    <template id="text">
+      <div class="artifact handlee">
+        <header data-editable="name">
+          <span class="name"></span>
+        </header>
+        <div class="content">
+          <div class="image" data-editable="image">
+            <img src="" draggable="false" />
+          </div>
+          <div class="description" data-editable="description"></div>
         </div>
       </div>
     </template>
-    <template id="text"></template>
-    <template id="effects"></template>
+    <template id="toast">
+      <header></header>
+      <div></div>
+      <footer></footer>
+    </template>
+    <template id="effectRow">
+      <div class="effect-row external">
+        <div class="flex">
+          <span class="material-icons hidden">drag_indicator</span>
+          <img src="" class="smallIcon" draggable="false"/>
+        </div>
+        <div class="flex">
+          <input type="number" name="count" value="0" min="0" max="99">
+          <button class="remove">x</button>
+        </div>
+      </div>
+    </template>
+    <template id="elementItem">
+      <li data-id draggable="true">
+        <div class="wrapper">
+          <div class="info">
+            <span data-action="expand" data-type="trashFolder" class="material-symbols-outlined fill">folder_delete</span>
+            <span data-action="expand" data-type="group" class="material-icons">folder</span>
+            <span class="name"></span>
+          </div>
+          <div class="actions">
+            <button name="edit" data-type="normal" class="material-icons" data-tip="Edit">edit_square</button>
+            <button name="delete" data-type="normal" class="material-icons" data-tip="Trash">delete</button>
+            <button name="restore" data-type="trash" class="material-icons" data-tip="Restore">restore_from_trash</button>
+            <button name="delete" data-type="trash" class="material-icons" data-tip="Delete">delete_forever</button>
+            <button name="restore" data-type="trashFolder" class="material-icons" data-tip="Restore All">restore_from_trash</button>
+            <button name="delete" data-type="trashFolder" class="material-icons" data-tip="Delete All">delete_forever</button>
+          </div>
+        </div>
+        <ul class="extra hidden" data-type="trashFolder,group"></ul>
+      </li>
+    </template>
+    <template id="imageItem">
+      <li>
+        <div class="wrapper">
+          <div class="info"><span class="name"></span></div>
+          <div class="actions">
+            <button name="delete" class="material-icons" data-tip="Delete">delete_forever</button>
+          </div>
+        </div>
+      </li>
+    </template>
+    <template id="setting">
+      <div>
+        <label>
+          <input type="checkbox" class="hidden">
+          <span class="setting"></span>
+          <span class="setting-name"></span>
+        </label>
+      </div>
+    </template>
+    <template id="select">
+      <div class="select-wrapper">
+        <div class="select-field">
+          <input
+            name="select"
+            type="text"
+            class="select-input"
+            autocomplete="off"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-autocomplete="list"
+            aria-controls="select-list"
+          />
+          <button class="btn material-icons" tabindex="-1" aria-label="Toggle list">keyboard_arrow_down</button>
+        </div>
+        <ul class="select-list" role="listbox" popover="manual"></ul>
+      </div>
+    </template>
+    <template id="version">3.0.0</template>
+    <template id="versionText">
+      <div>
+        <p>New Features:</p>
+        <ul>
+          <li>Interactive Editor</li>
+          <li>Saving</li>
+          <li>Archive</li>
+          <li>Artifacts</li>
+          <li>Multi-Tribes</li>
+          <li>Effects</li>
+          <li>Click-2-Insert Keywords</li>
+          <li>Switch <span class="switchLeft">left</span> and <span class="switchRight">right</span></li>
+          <li>Color Picker (for {color|text})</li>
+        </ul>
+      </div>
+    </template>
   </body>
 </html>

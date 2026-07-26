@@ -1,0 +1,49 @@
+#breadbox {
+  position-anchor: --app;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  position: fixed;
+  white-space: pre-wrap;
+  bottom: 5px;
+  left: 0;
+  left: anchor(left);
+  z-index: 100;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+#breadbox .toast {
+  background-color: rgba(8, 25, 77, 0.6);
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  max-width: 300px;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#breadbox .toast.error {
+  background-color: rgba(200, 0, 0, 0.6);
+}
+
+#breadbox .toast header {
+  border-bottom: 2px solid var(--border);
+  font-size: large;
+  margin-bottom: 5px;
+}
+
+#breadbox .toast div {
+  white-space: normal;
+}
+
+#breadbox .toast footer {
+  font-size: small;
+}
+
+#breadbox .toast header:empty,
+#breadbox .toast footer:empty {
+  display: none;
+}

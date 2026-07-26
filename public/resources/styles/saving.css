@@ -1,0 +1,30 @@
+.group.saving {
+  margin: 0;
+  background-color: var(--background);
+}
+
+.group.saving .content {
+  justify-content: initial;
+  min-height: initial;
+}
+
+.saving .no-save {
+  display: none;
+}
+
+.element.saving > footer {
+  display: block;
+}
+
+.element > footer {
+  display: none;
+  font-size: 13px;
+  text-align: center;
+  font-family: initial;
+}
+
+@media only screen and (max-width: 640px) {
+  .group.saving, .group.saving .content {
+    width: fit-content;
+  }
+}

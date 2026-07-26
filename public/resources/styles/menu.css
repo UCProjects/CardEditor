@@ -1,0 +1,62 @@
+:root {
+  --hover-color: rgb(243, 65, 33);
+  --shadow-filter: drop-shadow(1px 1px 1px var(--hover-color))
+    drop-shadow(1px -1px 1px var(--hover-color))
+    drop-shadow(-1px 1px 1px var(--hover-color))
+    drop-shadow(-1px -1px 1px var(--hover-color));
+}
+
+.menu {
+  inset: unset;
+  bottom: anchor(top);
+  right: anchor(right);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.menu:popover-open {
+  display: flex;
+  justify-content: center;
+}
+
+/* :first-of-type */
+.group > .menu {
+  inset: unset;
+  top: anchor(bottom);
+  right: anchor(right);
+  border-radius: 0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.menu button {
+  border: 0;
+  background-color: transparent;
+  height: 35px;
+}
+
+.menu button:hover {
+  margin: 0;
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
+.menu button:hover img {
+  filter: var(--shadow-filter);
+}
+
+.menu [data-shift] {
+  display: none;
+}
+
+.menu.shift [data-shift] {
+  display: block;
+}
+
+.menu.shift [data-no-shift] {
+  display: none;
+}
