@@ -4,7 +4,7 @@ import { asArray, filter } from '../utils/array.js';
 import resize from '../utils/resize.js';
 import { getURL, ImageType } from '../imageBank.js';
 import { adoptStyle } from '../utils/funcs.js';
-import settings, { SettingKey } from '../settings.js';
+import settings, { Settings } from '../settings.js';
 
 adoptStyle(style);
 
@@ -14,7 +14,7 @@ const tribeTemplate = document.querySelector('template#selectTribe');
 export default class CardRenderer extends Renderer {
   constructor(...args) {
     super(...args);
-    if (!this.element.isSpell()) settings.on(SettingKey.MonsterSoul, () => this.soul());
+    if (!this.element.isSpell()) settings.on(Settings.MonsterSoul, () => this.soul());
   }
 
   /** @type {import('../elements/CardElement.js').default} */
@@ -72,7 +72,9 @@ export default class CardRenderer extends Renderer {
     const list = this.query('.name').classList;
     list.remove(...filter(list, 'name'));
     const { soul } = this.element;
-    if (soul && (this.element.isSpell() || settings.enabled(SettingKey.MonsterSoul))) list.add(soul);
+    if (!soul) return;
+    if (this.element.isSpell() || settings.enabled(Settings.MonsterSoul)) list.add(soul);
+    // TODO Allow custom
   }
 
   tribes() {
@@ -83,7 +85,7 @@ export default class CardRenderer extends Renderer {
         element.classList.remove('selectable');
         return element;
       }
-      // TODO Custom?
+      // TODO Allow custom
       return undefined;
     }).filter(_ => _);
     this.query('.tribes').replaceChildren(...elements);
