@@ -8,9 +8,9 @@
 .element > .card {
   border: 2px solid var(--border);
   color: var(--text);
-  width: 162px;
+  width: 160px;
   overflow: hidden;
-  box-sizing: border-box;
+  box-sizing: content-box;
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -48,7 +48,8 @@
 }
 
 .card .image {
-  height: 88px;
+  width: 160px;
+  height: 90px;
   width: -moz-available;
   width: stretch;
 }
