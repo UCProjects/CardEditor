@@ -1,4 +1,3 @@
-
 export function allStrings(...data) {
   return data.every((value) => typeof value === 'string');
 }

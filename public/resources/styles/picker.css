@@ -1,4 +1,5 @@
 #picker {
+  position-area: block-start;
   position: fixed;
   inset: unset;
   background-color: var(--background);

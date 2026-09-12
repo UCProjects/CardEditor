@@ -48,10 +48,8 @@
 }
 
 .select-wrapper .select-list {
-  position: absolute;
-  top: anchor(bottom);
-  left: anchor(left);
-  right: anchor(right);
+  position-area: block-end;
+  inset: unset;
   background: var(--background);
   border: 1.5px solid var(--border);
   border-radius: 12px;
