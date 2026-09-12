@@ -52,7 +52,7 @@ class Settings extends EventEmitter {
   }
 
   set(key, enabled = false) {
-    const setting = this.get(key);
+    const setting = this.#settings.get(key);
     if (!setting) return;
     const { enabled: current = false } = setting;
     if (current === enabled) return;
