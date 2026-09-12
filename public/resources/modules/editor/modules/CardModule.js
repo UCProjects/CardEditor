@@ -1,5 +1,5 @@
 import { getAll, ImageType } from '../../imageBank.js';
-import settings from '../../settings.js';
+import settings, { Settings } from '../../settings.js';
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
 import Module from './ImageModule.js';
@@ -12,7 +12,6 @@ function updateActive(from, to) {
 
 /** @type {HTMLTemplateElement} */
 const effectRow = document.getElementById('effectRow');
-const monsterSoul = settings.get('monsterSoul');
 
 /** @param {InputEvent} e  */
 function positiveInputListener(e) {
@@ -43,7 +42,7 @@ export default class CardModule extends Module {
     });
 
     // Stats
-    const enableSoul = element.isSpell() || monsterSoul.enabled;
+    const enableSoul = element.isSpell() || settings.enabled(Settings.MonsterSoul);
     container.querySelectorAll('[data-extra]:not([data-insert] > [data-extra])').forEach((el) => {
       const { extra } = el.dataset;
       el.classList.toggle('hidden', extra === 'soul' ? !enableSoul : element.isSpell());
