@@ -2,14 +2,6 @@ import style from '../../styles/settings.css' with { type: 'css' };
 import settings from '../settings.js';
 import { adoptStyle } from '../utils/funcs.js';
 
-/**
- * @typedef {{
- *  key: string;
- *  name: string;
- *  enabled?: boolean;
- * }} Setting
- */
-
 adoptStyle(style);
 
 /** @type {HTMLTemplateElement} */
@@ -21,8 +13,8 @@ export function load() {
   settings.getAll().forEach(add);
 }
 
-/** @param {Setting} setting */
-function add({ key, name, enabled = false }) {
+/** @param {import('../settings.js').Setting} setting */
+function add({ checked: defaultEnabled = false, key, name, enabled = defaultEnabled }) {
   const container = document.importNode(template.content, true);
   container.querySelector('.setting-name').textContent = name;
 
