@@ -1,7 +1,7 @@
 import EventEmitter from './utils/EventEmitter.js';
 import { getSettings, setSettings } from './utils/storage.js';
 
-export const SettingKey = Object.freeze({
+export const Settings = Object.freeze({
   MonsterSoul: 'monsterSoul',
   SaveOnClose: 'editorSave',
 });
@@ -22,15 +22,15 @@ export const SettingKey = Object.freeze({
 
 /** @type {SettingInfo[]} */
 const baseSettings = [{
-  key: SettingKey.MonsterSoul,
+  key: Settings.MonsterSoul,
   name: 'Enable monster souls',
 }, {
-  key: SettingKey.SaveOnClose,
+  key: Settings.SaveOnClose,
   name: 'Save editor on close',
   checked: true,
 }];
 
-class Settings extends EventEmitter {
+class SettingManager extends EventEmitter {
   /** @type {Map<Setting['key'], Setting>} */
   #settings = new Map(baseSettings.map((setting) => [setting.key, {
     ...setting,
@@ -87,4 +87,4 @@ class Settings extends EventEmitter {
   }
 }
 
-export default new Settings();
+export default new SettingManager();

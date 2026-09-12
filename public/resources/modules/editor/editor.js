@@ -4,7 +4,7 @@ import CardModule from './modules/CardModule.js';
 import TextModule from './modules/TextModule.js';
 import GroupModule from './modules/GroupModule.js';
 import { adoptStyle } from '../utils/funcs.js';
-import settings, { SettingKey } from '../settings.js';
+import settings, { Settings } from '../settings.js';
 
 adoptStyle(style);
 
@@ -49,7 +49,7 @@ class Editor extends EventEmitter {
 
     editor.addEventListener('close', () => {
       const reason = editor.returnValue;
-      const save = settings.enabled(SettingKey.SaveOnClose) ? reason !== 'cancel' : reason === 'save';
+      const save = settings.enabled(Settings.SaveOnClose) ? reason !== 'cancel' : reason === 'save';
       if (save) {
         this.emit('save'); // Allow listeners to make modifications
         this.#original.element.emit('update', this.element.toJSON());
