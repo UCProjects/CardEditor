@@ -1,6 +1,7 @@
 import { contains } from './array.js';
 
 export function adoptStyle(...sheets) {
+  if (import.meta.env) return;
   const styles = document.adoptedStyleSheets;
   sheets.forEach((sheet) => {
     if (!styles.includes(sheet)) styles.push(sheet);
