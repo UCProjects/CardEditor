@@ -14,7 +14,7 @@ export function load() {
 }
 
 /** @param {import('../settings.js').Setting} setting */
-function add({ checked: defaultEnabled = false, key, name, enabled = defaultEnabled }) {
+function add({ key, name, enabled = false }) {
   const container = document.importNode(template.content, true);
   container.querySelector('.setting-name').textContent = name;
 
