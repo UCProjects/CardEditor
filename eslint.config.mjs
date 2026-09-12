@@ -136,11 +136,31 @@ export default defineConfig([
     rules: {},
   },
   {
-    files: ['./scripts/*.js'],
+    // node env
+    files: ['./scripts/**/*.js', './test/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.node,
       },
     },
   },
+  {
+    // test env
+    files: ['**/*.test.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+    },
+  },
+  {
+    settings: {
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.mjs', '.d.ts'],
+        },
+      },
+    },
+  }
 ]);
