@@ -1,6 +1,11 @@
 import EventEmitter from './utils/EventEmitter.js';
 import { getSettings, setSettings } from './utils/storage.js';
 
+export const SettingKey = Object.freeze({
+  MonsterSoul: 'monsterSoul',
+  SaveOnClose: 'editorSave',
+});
+
 /**
  * @typedef {{
  *  key: string;
@@ -11,18 +16,39 @@ import { getSettings, setSettings } from './utils/storage.js';
  * @typedef {SettingInfo & {
  *  enabled?: boolean;
  * }} Setting
+ *
+ * @typedef {SettingKey[keyof SettingKey]} SettingKeys
  */
 
 /** @type {SettingInfo[]} */
 const baseSettings = [{
-  key: 'monsterSoul',
+  key: SettingKey.MonsterSoul,
   name: 'Enable monster souls',
+}, {
+  key: SettingKey.SaveOnClose,
+  name: 'Save editor on close',
+  checked: true,
 }];
 
 class Settings extends EventEmitter {
   /** @type {Map<Setting['key'], Setting>} */
-  #settings = new Map(baseSettings.map((setting) => [setting.key, setting]));
+  #settings = new Map(baseSettings.map((setting) => [setting.key, {
+    ...setting,
+    enabled: setting.checked ?? false,
+  }]));
 
+  /**
+   * @param {SettingKeys} key
+   * @returns {boolean}
+   */
+  enabled(key) {
+    return this.get(key)?.enabled ?? false;
+  }
+
+  /**
+   * @param {SettingKeys} key
+   * @returns {Setting | null}
+   */
   get(key) {
     const setting = this.#settings.get(key);
     return setting ? { ...setting } : null;
