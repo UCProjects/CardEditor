@@ -75,7 +75,6 @@ export default class BaseElement extends EventEmitter {
     } = this;
     return {
       ...this,
-      // TODO: ...getProps(this).reduce((acc, key) => acc[key] = this[key], {}),
       id,
       type,
     };
