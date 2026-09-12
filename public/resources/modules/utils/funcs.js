@@ -1,3 +1,5 @@
+import { contains } from './array.js';
+
 export function adoptStyle(...sheets) {
   const styles = document.adoptedStyleSheets;
   sheets.forEach((sheet) => {
@@ -35,8 +37,13 @@ export function getProps(obj, ...ignore) {
     .map(([prop]) => prop);
 }
 
-export function hasValue(obj, value) {
-  return Object.values(obj).includes(value);
+export function hasKey(obj, ...values) {
+  if (!obj) return false;
+  return contains(Object.keys(obj), values);
+}
+
+export function hasValue(obj, ...values) {
+  return contains(Object.values(obj), values);
 }
 
 export function isBase64(string = '', checkPrefix = false) {

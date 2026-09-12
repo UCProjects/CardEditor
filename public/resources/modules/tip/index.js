@@ -1,7 +1,7 @@
 import style from '../../styles/tip.css' with { type: 'css' };
 import editor from '../editor/editor.js';
 import { contains } from '../utils/array.js';
-import { adoptStyle, isElementInViewport } from '../utils/funcs.js';
+import { adoptStyle, hasKey } from '../utils/funcs.js';
 
 adoptStyle(style);
 
@@ -13,28 +13,34 @@ document.body.append(tip);
 
 let currentObserver;
 
+/** @param {HTMLElement} el */
+function getSource(el) {
+  if (hasKey(el.dataset, 'tip', 'editable')) return el;
+  const parent = el.parentElement;
+  if (hasKey(parent?.dataset, 'tip', 'editable')) return parent;
+}
+
+/** @param {MouseEvent} event */
 function show(event) {
-  const source = event.target;
-  if (!source.dataset || tip.matches(':popover-open')) return;
+  const source = getSource(event.target);
+  if (!source) return;
   const editorText = editor.isOpen && (source.dataset.editableFor || source.dataset.editable);
   const text = source.dataset.tip;
   if (!text && !editorText) return;
   const currentText = text || `Edit ${editorText}`;
   tip.textContent = currentText;
   tip.hidePopover();
-  tip.classList.remove('flip');
   tip.showPopover({ source });
-  tip.classList.toggle('flip', !isElementInViewport(tip));
 
   currentObserver?.disconnect();
   const observer = new MutationObserver(() => {
     if (!source.isConnected || !source.offsetParent) {
       tip.hidePopover();
       observer.disconnect();
-      currentObserver = null;
+      if (currentObserver === observer) currentObserver = null;
     } else if (tip.textContent !== currentText) {
       observer.disconnect();
-      currentObserver = null;
+      if (currentObserver === observer) currentObserver = null;
     }
   });
   observer.observe(source, { attributes: true, attributeFilter: ['style', 'class'] });
