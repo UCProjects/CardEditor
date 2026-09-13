@@ -63,6 +63,7 @@ export default class Module extends EventEmitter {
       const value = descriptionInput.value;
       const pos = descriptionInput.selectionStart;
       const start = value.lastIndexOf('{', pos) + 1;
+      if (start > 1 && value[start - 2] === '{') return null;
       if (!start || pos < start) return null;
       const close = value.indexOf('}', start);
       if (!!~close && close < pos) return null;
