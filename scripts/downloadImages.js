@@ -21,9 +21,6 @@ const effects = new Set([
 ]);
 
 async function updateFile(path, data) {
-  // Create blank if not exists
-  await fs.writeFile(path, Array.isArray(data) ? [] : {}, { flag: 'wx' });
-
   // Load existing
   const file = await fs.readFile(path);
   const existing = JSON.parse(file.toString());
@@ -79,7 +76,7 @@ fetch('https://undercards.net/AllCards')
   })))
   .then((avatars) => Promise.all([
     updateFile(resolve(base, 'data', 'avatars.json'), avatars),
-    updateFile(resolve(base, 'data', 'status.json'), effects),
+    updateFile(resolve(base, 'data', 'status.json'), [...effects.values()]),
     downloadAvatars(Object.values(avatars)),
     downloadEffects(),
   ]));
