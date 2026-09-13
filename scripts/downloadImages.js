@@ -5,25 +5,22 @@ const fetch = require('node-fetch');
 const base = join('public', 'resources');
 
 const effects = new Set([
-  'bonusCost',
-  'malusCost',
-  'determination',
-  'bonusAtk',
-  'malusAtk',
-  'bonusHp',
-  'malusHp',
-  'underevent2024',
-  'burn',
-  'box',
-  'invulnerable',
-  'silenced',
-  'ranged',
+  'BonusCost',
+  'MalusCost',
+  'Determination',
+  'BonusAtk',
+  'MalusAtk',
+  'BonusHp',
+  'MalusHp',
+  'Underevent2024',
+  'Burn',
+  'Box',
+  'Invulnerable',
+  'Silenced',
+  'Ranged',
 ]);
 
 async function updateFile(path, data) {
-  // Create blank if not exists
-  await fs.writeFile(path, Array.isArray(data) ? [] : {}, { flag: 'wx' });
-
   // Load existing
   const file = await fs.readFile(path);
   const existing = JSON.parse(file.toString());
@@ -42,6 +39,7 @@ async function updateFile(path, data) {
 }
 
 async function download(url, file) {
+  // FIXME this can save bad images
   try {
     const image = await fetch(url);
     await fs.writeFile(file, image.body);
@@ -78,7 +76,7 @@ fetch('https://undercards.net/AllCards')
   })))
   .then((avatars) => Promise.all([
     updateFile(resolve(base, 'data', 'avatars.json'), avatars),
-    updateFile(resolve(base, 'data', 'status.json'), effects),
+    updateFile(resolve(base, 'data', 'status.json'), [...effects.values()]),
     downloadAvatars(Object.values(avatars)),
     downloadEffects(),
   ]));
