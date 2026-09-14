@@ -1,0 +1,149 @@
+.archive-button {
+  position-anchor: --app;
+  position: fixed;
+  right: 0;
+  right: anchor(right);
+  bottom: 5px;
+  font-size: 100px;
+}
+
+.archive-button:hover {
+  color: var(--hover-color);
+}
+
+.archive {
+  position-anchor: --app;
+  position: fixed;
+  inset: unset;
+  top: 0;
+  bottom: 0;
+  right: 0; /* Maybe anchor to app? */
+  width: 300px;
+  z-index: 100;
+  color: var(--text);
+  background-color: var(--background);
+  height: auto;
+  border: 0;
+  padding: 0;
+}
+
+.archive header {
+  display: flex;
+  text-align: center;
+  background-color: rgb(31, 31, 31);
+}
+
+.archive header input {
+  display: none;
+}
+
+.archive header label {
+  flex: 1;
+  line-height: 2;
+  border-bottom: 2px solid var(--border);
+}
+
+.archive header input:checked+label {
+  border: 2px solid var(--border);
+  background-color: var(--background);
+  border-bottom: 0;
+}
+
+.archive [data-page] {
+  border: 2px solid var(--border);
+  border-top: 0;
+  display: none;
+  height: calc(100% - 50px);
+  overflow: auto;
+  padding: 10px;
+  text-align: center;
+}
+
+.archive [data-page].active {
+  display: block;
+}
+
+.archive ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.archive  div > ul > li {
+  border-bottom: 1px solid var(--border);
+}
+
+.archive li:not(.hidden) > .wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.archive div > ul > li:nth-child(even of :not(.hidden, .group-label)) {
+  background-color: rgb(31, 31, 31);
+}
+
+.archive .info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.archive .name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.archive [data-type]:not([data-type="group"]) .name::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  margin-right: 5px;
+}
+
+.archive [data-type="card"] .name::before {
+  background-image: url('/resources/tribes/MONSTER.png');
+}
+
+.archive [data-spell] .name::before {
+  background-image: url('/resources/images/SPELL.png');
+}
+
+.archive [data-type="text"] .name::before {
+  background-image: url('/resources/images/TEXT.png');
+}
+
+.archive .actions {
+  flex-shrink: 0;
+}
+
+.archive .extra {
+  width: 100%;
+  padding-left: 10px;
+  border-left: 1px dotted var(--border);
+}
+
+.archive .stretch {
+  width: max-content;
+}
+
+.archive label,
+.archive button {
+  cursor: pointer;
+}
+
+.archive li.group-label {
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--BASE);
+  margin-top: 10px;
+}
+
+.archive li.group-label:first-child {
+  margin-top: 0;
+}

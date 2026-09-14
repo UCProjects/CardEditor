@@ -1,3 +1,44 @@
+:root {
+  --background: rgb(0, 0, 0);
+}
+
+/* Undercards styling */
+@font-face {
+    font-family: 'DTM-Mono';
+    src: url('./DTM-Mono.otf') format('truetype');
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+}
+
+body > footer {
+  position: fixed;
+  bottom: 10px;
+  justify-self: center;
+  border: 1px solid;
+  padding: 5px 7px;
+  margin: auto;
+  text-align: center;
+  background-color: var(--background);
+  cursor: default;
+  border-radius: 30px;
+  opacity: 0.3;
+  z-index: 1000;
+  right: calc(50% - 128px);
+}
+
+body > footer:hover {
+  opacity: 1;
+}
+
+body > footer img {
+  width: 16px;
+  vertical-align: middle;
+}
+
 #loading {
   position: relative;
   text-align: center;
@@ -10,6 +51,10 @@
 #loading > span {
   height: 300px;
   display: inline-flex;
+}
+
+.template {
+  display: none;
 }
 
 @keyframes loading {

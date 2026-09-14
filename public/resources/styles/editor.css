@@ -1,0 +1,249 @@
+:root {
+  --spacing: 10px;
+  --accent: rgb(255, 215, 0);
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+#editor {
+  font-family: 'DTM-Mono';
+  background-color: var(--background);
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  padding: 0;
+  color: var(--text);
+}
+
+#editor::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+#editor .stretch,
+#editor input,
+#editor textarea {
+  width: -moz-available;
+  width: stretch;
+}
+
+.editor-wrapper {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr fit-content(620px);
+}
+
+.editor-wrapper > header {
+  color: var(--text-alt);
+  background-color: var(--background-alt);
+  padding: 5px var(--spacing);
+  grid-column: 1 / -1;
+  justify-content: space-between;
+}
+
+.editor-wrapper > header button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.editor-wrapper > header button:hover {
+  color: var(--hover-color);
+}
+
+.editor-wrapper > .helper {
+  border-left: 2px solid var(--border);
+  padding: var(--spacing);
+  text-align: center;
+  min-width: 200px;
+  overflow-y: auto;
+}
+
+.editor-wrapper > .preview {
+  margin: var(--spacing);
+}
+
+#editor:not([data-type="card"]) .editor-wrapper > .helper,
+.editor-wrapper > .extended {
+  border: 0;
+  border-top: 2px solid var(--border);
+  grid-column: 1 / -1;
+  padding: var(--spacing);
+}
+
+#editor[data-type="group"] .preview,
+#editor[data-type="text"] .preview,
+.editor-wrapper > .extended {
+  grid-column: 1 / -1;
+}
+
+.editor-wrapper > .extended {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--background);
+}
+
+#editor .group {
+  margin-bottom: unset;
+}
+
+#editor [data-editable] {
+  min-height: 16px;
+  min-width: 16px;
+}
+
+#editor:not([data-type="card"]) .description {
+  min-height: 150px;
+}
+
+#editor .artifact .image:has(> img[src=""]) {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#editor .artifact .image:has(> img[src=""])::after {
+  content: '?';
+  font-size: 25px;
+  opacity: 0.3;
+}
+
+#editor [data-editable]:hover,
+.editable {
+  border: 1px solid red;
+}
+
+#editor #effects {
+  min-height: 20px;
+}
+
+#editor [data-editable="effects"]:empty,
+#editor [data-editable="tribes"]:empty {
+  background-image: url('/resources/tribes/MONSTER.png');
+  background-size: 14px;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+}
+
+#editor [data-editable="effects"]:empty {
+  background-image: url('/resources/images/effects/silenced.png');
+}
+
+#editor [data-editable="effects"]:empty:hover,
+#editor [data-editable="tribes"]:empty:hover {
+  opacity: 1;
+}
+
+#editor[data-type="group"] .content,
+#editor[data-type="group"] .handle,
+#editor [data-editing],
+#editor [data-type] {
+  display: none;
+}
+
+#editor[data-type="group"] .group {
+  margin-bottom: unset;
+}
+
+#editor .active {
+  display: inline;
+}
+
+#editor .extra {
+  display: none;
+}
+
+.show-extra .extra {
+  display: unset;
+}
+
+#editor legend {
+  text-transform: uppercase;
+}
+
+.helper .grid {
+  display: grid;
+  grid-gap: 5px;
+  align-items: center;
+  width: 250px;
+  grid-template-columns: repeat(auto-fit, 16px);
+  justify-self: center;
+}
+
+.helper [data-rarity],
+.helper [data-tribe] {
+  opacity: 0.4;
+}
+
+.helper [data-rarity].active,
+.helper [data-tribe].active {
+  opacity: 1;
+  filter: var(--shadow-filter);
+}
+
+fieldset.soul {
+  width: min-content;
+  justify-self: center;
+}
+
+#editor .element.group,
+#editor .element.text {
+  max-width: -moz-available;
+  max-width: stretch;
+}
+
+#editor optgroup:empty {
+  display: none;
+}
+
+#editor .activeList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+#editor .effect-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  position: relative;
+  padding: 5px;
+}
+
+#editor .effect-row:not(:first-child) {
+  border-top: 1px solid var(--border);
+}
+
+#editor .effect-row input {
+  width: unset;
+}
+
+.effect-row .remove {}
+
+.effect-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+
+#editor .group header {
+  position: relative;
+}
+
+#editor .keywords > span:not([data-ignore]) {
+  cursor: pointer;
+}
+
+#editor .keywords > span:not(:last-child)::after {
+  content: ';';
+  color: var(--BASE);
+}

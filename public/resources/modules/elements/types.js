@@ -3,3 +3,9 @@ export const Elements = Object.freeze({
   Group: 'group',
   Text: 'text',
 });
+
+export const TextSizes = Object.freeze({
+  Normal: '',
+  Stretch: 'stretch',
+  Short: 'short',
+});
