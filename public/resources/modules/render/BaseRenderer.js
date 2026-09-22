@@ -46,6 +46,11 @@ function bindMenu(renderer, menu) {
     menu.classList.toggle('shift', e.shiftKey);
     menu.showPopover({ source });
   });
+  source.addEventListener('click', (e) => {
+    if (isArchiveOpen() || menu.contains(e.target)) return;
+    menu.classList.toggle('shift', e.shiftKey);
+    menu.showPopover({ source });
+  });
 
   // Remove mismatched buttons
   menu.querySelectorAll('[data-type]').forEach((el) => {

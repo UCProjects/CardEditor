@@ -164,7 +164,7 @@
     </div>
     <!-- Archive -->
     <div class="material-symbols-outlined archive-button" data-tip="Open Archive">package_2</div>
-    <div class="archive" popover="manual">
+    <div class="archive" popover="manual" id="archive">
       <header>
         <input type="radio" name="page" id="elements" checked />
         <label for="elements" class="material-symbols-outlined fill">package_2</label>
@@ -172,6 +172,7 @@
         <label for="images" class="material-icons">image_search</label>
         <input type="radio" name="page" id="settings" />
         <label for="settings" class="material-icons">settings</label>
+        <button type="button" class="archive-close material-icons" popovertarget="archive" popovertargetaction="hide" aria-label="Close" data-tip="Close">close</button>
       </header>
       <div data-page="elements" class="active">
         <div>Empty, archive something</div>

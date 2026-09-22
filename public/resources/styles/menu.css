@@ -38,6 +38,7 @@
   border: 0;
   background-color: transparent;
   height: 35px;
+  padding: 0 8px;
 }
 
 .menu button:hover {
