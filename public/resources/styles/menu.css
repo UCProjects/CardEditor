@@ -55,6 +55,12 @@
   display: none;
 }
 
+@media only screen and (max-width: 640px) {
+  .menu [data-shift] {
+    display: block;
+  }
+}
+
 .menu.shift [data-shift] {
   display: block;
 }
