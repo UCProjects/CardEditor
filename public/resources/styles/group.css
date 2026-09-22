@@ -3,6 +3,7 @@
 }
 
 .group > header {
+  background-color: var(--background);
   position: sticky;
   top: 0px;
   border: 2px solid var(--border);
