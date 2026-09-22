@@ -136,7 +136,7 @@ input, textarea {
 }
 
 #editor [data-editable="effects"]:empty {
-  background-image: url('/resources/images/effects/silenced.png');
+  background-image: url('/resources/images/effects/Silenced.png');
 }
 
 #editor [data-editable="effects"]:empty:hover,
