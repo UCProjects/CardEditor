@@ -1,20 +1,33 @@
+import app, { loadStorage } from './UndercardEditor.js';
 import serviceWorker from './sw.register.js';
-import newGroup from './group.js';
-import { ready as effects } from './effects.js';
+import { ready as keywords } from './keywords.js';
+import { error as errorToast } from './toast/index.js';
+import { load as loadStatus } from './status.js';
 
 const preloads = [
   serviceWorker(),
-  effects,
+  keywords,
+  loadStatus(),
+  loadStorage(),
 ];
 
 function ready() {
   document.querySelectorAll('[legacy], #loading').forEach((el) => el.remove());
-  document.querySelector('#draggable-live-region').remove();
+  document.querySelector('#draggable-live-region')?.remove(); // This is from draggable
 
-  newGroup();
+  document.querySelectorAll('[data-template]').forEach((el) => {
+    const template = el.dataset.template;
+    el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load '${template}'`;
+  });
+
+  document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
+
+  app.init();
 }
 
 Promise.all(preloads)
   .then(ready)
-  // eslint-disable-next-line no-console
-  .catch(console.error);
+  .catch((err) => {
+    console.error(err);
+    errorToast({ body: 'Failed to load Editor' });
+  });

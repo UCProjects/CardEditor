@@ -39,9 +39,11 @@ async function updateFile(path, data) {
 }
 
 async function download(url, file) {
-  // FIXME this can save bad images
   try {
     const image = await fetch(url);
+    if (!image.ok) {
+      throw 'Bad url';
+    }
     await fs.writeFile(file, image.body);
   } catch (e) {
     console.error('Failed to save', basename(file), e.message || e);

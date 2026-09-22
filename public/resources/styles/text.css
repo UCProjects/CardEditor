@@ -1,0 +1,41 @@
+:root {
+  --ARTIFACT: rgb(66, 139, 202);
+}
+
+.group .element.text {
+  grid-column: span 4;
+  justify-self: stretch;
+}
+
+.element.text.short {
+  grid-column: span 2;
+}
+
+.element.text.stretch {
+  grid-column: 1 / -1;
+}
+
+.element.text .artifact {
+  border: 2px solid var(--border);
+  height: stretch;
+}
+
+.element.text .artifact > header {
+  background-color: var(--ARTIFACT);
+  padding: 15px;
+}
+
+.element.text .artifact .content {
+  padding: 15px;
+  min-height: 180px;
+}
+
+.element.text .artifact .image {
+  float: left;
+  margin-right: 5px;
+}
+
+.element.text .artifact img {
+  max-width: 40px;
+  max-height: 40px;
+}

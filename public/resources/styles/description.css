@@ -1,0 +1,61 @@
+:root {
+  --RARE: rgb(0, 184, 255);
+  --COST: var(--RARE);
+  --GOLD: rgb(255, 215, 0);
+  --LEGEND: var(--GOLD);
+  --ATTACK: rgb(255, 0, 0);
+  --DT: var(--ATTACK);
+  --HEALTH: rgb(0, 192, 0);
+  --KINDNESS: var(--HEALTH);
+  --TOKEN: var(--HEALTH);
+  --DAMAGE: rgb(255, 255, 0);
+  --JUSTICE: var(--DAMAGE);
+  --EPIC: rgb(213, 53, 217);
+  --PERS: var(--EPIC);
+  --POISON: var(--EPIC);
+  --NAME: rgb(65, 252, 255);
+  --PATIENCE: var(--NAME);
+  --BRAVERY: rgb(252, 165, 0);
+  --INTEG: rgb(0, 59, 255);
+  --BASE: rgb(128, 128, 128);
+  --COMMON: var(--text);
+  --LEFT: rgba(0, 255, 255, 0.4);
+  --RIGHT: rgba(255, 0, 0, 0.4);
+}
+
+.underline { text-decoration: underline; }
+.RARE { color: var(--RARE); }
+.COST { color: var(--COST); }
+.gold { color: var(--GOLD) }
+.LEGENDARY { color: var(--LEGEND); }
+.attack { color: var(--ATTACK); }
+.DETERMINATION, .DT { color: var(--DT); }
+.KINDNESS { color: var(--KINDNESS) }
+.health { color: var(--HEALTH); }
+.GENERATED, .TOKEN { color: var(--TOKEN); }
+.damage { color: var(--DAMAGE); }
+.JUSTICE { color: var(--JUSTICE); }
+.EPIC { color: var(--EPIC); }
+.PERSEVERANCE { color: var(--PERS); }
+.poison { color: var(--POISON); }
+.cardName { color: var(--NAME); }
+.PATIENCE { color: var(--PATIENCE); }
+.BRAVERY { color: var(--BRAVERY); }
+.INTEGRITY { color: var(--INTEG); }
+.COMMON { color: var(--COMMON) }
+.BASE { color: var(--BASE); }
+
+.selectable { cursor: pointer; }
+
+.switchLeft, .switchRight {
+  padding: 0 0.2em;
+  border-radius: 0.3em;
+  background-color: var(--LEFT);
+  -webkit-box-decoration-break: clone;
+  -o-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.switchRight {
+  background-color: var(--RIGHT);
+}
