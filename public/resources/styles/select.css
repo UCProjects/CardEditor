@@ -49,12 +49,15 @@
 
 .select-wrapper .select-list {
   position-area: block-end;
+  position-try-fallbacks: flip-block;
   inset: unset;
+  width: anchor-size(width);
+  max-width: calc(100vw - 16px);
   background: var(--background);
   border: 1.5px solid var(--border);
   border-radius: 12px;
   list-style: none;
-  max-height: 220px;
+  max-height: min(220px, 40dvh);
   overflow-y: auto;
   z-index: 100;
   padding: 6px;

@@ -49,6 +49,16 @@
   border-bottom: 0;
 }
 
+.archive-close {
+  flex: 0 0 auto;
+  border: 0;
+  border-bottom: 2px solid var(--border);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 12px;
+}
+
 .archive [data-page] {
   border: 2px solid var(--border);
   border-top: 0;
@@ -121,6 +131,13 @@
   flex-shrink: 0;
 }
 
+.archive .actions button {
+  padding: 6px;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
 .archive .extra {
   width: 100%;
   padding-left: 10px;
@@ -146,4 +163,14 @@
 
 .archive li.group-label:first-child {
   margin-top: 0;
+}
+
+@media only screen and (max-width: 640px) {
+  .archive-button {
+    font-size: 64px;
+  }
+
+  .archive {
+    width: 100%;
+  }
 }

@@ -9,6 +9,9 @@
     "dependencies": {
         "node-fetch": "^2.6.7"
     },
+    "engines": {
+        "node": "^24"
+    },
     "devDependencies": {
         "@eslint/css": "^0.14.1",
         "@happy-dom/global-registrator": "^20.14.5",

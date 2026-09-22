@@ -34,6 +34,12 @@ body > footer:hover {
   opacity: 1;
 }
 
+@media (hover: none) {
+  body > footer {
+    opacity: 0.6;
+  }
+}
+
 body > footer img {
   width: 16px;
   vertical-align: middle;

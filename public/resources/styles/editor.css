@@ -32,20 +32,26 @@ input, textarea {
   padding: 0;
   display: grid;
   grid-template-columns: 1fr fit-content(620px);
+  align-content: start;
 }
 
 .editor-wrapper > header {
   color: var(--text-alt);
   background-color: var(--background-alt);
-  padding: 5px var(--spacing);
+  padding: 6px var(--spacing);
   grid-column: 1 / -1;
   justify-content: space-between;
+  font-size: 0.95rem;
+  line-height: 1.2;
 }
 
 .editor-wrapper > header button {
   background-color: transparent;
   border: 0;
   cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .editor-wrapper > header button:hover {
@@ -223,7 +229,13 @@ fieldset.soul {
   width: unset;
 }
 
-.effect-row .remove {}
+.effect-row .remove {
+  padding: 4px 10px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
 
 .effect-row::before {
   content: '';
@@ -246,4 +258,48 @@ fieldset.soul {
 #editor .keywords > span:not(:last-child)::after {
   content: ';';
   color: var(--BASE);
+}
+
+@media only screen and (max-width: 640px) {
+  .editor-wrapper > header {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+
+  .editor-wrapper > header button {
+    font-size: 18px;
+    padding: 10px;
+  }
+
+  #editor {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    border-radius: 0;
+    border: 0;
+  }
+
+  .editor-wrapper {
+    grid-template-columns: 1fr;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .editor-wrapper > .preview {
+    display: flex;
+    justify-content: center;
+  }
+
+  .editor-wrapper > .helper {
+    border-left: 0;
+    border-top: 2px solid var(--border);
+    min-width: 0;
+  }
+
+  .helper .grid {
+    width: auto;
+    max-width: 100%;
+  }
 }
