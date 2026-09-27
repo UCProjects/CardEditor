@@ -8,9 +8,16 @@ const db = new Promise((resolve, reject) => {
   request.onupgradeneeded = (e) => {
     e.target.result.createObjectStore(STORE, { keyPath: 'id' });
   };
-  request.onsuccess = (e) => resolve(e.target.result);
+  request.onsuccess = (e) => {
+    const conn = e.target.result;
+    conn.onversionchange = () => conn.close();
+    resolve(conn);
+  };
   request.onerror = (e) => reject(e.target.error);
+  request.onblocked = () => reject(new Error('Image database upgrade blocked by another tab'));
 });
+
+db.catch((e) => console.error('Failed to open the image database', e));
 
 /** @typedef {import('../imageBank.js').StoredImage} StoredImage */
 
