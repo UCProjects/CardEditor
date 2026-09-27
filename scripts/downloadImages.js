@@ -42,43 +42,65 @@ async function download(url, file) {
   try {
     const image = await fetch(url);
     if (!image.ok) {
-      throw 'Bad url';
+      throw new Error(`HTTP ${image.status}`);
     }
     await fs.writeFile(file, image.body);
+    return true;
   } catch (e) {
     console.error('Failed to save', basename(file), e.message || e);
+    return false;
   }
 }
 
 async function downloadAvatars(images) {
   const path = join(base, 'images', 'avatars');
   await fs.mkdir(path, { recursive: true });
+  let failed = 0;
   for (const name of images) {
     const url = `https://undercards.net/images/cards/${name}.png`;
-    await download(url, resolve(path, `${name}.png`));
+    if (!await download(url, resolve(path, `${name}.png`))) failed += 1;
   }
+  console.log(`Avatars: ${images.length - failed} saved, ${failed} failed`);
+  return failed;
 }
 
 async function downloadEffects() {
   const path = join(base, 'images', 'effects');
   await fs.mkdir(path, { recursive: true });
-  const values = effects.values();
-  for (const effect of values) {
+  let failed = 0;
+  for (const effect of effects.values()) {
     const url = `https://undercards.net/images/powers/${effect}.png`;
-    await download(url, resolve(path, `${effect}.png`));
+    if (!await download(url, resolve(path, `${effect}.png`))) failed += 1;
   }
+  console.log(`Effects: ${effects.size - failed} saved, ${failed} failed`);
+  return failed;
 }
 
-fetch('https://undercards.net/AllCards')
-  .then((res) => res.json())
-  .then(({ cards }) => JSON.parse(cards))
-  .then((cards) => Object.fromEntries(cards.map(({ name, image, statuses = [] }) => {
+async function run() {
+  const res = await fetch('https://undercards.net/AllCards');
+  if (!res.ok) throw new Error(`AllCards: HTTP ${res.status}`);
+
+  const { cards } = await res.json();
+  const parsed = JSON.parse(cards);
+  const avatars = Object.fromEntries(parsed.map(({ name, image, statuses = [] }) => {
     statuses.forEach(({ name: effect }) => effects.add(effect));
     return [name, image];
-  })))
-  .then((avatars) => Promise.all([
+  }));
+
+  console.log(`Cards: ${parsed.length}, effects: ${effects.size}`);
+
+  const [, , avatarsFailed, effectsFailed] = await Promise.all([
     updateFile(resolve(base, 'data', 'avatars.json'), avatars),
     updateFile(resolve(base, 'data', 'status.json'), [...effects.values()]),
     downloadAvatars(Object.values(avatars)),
     downloadEffects(),
-  ]));
+  ]);
+
+  const failed = avatarsFailed + effectsFailed;
+  if (failed) throw new Error(`${failed} download(s) failed`);
+}
+
+run().catch((e) => {
+  console.error(e.message || e);
+  process.exitCode = 1;
+});
