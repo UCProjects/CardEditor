@@ -292,7 +292,7 @@ fieldset.soul {
     overflow-y: auto;
   }
 
-  .editor-wrapper > .preview {
+  #editor[data-type="card"] .editor-wrapper > .preview {
     display: flex;
     justify-content: center;
   }
