@@ -77,6 +77,11 @@ export async function rename(id, name) {
   return true;
 }
 
+/** @param {string} id */
+export function isUserImage(id) {
+  return uuidValidateV6(id);
+}
+
 export function getName(id) {
   const store = images.get(id);
   if (!store) return store;

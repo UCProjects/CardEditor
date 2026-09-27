@@ -1,4 +1,4 @@
-import { events, getAll, getName, ImageType, remove, rename } from '../imageBank.js';
+import { events, getAll, getName, getURL, ImageType, isUserImage, remove, rename } from '../imageBank.js';
 import { li, span } from '../utils/html.js';
 import { bindFilter, matches } from './filter.js';
 import { tryOrError } from '../toast/index.js';
@@ -26,7 +26,7 @@ const list = container.querySelector('ul');
 
 export function load() {
   Object.entries(getAll()).forEach(([id, store]) => {
-    if (!store.file) return;
+    if (!isUserImage(id)) return;
     folders[store.type || 'misc'].items.push({ id, ...store });
   });
 
@@ -42,8 +42,8 @@ export function load() {
   events.on('new',
     /** @param {StoredImage} store  */
     (store) => {
-      const { type = 'misc' } = store;
-      if (!store.file) return;
+      const { id, type = 'misc' } = store;
+      if (!isUserImage(id)) return;
       const folder = folders[type];
       if (!folder) throw new Error('Unknown type');
       folder.items.push(store);
@@ -81,12 +81,25 @@ function refresh(type) {
   list.querySelector(`.group-label[data-type="${type}"]`).classList.toggle('hidden', !visible);
 }
 
+/** @param {string} id */
+function previewURL(id) {
+  try {
+    return getURL(id);
+  } catch {
+    return '';
+  }
+}
+
 /** @param {StoredImage} item */
 function newItem(item) {
   const { id, type = 'misc' } = item;
   const wrapper = document.importNode(template, true).querySelector('li');
   wrapper.dataset.id = id;
   wrapper.dataset.type = type;
+
+  const preview = wrapper.querySelector('.preview');
+  preview.src = previewURL(id);
+  preview.addEventListener('error', () => preview.classList.add('hidden'));
 
   const name = wrapper.querySelector('.name');
   function setName() {

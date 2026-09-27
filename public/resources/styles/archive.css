@@ -216,3 +216,19 @@
   appearance: none;
   -webkit-appearance: none;
 }
+
+.archive .preview {
+  width: auto;
+  max-width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.archive [data-type="effect"] .preview {
+  image-rendering: pixelated;
+}
+
+.archive [data-page="images"] li[data-type] .name::before {
+  content: none;
+}

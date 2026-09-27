@@ -1,5 +1,4 @@
-import { add, events, getAll, getName, getURL, ImageType, save } from './imageBank.js';
-import { effects as builtin } from './status.js';
+import { add, events, getAll, getName, getURL, ImageType, isUserImage, save } from './imageBank.js';
 import { error } from './toast/index.js';
 
 /** @type {HTMLDivElement} */
@@ -21,7 +20,7 @@ const warn = controls.querySelector('.warn').classList;
  * @param {import('./imageBank.js').ImageStore} data
  */
 function isCustom(id, data) {
-  return data?.type === ImageType.Effect && !builtin.includes(id);
+  return data?.type === ImageType.Effect && isUserImage(id);
 }
 
 /** @param {string} id */
