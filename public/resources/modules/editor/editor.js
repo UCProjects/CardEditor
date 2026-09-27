@@ -13,7 +13,15 @@ adoptStyle(style);
 /** @type {HTMLDialogElement} */
 const editor = document.getElementById('editor');
 
+/** @type {HTMLButtonElement} */
+const swap = editor.querySelector('header > .swap');
+
+swap.addEventListener('click', () => {
+  editor.dataset.panel = editor.dataset.panel === 'helper' ? 'preview' : 'helper';
+});
+
 function setActive(key) {
+  editor.dataset.panel = 'preview';
   if (key === 'none') {
     delete editor.dataset.editing;
   } else {

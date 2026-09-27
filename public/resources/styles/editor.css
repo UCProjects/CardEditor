@@ -45,8 +45,13 @@ input, textarea {
   line-height: 1.2;
 }
 
+.editor-wrapper > header > .swap {
+  display: none;
+}
+
 .editor-wrapper > header button {
   background-color: transparent;
+  color: inherit;
   border: 0;
   cursor: pointer;
   font-size: 20px;
@@ -301,5 +306,21 @@ fieldset.soul {
   .helper .grid {
     width: auto;
     max-width: 100%;
+  }
+
+  #editor[data-editing="description"] > .editor-wrapper > header > .swap {
+    display: block;
+  }
+
+  #editor[data-editing="description"] .editor-wrapper > .helper {
+    display: none;
+  }
+
+  #editor[data-editing="description"][data-panel="helper"] .editor-wrapper > .helper {
+    display: block;
+  }
+
+  #editor[data-editing="description"][data-panel="helper"] .editor-wrapper > .preview {
+    display: none;
   }
 }
