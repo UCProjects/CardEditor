@@ -1,5 +1,6 @@
 import { keywords, specials } from '../keywords.js';
 import Builder from '../utils/builder.js';
+import { hasKey } from '../utils/funcs.js';
 
 const underlineRegex = new Builder(() => new RegExp(`(?<!\\\\)(${keywords.join('|')})(?![^{]*})|_([^_]+)_`, 'g'));
 const specialRegex = new RegExp(`(?<!{|"|>|\\w|\\\\)(${specials.join('|')})(?![\\w}])`, 'g');
@@ -47,7 +48,8 @@ function process(text = '') {
     const add = rest.join(':');
     if (add) args.unshift(add);
   }
-  const handler = commands[command.toLowerCase()];
+  const key = command.toLowerCase();
+  const handler = hasKey(commands, key) && commands[key];
   if (typeof handler !== 'function') return '';
   return handler(args);
 }
