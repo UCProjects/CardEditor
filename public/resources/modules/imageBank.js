@@ -69,13 +69,12 @@ export async function remove(key) {
   events.emit('remove', key);
 }
 
-export function rename(id, name) {
+export async function rename(id, name) {
   const image = images.get(id);
-  if (image && image.name !== name) {
-    image.name = name;
-    return true;
-  }
-  return false;
+  if (!image || image.name === name) return false;
+  image.name = name;
+  if (image.file instanceof File) await save(id);
+  return true;
 }
 
 export function getName(id) {

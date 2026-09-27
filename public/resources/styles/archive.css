@@ -203,3 +203,16 @@
 .archive ul.filtering > li > ul.extra.hidden {
   display: block;
 }
+
+.archive input.rename {
+  width: 100%;
+  min-width: 0;
+  padding: 0 2px;
+  font: inherit;
+  color: var(--text);
+  background-color: rgb(31, 31, 31);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}

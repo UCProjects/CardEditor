@@ -1,6 +1,7 @@
-import { events, getAll, ImageType, remove } from '../imageBank.js';
+import { events, getAll, getName, ImageType, remove, rename } from '../imageBank.js';
 import { li, span } from '../utils/html.js';
 import { bindFilter, matches } from './filter.js';
+import { tryOrError } from '../toast/index.js';
 
 /**
  * @typedef {import('../imageBank.js').StoredImage} StoredImage
@@ -82,17 +83,56 @@ function refresh(type) {
 
 /** @param {StoredImage} item */
 function newItem(item) {
-  const { id, type = 'misc', file } = item;
+  const { id, type = 'misc' } = item;
   const wrapper = document.importNode(template, true).querySelector('li');
   wrapper.dataset.id = id;
   wrapper.dataset.type = type;
 
   const name = wrapper.querySelector('.name');
-  name.textContent = item.name ?? file.name ?? '(blank)';
+  function setName() {
+    const value = getName(id) || '(blank)';
+    name.textContent = value;
+    wrapper.dataset.search = value;
+  }
+  setName();
 
-  // TODO rename
-
+  wrapper.querySelector('[data-tip="Rename"]').addEventListener('click', () => startRename(id, name, setName));
   wrapper.querySelector('[data-tip="Delete"]').addEventListener('click', () => remove(id));
 
   return wrapper;
+}
+
+function startRename(id, name, setName) {
+  if (!name.isConnected) return;
+  const field = document.createElement('input');
+  field.type = 'text';
+  field.className = 'rename';
+  field.value = getName(id) ?? '';
+  name.replaceWith(field);
+  field.focus();
+  field.select();
+
+  let done = false;
+  async function finish(commit) {
+    if (done) return;
+    done = true;
+    const value = field.value.trim();
+    field.replaceWith(name);
+    if (commit && value) {
+      await tryOrError(() => rename(id, value), 'Failed to rename the image');
+    }
+    setName();
+  }
+
+  field.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      finish(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      finish(false);
+    }
+  });
+  field.addEventListener('blur', () => finish(true));
 }
