@@ -352,3 +352,38 @@ fieldset.soul {
     display: none;
   }
 }
+
+@media (hover: none) {
+  .helper .grid {
+    grid-template-columns: repeat(auto-fit, 32px);
+    justify-content: center;
+  }
+
+  .helper .selectable {
+    image-rendering: pixelated;
+  }
+
+  .helper .smallIcon {
+    max-height: 32px;
+    max-width: 32px;
+  }
+
+  .helper .smallerIcon {
+    max-height: 28px;
+    max-width: 28px;
+  }
+
+  .helper [data-rarity] {
+    width: 48px;
+  }
+
+  .helper .addEffect {
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+  }
+}
+
+#editor fieldset[name="custom"]:not(:has(#customEffects > :not(.hidden))) {
+  display: none;
+}
