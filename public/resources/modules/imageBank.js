@@ -62,8 +62,9 @@ export function add(data) {
 /**  @param {string} key */
 export async function remove(key) {
   const store = images.get(key);
-  if (!store?.file || !images.delete(key)) return;
-  URL.revokeObjectURL(store.src);
+  if (!store) return;
+  images.delete(key);
+  if (store.file) URL.revokeObjectURL(store.src);
   await removeImage(key);
   events.emit('remove', key);
 }
