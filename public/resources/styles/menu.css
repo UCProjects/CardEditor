@@ -13,6 +13,8 @@
   right: anchor(right);
   margin: 0;
   padding: 0;
+  color: var(--text);
+  background-color: var(--background);
   border: 1px solid var(--border);
   border-bottom: 0;
   border-top-left-radius: 8px;
@@ -29,6 +31,8 @@
   inset: unset;
   top: anchor(bottom);
   right: anchor(right);
+  border-top: 0;
+  border-bottom: 1px solid var(--border);
   border-radius: 0;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
