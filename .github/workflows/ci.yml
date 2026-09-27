@@ -7,9 +7,13 @@ on:
       - master
     paths-ignore:
       - 'public/**'
+      - 'firebase.json'
   pull_request:
     paths-ignore:
       - 'public/**'
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   check:
     name: Lint and test

@@ -6,6 +6,10 @@ on:
       - master
     paths:
       - 'public/**'
+      - 'firebase.json'
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   check:
     uses: ./.github/workflows/ci.yml
