@@ -42,8 +42,4 @@ export default class Item extends EventEmitter {
   isActive() {
     return this.element.renderer().container.isConnected;
   }
-
-  isHidden() {
-    return !!this.group || this.trashed || this.isActive();
-  }
 }

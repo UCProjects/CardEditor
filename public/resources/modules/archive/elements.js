@@ -2,12 +2,13 @@ import { getAll, register, remove, save } from '../elements/registry.js';
 import events from '../elements/registryEvents.js';
 import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
-import { contains } from '../utils/array.js';
 import { removeClass } from '../utils/funcs.js';
 import { bindFilter, matches } from './filter.js';
 import Item from './Item.js';
 import App from '../UndercardEditor.js';
 import editor from '../editor/editor.js';
+
+const Trash = 'trashFolder';
 
 /** @type {HTMLDivElement} */
 const page = document.querySelector('.archive div[data-page="elements"]');
@@ -16,7 +17,7 @@ const empty = page.querySelector('div');
  * @type {{
  *  groups: HTMLLIElement;
  *  items: HTMLLIElement;
- *  trash: HTMLLIElement;
+ *  trash: HTMLUListElement;
  * }}
  */
 const list = {
@@ -33,14 +34,36 @@ const filterInput = page.querySelector('input[name="filter"]');
 const items = new Map();
 /** @type {Map<string, Item>} */
 const groups = new Map();
+/** @type {Set<Item>} */
+const trashed = new Set();
 
-const trashRef = new Item({
-  id: 'trash',
-  name: 'Trash',
-  type: 'trashFolder',
-  on() { return this; },
-  renderer() { return { container: {} }; }
-});
+/**
+ * @typedef {{
+ *  li: HTMLLIElement;
+ *  extra: HTMLUListElement;
+ *  collapse: () => void;
+ * }} Row
+ */
+
+/** @type {WeakMap<Item, Row>} */
+const rows = new WeakMap();
+
+class TrashItem extends Item {
+  constructor() {
+    super({
+      id: 'trash',
+      name: 'Trash',
+      type: Trash,
+      on() { return this; },
+    });
+  }
+
+  isActive() {
+    return false;
+  }
+}
+
+const trashRef = new TrashItem();
 
 let dragSrc;
 
@@ -54,21 +77,23 @@ function add(el) {
     if (item.group && !groups.get(item.group)?.element.content.includes(item.id)) {
       item.group = undefined;
     }
-    addItem(item);
+    place(item);
   });
   item.on('restore', () => {
+    if (!item.trashed) return;
     register(item.element);
     save(item.element);
     item.trashed = false;
-    item.emit('refresh');
+    trashed.delete(item);
+    place(item);
     trashRef.emit('refresh');
   });
   item.on('trash', () => {
     if (item.trashed) return;
     remove(item.element);
     item.trashed = true;
-    addItem(item, true);
-    item.emit('refresh');
+    trashed.add(item);
+    place(item);
     trashRef.emit('refresh');
   });
 
@@ -98,11 +123,15 @@ events.on('add', (element) => {
 export function load() {
   getAll().forEach(add);
 
-  groups.forEach(i => addItem(i));
-
-  items.forEach(i => addItem(i));
+  groups.forEach((group) => forEach(group, (child) => {
+    child.group = group.id;
+  }));
 
   initTrash();
+
+  groups.forEach((group) => place(group));
+
+  items.forEach((item) => place(item));
 
   const app = document.getElementById('app');
   initDrop(app, true);
@@ -121,155 +150,160 @@ export function load() {
   refreshEmptyMessage();
 }
 
-/** @param {Item} item  */
-function render(item, {
-  inGroup = false,
-  inTrash = false,
-} = {}) {
-  const container = document.importNode(listItem.content, true);
-  const isTrashFolder = item.type === 'trashFolder';
-  const li = container.querySelector('li');
-  li.draggable = !isTrashFolder;
-  container.querySelectorAll('[data-type]').forEach((el) => {
-    const types = el.dataset.type.split(',');
-    const needle = [item.type];
-    if (!isTrashFolder) needle.push(inTrash || item.trashed ? 'trash' : 'normal');
-    if (!contains(types, needle)) el.remove();
-  });
-  const name = container.querySelector('.name');
+/**
+ * @param {Item} item
+ * @returns {Row}
+ */
+function rowOf(item) {
+  let row = rows.get(item);
+  if (!row) {
+    row = render(item);
+    rows.set(item, row);
+  }
+  return row;
+}
+
+/** @param {Item} item */
+function place(item) {
+  if (item.isActive()) return;
+  const { li } = rowOf(item);
+  const group = item.group ? groups.get(item.group) : undefined;
+  if (group) rowOf(group).extra.append(li);
+  else if (item.trashed) list.trash.append(li);
+  else if (item.type === Elements.Group) list.groups.before(li);
+  else list.items.before(li);
+  if (item.type === Elements.Group) forEach(item, place);
+  item.emit('refresh');
+  refreshEmptyMessage();
+}
+
+/**
+ * @param {Item} item
+ * @returns {Row}
+ */
+function render(item) {
+  const fragment = document.importNode(listItem.content, true);
+  /** @type {HTMLLIElement} */
+  const li = fragment.querySelector('li');
+  /** @type {HTMLUListElement} */
+  const extra = fragment.querySelector('ul.extra');
+  const isContainer = item.type === Elements.Group || item.type === Trash;
+
+  li.dataset.id = item.id;
+  li.dataset.type = item.type;
+  li.draggable = item.type !== Trash;
+  if (item.type === Elements.Card && item.element.isSpell()) li.dataset.spell = '';
+
+  const name = li.querySelector('.name');
   function setName() {
     name.dataset.tip = item.name;
     name.textContent = item.name || '(blank)';
     li.dataset.search = [item.name, item.element.description].filter(Boolean).join(' ');
   }
   setName();
-  if (!isTrashFolder) {
+
+  if (!isContainer) extra.remove();
+  const collapse = isContainer ? initExpand(li, extra) : () => {};
+
+  if (item !== trashRef) {
     const EOL = new AbortController();
-    item.on('refresh', () => li.classList.toggle('hidden', !inTrash && !inGroup && item.isHidden()));
-    item.on('destroy', () => {
-      const map = item.type === Elements.Group ? groups : items;
-      map.delete(item.id);
+    const options = { signal: EOL.signal };
+    function discard() {
       li.remove();
+      rows.delete(item);
       EOL.abort();
       refreshEmptyMessage();
-    });
+    }
+    item.on('refresh', () => {
+      li.classList.toggle('hidden', item.isActive());
+      li.classList.toggle('trashed', item.trashed);
+    }, options);
+    item.on('update', setName, options);
+    item.on('destroy', () => {
+      (item.type === Elements.Group ? groups : items).delete(item.id);
+      trashed.delete(item);
+      discard();
+      trashRef.emit('refresh');
+    }, options);
     item.on('dropped', () => {
-      if (item.group) {
-        const group = groups.get(item.group);
-        if (!group) return;
+      const group = item.group ? groups.get(item.group) : undefined;
+      if (group) {
         group.element.remove(item.id);
         save(group.element);
       }
-      li.remove();
-      EOL.abort();
-      refreshEmptyMessage();
-    });
-    item.on('update', () => {
-      if (!li.isConnected) return true;
-      setName();
-      return false;
-    }, { signal: EOL.signal });
+      discard();
+    }, options);
   }
+
   initButtons(li, item);
   initDrag(li, item);
-  li.dataset.id = item.id;
-  li.dataset.type = item.element.type;
-  if (item.element.type === Elements.Card && item.element.isSpell()) li.dataset.spell = '';
   item.emit('refresh');
-  return container;
+  return { li, extra, collapse };
 }
 
-/** @param {Item} group  */
-function addGroup(group, trash = false) {
-  const container = render(group, { inTrash: trash });
-  const extra = container.querySelector('ul.extra');
-  const button = container.querySelector('[data-action="expand"]');
-  button.addEventListener('click', () => {
-    extra.classList.toggle('hidden');
-    button.textContent = button.textContent === 'folder' ? 'folder_open' : 'folder';
-  });
-  function addChild(item) {
-    item.group = group.id;
-    extra.appendChild(render(item, { inGroup: true, inTrash: trash }));
+/**
+ * @param {HTMLLIElement} li
+ * @param {HTMLUListElement} extra
+ * @returns {() => void}
+ */
+function initExpand(li, extra) {
+  const buttons = [...li.querySelectorAll('[data-action="expand"]')].map((button) => ({
+    button,
+    closed: button.textContent,
+    open: button.dataset.open ?? button.textContent,
+  }));
+
+  function setCollapsed(collapsed) {
+    extra.classList.toggle('hidden', collapsed);
+    buttons.forEach(({ button, closed, open }) => {
+      button.classList.toggle('fill', collapsed);
+      button.textContent = collapsed ? closed : open;
+    });
   }
-  forEach(group, addChild);
-  if (!trash) group.on('addChild', (id) => addChild(items.get(id)));
-  if (trash) list.trash.append(container);
-  else list.groups.before(container);
+
+  buttons.forEach(({ button }) => button.addEventListener('click', () => {
+    setCollapsed(!extra.classList.contains('hidden'));
+  }));
+
+  return () => setCollapsed(true);
 }
 
-/** @param {Item} item  */
-function addItem(item, trash = false) {
-  if (item.isActive()) return;
-  if (item.type === Elements.Group) {
-    addGroup(item, trash);
-  } else if (trash) {
-    if (groups.get(item.group)?.trashed) return;
-    list.trash.append(render(item, { inTrash: true }));
-  } else if (!item.group) { // TODO or if group trashed
-    list.items.before(render(item));
-  }
-  refreshEmptyMessage();
+/**
+ * @param {Item} item
+ * @param {string} event
+ */
+function cascade(item, event) {
+  if (item.type === Elements.Group) forEach(item, (child) => child.emit(event));
+  item.emit(event);
 }
+
+/** @type {Record<string, (item: Item) => void>} */
+const actions = {
+  edit(item) {
+    const editController = new AbortController();
+    editor.on('save', () => {
+      item.emit('update');
+    }, { signal: editController.signal });
+    editor.on('close', () => {
+      editController.abort();
+      document.querySelector('.archive').showPopover();
+    }, { signal: editController.signal });
+    editor.open(item.element.renderer());
+  },
+  trash: (item) => cascade(item, 'trash'),
+  restore: (item) => cascade(item, 'restore'),
+  destroy: (item) => cascade(item, 'destroy'),
+  restoreAll: () => getTrash().forEach((i) => i.emit('restore')),
+  destroyAll: () => getTrash().forEach((i) => i.emit('destroy')),
+};
 
 /**
  * @param {HTMLElement} container
  * @param {Item} item
  */
 function initButtons(container, item) {
-  const isGroup = item.type === Elements.Group;
-  const isTrashFolder = item.type === 'trashFolder';
   container.querySelectorAll('button').forEach((button) => {
-    if (button.name === 'edit') {
-      button.addEventListener('click', () => {
-        const editController = new AbortController();
-        editor.on('save', () => {
-          item.emit('update');
-        }, { signal: editController.signal });
-        editor.on('close', () => {
-          editController.abort();
-          document.querySelector('.archive').showPopover();
-        }, { signal: editController.signal });
-        editor.open(item.element.renderer());
-      });
-    } else if (button.name === 'delete') {
-      button.addEventListener('click', () => {
-        /** @param {Item} i  */
-        function destroy(i) {
-          i.emit('destroy');
-        }
-        /** @param {Item} i  */
-        function mark(i) {
-          i.emit('trash');
-        }
-        if (isTrashFolder) {
-          getTrash().forEach(destroy);
-          trashRef.emit('refresh');
-        } else if (item.trashed) {
-          destroy(item);
-          if (isGroup) forEach(item, destroy);
-        } else {
-          // if (item.group) item.group = undefined; // TODO is this needed?
-          mark(item);
-          if (isGroup) forEach(item, mark);
-        }
-      });
-    } else if (button.name === 'restore') {
-      button.addEventListener('click', () => {
-        /** @param {Item} i  */
-        function mark(i) {
-          i.emit('restore');
-          if (!isTrashFolder) container.remove();
-        }
-        if (isTrashFolder) {
-          getTrash().sort(childrenFirst).forEach(mark);
-          list.trash.innerHTML = '';
-        } else {
-          if (isGroup) forEach(item, mark);
-          mark(item);
-        }
-      });
-    }
+    button.addEventListener('click', () => actions[button.name]?.(item));
   });
 }
 
@@ -316,7 +350,7 @@ function initDrop(container, allowGroups = false) {
     const { id, type } = dragSrc.dataset;
     const isGroup = type === Elements.Group;
     const item = isGroup ? groups.get(id) : items.get(id);
-    if (item.trashed) item.emit('restore');
+    if (item.trashed) cascade(item, 'restore');
     if (isGroup) {
       const renderer = item.element.renderer();
       App.addGroup(renderer);
@@ -335,34 +369,21 @@ function initDrop(container, allowGroups = false) {
 }
 
 function initTrash() {
-  const container = render(trashRef);
-  const li = container.querySelector('li');
-  const extra = container.querySelector('ul.extra');
-  const button = container.querySelector('[data-action="expand"]');
-  button.addEventListener('click', () => {
-    extra.classList.toggle('hidden');
-    button.classList.toggle('fill');
-  });
+  const { li, extra, collapse } = rowOf(trashRef);
+  list.trash = extra;
 
   trashRef.on('refresh', () => {
-    const hidden = !getTrash().length;
+    const hidden = !trashed.size;
     li.classList.toggle('hidden', hidden);
-    if (hidden) {
-      extra.classList.add('hidden');
-      button.classList.add('fill');
-    }
+    if (hidden) collapse();
     refreshEmptyMessage();
   }).emit('refresh');
 
-  list.items.after(container);
-  list.trash = extra;
+  list.items.after(li);
 }
 
 function getTrash() {
-  return [
-    ...groups.values(),
-    ...items.values(),
-  ].filter((i) => i.trashed);
+  return [...trashed].sort(childrenFirst);
 }
 
 /**

@@ -355,20 +355,20 @@
       <li data-id draggable="true">
         <div class="wrapper">
           <div class="info">
-            <span data-action="expand" data-type="trashFolder" class="material-symbols-outlined fill">folder_delete</span>
-            <span data-action="expand" data-type="group" class="material-icons">folder</span>
+            <span data-action="expand" data-show="trashFolder" class="material-symbols-outlined fill">folder_delete</span>
+            <span data-action="expand" data-show="group" class="material-icons" data-open="folder_open">folder</span>
             <span class="name"></span>
           </div>
           <div class="actions">
-            <button name="edit" data-type="normal" class="material-icons" data-tip="Edit">edit_square</button>
-            <button name="delete" data-type="normal" class="material-icons" data-tip="Trash">delete</button>
-            <button name="restore" data-type="trash" class="material-icons" data-tip="Restore">restore_from_trash</button>
-            <button name="delete" data-type="trash" class="material-icons" data-tip="Delete">delete_forever</button>
-            <button name="restore" data-type="trashFolder" class="material-icons" data-tip="Restore All">restore_from_trash</button>
-            <button name="delete" data-type="trashFolder" class="material-icons" data-tip="Delete All">delete_forever</button>
+            <button name="edit" data-show="normal" class="material-icons" data-tip="Edit">edit_square</button>
+            <button name="trash" data-show="normal" class="material-icons" data-tip="Trash">delete</button>
+            <button name="restore" data-show="trash" class="material-icons" data-tip="Restore">restore_from_trash</button>
+            <button name="destroy" data-show="trash" class="material-icons" data-tip="Delete">delete_forever</button>
+            <button name="restoreAll" data-show="trashFolder" class="material-icons" data-tip="Restore All">restore_from_trash</button>
+            <button name="destroyAll" data-show="trashFolder" class="material-icons" data-tip="Delete All">delete_forever</button>
           </div>
         </div>
-        <ul class="extra hidden" data-type="trashFolder,group"></ul>
+        <ul class="extra hidden"></ul>
       </li>
     </template>
     <template id="addCustom">

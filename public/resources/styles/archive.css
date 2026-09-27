@@ -127,6 +127,17 @@
   background-image: url('/resources/images/TEXT.png');
 }
 
+.archive .wrapper [data-show] {
+  display: none;
+}
+
+.archive li[data-type="group"] > .wrapper [data-show~="group"],
+.archive li[data-type="trashFolder"] > .wrapper [data-show~="trashFolder"],
+.archive li.trashed > .wrapper [data-show~="trash"],
+.archive li:not(.trashed, [data-type="trashFolder"]) > .wrapper [data-show~="normal"] {
+  display: revert;
+}
+
 .archive .actions {
   flex-shrink: 0;
 }
