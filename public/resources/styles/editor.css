@@ -185,6 +185,34 @@ input, textarea {
   justify-self: center;
 }
 
+.helper .addEffects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.helper .addEffects > input,
+.helper .addEffects > .warn {
+  flex: 1 0 100%;
+}
+
+.helper .addEffect {
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  background: none;
+  color: inherit;
+  border: 1px dotted var(--border);
+  cursor: pointer;
+}
+
 .helper [data-rarity],
 .helper [data-tribe] {
   opacity: 0.4;

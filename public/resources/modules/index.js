@@ -4,6 +4,7 @@ import { ready as keywords } from './keywords.js';
 import { ready as images } from './imageBank.js';
 import { error as errorToast } from './toast/index.js';
 import { load as loadStatus } from './status.js';
+import { load as loadCustomEffects } from './customEffects.js';
 
 const preloads = [
   serviceWorker(),
@@ -21,6 +22,8 @@ function ready() {
     const template = el.dataset.template;
     el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load '${template}'`;
   });
+
+  loadCustomEffects();
 
   document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
 

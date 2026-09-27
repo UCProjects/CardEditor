@@ -1,4 +1,4 @@
-import { getAll, ImageType } from '../../imageBank.js';
+import { getAll, getURL, ImageType } from '../../imageBank.js';
 import settings, { Settings } from '../../settings.js';
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
@@ -118,7 +118,7 @@ export default class CardModule extends Module {
 
     // effects
     const effects = new Map();
-    const effectList = document.getElementById('effects');
+    const effectList = document.querySelector('[data-editing="effects"]');
     const activeList = document.querySelector('[data-editing="effects"] .activeList');
     const effectSet = activeList.parentElement;
     const empty = effectSet.querySelector('.empty');
@@ -142,7 +142,7 @@ export default class CardModule extends Module {
       const [wrapper] = row.children;
 
       const img = row.querySelector('img');
-      img.src = `/resources/images/effects/${effect}.png`;
+      img.src = getURL(effect, ImageType.Effect);
       img.alt = effect;
 
       const input = row.querySelector('input');
@@ -158,7 +158,7 @@ export default class CardModule extends Module {
       // Remove
       const remove = row.querySelector('button.remove');
       remove.addEventListener('click', () => {
-        effectList.querySelector(`[data-value="${effect}"]`).classList.remove('hidden');
+        effectList.querySelector(`[data-value="${effect}"]`)?.classList.remove('hidden');
         wrapper.remove();
         effects.delete(effect);
         empty.classList.toggle('hidden', effects.size);
@@ -181,14 +181,16 @@ export default class CardModule extends Module {
     });
 
     effectList.querySelectorAll('[data-value]').forEach((el) => {
-      const effect = el.dataset.value;
-      el.classList.toggle('hidden', effects.has(effect));
-      el.addEventListener('click', () => {
-        el.classList.add('hidden');
-        addActive(effect);
-        empty.classList.add('hidden');
-      }, { signal });
+      el.classList.toggle('hidden', effects.has(el.dataset.value));
     });
+
+    effectList.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-value]');
+      if (!el) return;
+      el.classList.add('hidden');
+      addActive(el.dataset.value);
+      empty.classList.add('hidden');
+    }, { signal });
 
     empty.classList.toggle('hidden', effects.size);
   }
