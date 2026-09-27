@@ -4,6 +4,7 @@ const DATA = 'data:';
 const keys = {
   element: (id) => `${DATA}el:${id}`,
   colors: `${APP}colors`,
+  corrupt: (key) => `${APP}corrupt:${key}`,
   groups: `${APP}groups`,
   setting: (key) => `${APP}setting:${key}`, // TODO
   settings: `${APP}settings`,
@@ -12,8 +13,7 @@ const keys = {
 
 /** @returns {string[]} */
 export function getColors() {
-  const data = localStorage.getItem(keys.colors);
-  return data ? JSON.parse(data) : [];
+  return read(keys.colors, []);
 }
 
 export function setColors(colors) {
@@ -22,8 +22,7 @@ export function setColors(colors) {
 
 /** @returns {string[]} */
 export function getGroups() {
-  const groups = localStorage.getItem(keys.groups);
-  return groups ? JSON.parse(groups) : [];
+  return read(keys.groups, []);
 }
 
 export function setGroups(ids) {
@@ -40,8 +39,7 @@ export function setVersion(version) {
 
 /** @returns {import('../elements/BaseElement.js').default | undefined} */
 export function getElement(id) {
-  const item = localStorage.getItem(keys.element(id));
-  return item ? JSON.parse(item) : undefined;
+  return read(keys.element(id));
 }
 
 export function setElement(id, data) {
@@ -54,8 +52,7 @@ export function removeElement(id) {
 
 /** @returns {string[]} */
 export function getSettings() {
-  const groups = localStorage.getItem(keys.settings);
-  return groups ? JSON.parse(groups) : [];
+  return read(keys.settings, []);
 }
 
 export function setSettings(value) {
@@ -90,4 +87,27 @@ function reducer(_, value) {
     return value.trim() || undefined;
   }
   return value;
+}
+
+function read(key, fallback) {
+  const data = localStorage.getItem(key);
+  if (!data) return fallback;
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    console.error(`Failed to read '${key}' from storage`, e);
+    quarantine(key, data);
+    return fallback;
+  }
+}
+
+function quarantine(key, data) {
+  const target = keys.corrupt(key);
+  try {
+    localStorage.setItem(target, data);
+    localStorage.removeItem(key);
+    console.error(`Corrupt '${key}' preserved at '${target}'`);
+  } catch (e) {
+    console.error(`Failed to preserve corrupt '${key}'`, e);
+  }
 }
