@@ -22,11 +22,14 @@ export const ImageType = Object.freeze({
  *
  * @typedef {{
  *  id?: string;
- *  file?: File;
  *  name?: string;
- *  src: string;
  *  type?: ImageTypes;
- * }} ImageStore
+ * }} ImageBase
+ *
+ * @typedef {ImageBase & { src: string; file?: never; }} SourceImage
+ * @typedef {ImageBase & { file: File; src?: string; }} FileImage
+ *
+ * @typedef {SourceImage | FileImage} ImageStore
  */
 
 /** @type {Map<string, string>} */
