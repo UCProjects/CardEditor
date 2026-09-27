@@ -100,6 +100,7 @@ async function confirmRemove(id) {
       title: 'Delete image',
       body: `${getName(id) || 'This image'} is used by ${used} ${used === 1 ? 'element' : 'elements'}, which will lose it.`,
       accept: 'Delete',
+      destructive: true,
     });
     if (!accepted) return;
   }

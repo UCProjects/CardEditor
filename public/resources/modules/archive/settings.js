@@ -31,6 +31,7 @@ export function load() {
       title: 'Reset Editor?',
       body: 'This permanently deletes every group, element, uploaded image and setting. This cannot be undone.',
       accept: 'Delete Everything',
+      destructive: true,
     });
     if (!accepted) return;
 

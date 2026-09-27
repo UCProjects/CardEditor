@@ -12,6 +12,7 @@ const dialog = document.querySelector('#confirm');
  *  body?: string;
  *  accept?: string;
  *  cancel?: string;
+ *  destructive?: boolean;
  * }} options
  * @returns {Promise<boolean>}
  */
@@ -20,7 +21,9 @@ export default function confirm({
   body = '',
   accept = 'Confirm',
   cancel = 'Cancel',
+  destructive = false,
 } = {}) {
+  dialog.classList.toggle('destructive', destructive);
   dialog.querySelector('h2').textContent = title;
   dialog.querySelector('p').textContent = body;
   dialog.querySelector('.accept').textContent = accept;
