@@ -12,13 +12,15 @@ const keys = {
   version: `${APP}version`,
 };
 
+let cleared = false;
+
 /** @returns {string[]} */
 export function getColors() {
   return read(keys.colors, []);
 }
 
 export function setColors(colors) {
-  localStorage.setItem(keys.colors, JSON.stringify(colors));
+  write(keys.colors, JSON.stringify(colors));
 }
 
 /** @returns {string[]} */
@@ -27,7 +29,7 @@ export function getGroups() {
 }
 
 export function setGroups(ids) {
-  localStorage.setItem(keys.groups, JSON.stringify(ids));
+  write(keys.groups, JSON.stringify(ids));
 }
 
 export function getVersion() {
@@ -35,7 +37,7 @@ export function getVersion() {
 }
 
 export function setVersion(version) {
-  localStorage.setItem(keys.version, version);
+  write(keys.version, version);
 }
 
 /** @returns {import('../elements/BaseElement.js').default | undefined} */
@@ -44,7 +46,7 @@ export function getElement(id) {
 }
 
 export function setElement(id, data) {
-  localStorage.setItem(keys.element(id), JSON.stringify(data, reducer));
+  write(keys.element(id), JSON.stringify(data, reducer));
 }
 
 export function removeElement(id) {
@@ -57,14 +59,7 @@ export function getSettings() {
 }
 
 export function setSettings(value) {
-  localStorage.setItem(keys.settings, JSON.stringify(value));
-}
-
-export function* getData() {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith(DATA)) yield [key, localStorage.getItem(key)];
-  }
+  write(keys.settings, JSON.stringify(value));
 }
 
 export function* getKeys() {
@@ -74,10 +69,25 @@ export function* getKeys() {
   }
 }
 
-export function clear() {
+export function* getCorrupt() {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith(CORRUPT)) yield key;
+  }
+}
+
+export function clearCorrupt() {
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
-    if (key.startsWith(DATA) || key?.startsWith(APP)) localStorage.removeItem(key);
+    if (key.startsWith(CORRUPT)) localStorage.removeItem(key);
+  }
+}
+
+export function clear() {
+  cleared = true;
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i);
+    if (key.startsWith(DATA) || key.startsWith(APP)) localStorage.removeItem(key);
   }
 }
 
@@ -88,6 +98,11 @@ function reducer(_, value) {
     return value.trim() || undefined;
   }
   return value;
+}
+
+function write(key, value) {
+  if (cleared) return;
+  localStorage.setItem(key, value);
 }
 
 function read(key, fallback) {

@@ -54,6 +54,16 @@ export async function getAll() {
   });
 }
 
+/** @returns {Promise<void>} */
+export async function clear() {
+  const store = await transaction('readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.clear();
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
 async function transaction(mode) {
   const conn = await db;
   return conn.transaction(STORE, mode).objectStore(STORE);
