@@ -30,6 +30,18 @@
       </span>
       <div>Loading...</div>
     </div>
+    <div legacy hidden class="unsupported">
+      <h2>Unsupported browser</h2>
+      <p>This editor is built with JavaScript modules, which this browser does not support.</p>
+      <p>Updating to a current version of Chrome, Firefox, Edge or Safari will get you going.</p>
+    </div>
+    <noscript>
+      <div class="unsupported">
+        <h2>JavaScript required</h2>
+        <p>This editor needs JavaScript to run. Enable it and reload the page.</p>
+      </div>
+      <style>#loading { display: none; }</style>
+    </noscript>
     <footer class="transparent">
       <a href="https://undercards.net" title="Undercards" target="_blank">Undercards</a> Template Editor
       &bullet;
@@ -419,5 +431,9 @@
         </ul>
       </div>
     </template>
+    <script nomodule>
+      document.getElementById('loading').hidden = true;
+      document.querySelector('[legacy]').hidden = false;
+    </script>
   </body>
 </html>

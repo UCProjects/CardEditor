@@ -92,3 +92,12 @@ body > footer img {
   animation-delay: 1s;
   animation-duration: 4s;
 }
+
+.unsupported {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 0 16px;
+  text-align: center;
+  font-family: 'DTM-Mono';
+  line-height: 1.5;
+}
