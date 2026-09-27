@@ -3,6 +3,7 @@ import EventEmitter from '../utils/EventEmitter.js';
 
 const { store } = vi.hoisted(() => ({ store: new Map() }));
 
+vi.mock('../tip/index.js', () => ({ close: vi.fn() }));
 vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn() } }));
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
 vi.mock('../elements/registry.js', () => ({
@@ -39,24 +40,50 @@ const row = (id) => root().querySelector(`li[data-id="${id}"]`);
 const trashFolder = () => row('trash');
 const trashList = () => trashFolder().querySelector('ul.extra');
 const click = (id, name) => row(id).querySelector(`button[name="${name}"]`).click();
+const extraOf = (id) => row(id).querySelector('ul.extra');
+const dropOut = () => document.querySelector('.archive [data-page="elements"] .drop-out');
+const hidden = (el) => el.classList.contains('hidden');
+
+function fire(el, type, props = {}) {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.assign(event, props);
+  el.dispatchEvent(event);
+}
+
+const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+
+async function dragStart(id) {
+  const li = row(id);
+  fire(li, 'dragstart', { dataTransfer: {} });
+  await frame();
+  return li;
+}
+
+async function drag(id, target) {
+  const li = await dragStart(id);
+  fire(target, 'dragover');
+  const accepted = target.classList.contains('drag-over');
+  if (accepted) fire(target, 'drop');
+  fire(li, 'dragend');
+  return accepted;
+}
 
 beforeAll(async () => {
-  ['card', 'group', 'child'].forEach((id) => store.set(id, element({
-    id,
-    type: id === 'group' ? 'group' : 'card',
-    content: id === 'group' ? ['child'] : undefined,
-  })));
+  store.set('card', element({ id: 'card', type: 'card' }));
+  store.set('child', element({ id: 'child', type: 'card' }));
+  store.set('group', element({ id: 'group', type: 'group', content: ['child'] }));
+  store.set('other', element({ id: 'other', type: 'group', content: [] }));
   const { load } = await import('./elements.js');
   load();
 });
 
 describe('load', () => {
   it('renders one row per element', () => {
-    expect(root().querySelectorAll('li[data-id]')).toHaveLength(4);
+    expect(root().querySelectorAll('li[data-id]')).toHaveLength(5);
   });
 
   it('nests children inside their group', () => {
-    expect(row('child').parentElement).toBe(row('group').querySelector('ul.extra'));
+    expect(row('child').parentElement).toBe(extraOf('group'));
   });
 
   it('hides an empty trash folder', () => {
@@ -102,7 +129,7 @@ describe('trash', () => {
     expect(row('child')).toBe(child);
     expect(child.parentElement).toBe(trashList());
     click('child', 'restore');
-    expect(child.parentElement).toBe(row('group').querySelector('ul.extra'));
+    expect(child.parentElement).toBe(extraOf('group'));
   });
 
   it('carries group children into the trash', () => {
@@ -114,6 +141,87 @@ describe('trash', () => {
     click('group', 'restore');
     expect(row('group').parentElement).toBe(root());
     expect(row('child')).toBe(child);
+  });
+});
+
+describe('move', () => {
+  it('drops a loose item into a group', async () => {
+    const li = row('card');
+    expect(await drag('card', row('group'))).toBe(true);
+    expect(row('card')).toBe(li);
+    expect(li.parentElement).toBe(extraOf('group'));
+    expect(store.get('group').content).toContain('card');
+  });
+
+  it('expands the group it dropped into', () => {
+    expect(extraOf('group').classList.contains('hidden')).toBe(false);
+  });
+
+  it('moves an item between groups', async () => {
+    const li = row('card');
+    expect(await drag('card', row('other'))).toBe(true);
+    expect(row('card')).toBe(li);
+    expect(li.parentElement).toBe(extraOf('other'));
+    expect(store.get('group').content).not.toContain('card');
+    expect(store.get('other').content).toContain('card');
+  });
+
+  it('rejects the group it already belongs to', async () => {
+    expect(await drag('card', row('other'))).toBe(false);
+  });
+
+  it('rejects nesting a group inside a group', async () => {
+    expect(await drag('group', row('other'))).toBe(false);
+  });
+
+  it('rejects a trashed group as a target', async () => {
+    click('other', 'trash');
+    expect(await drag('child', row('other'))).toBe(false);
+    click('other', 'restore');
+  });
+
+  it('restores a trashed item into its new group', async () => {
+    click('child', 'trash');
+    expect(row('child').parentElement).toBe(trashList());
+    expect(await drag('child', row('other'))).toBe(true);
+    expect(row('child').parentElement).toBe(extraOf('other'));
+    expect(row('child').classList.contains('trashed')).toBe(false);
+    expect(trashFolder().classList.contains('hidden')).toBe(true);
+  });
+});
+
+describe('leaving a group', () => {
+  it('only offers the drop target while dragging a grouped item', async () => {
+    expect(hidden(dropOut())).toBe(true);
+
+    const loose = await dragStart('group');
+    expect(hidden(dropOut())).toBe(true);
+    fire(loose, 'dragend');
+
+    const grouped = await dragStart('card');
+    expect(hidden(dropOut())).toBe(false);
+    fire(grouped, 'dragend');
+    expect(hidden(dropOut())).toBe(true);
+  });
+
+  it('sits in the list below the groups', () => {
+    expect(dropOut().parentElement).toBe(root());
+    expect(dropOut().previousElementSibling.dataset.insert).toBe('groups');
+  });
+
+  it('moves the item back to the top level', async () => {
+    const li = row('card');
+    expect(await drag('card', dropOut())).toBe(true);
+    expect(row('card')).toBe(li);
+    expect(li.parentElement).toBe(root());
+    expect(dropOut().nextElementSibling).toBe(li);
+    expect(store.get('other').content).not.toContain('card');
+  });
+
+  it('no longer offers the target once it is loose', async () => {
+    const li = await dragStart('card');
+    expect(hidden(dropOut())).toBe(true);
+    fire(li, 'dragend');
   });
 });
 

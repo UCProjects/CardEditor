@@ -29,6 +29,8 @@ const list = {
 const listItem = document.getElementById('elementItem');
 /** @type {HTMLInputElement} */
 const filterInput = page.querySelector('input[name="filter"]');
+/** @type {HTMLDivElement} */
+const dropOut = page.querySelector('.drop-out');
 
 /** @type {Map<string, Item>} */
 const items = new Map();
@@ -41,7 +43,7 @@ const trashed = new Set();
  * @typedef {{
  *  li: HTMLLIElement;
  *  extra: HTMLUListElement;
- *  collapse: () => void;
+ *  setCollapsed: (collapsed: boolean) => void;
  * }} Row
  */
 
@@ -104,7 +106,10 @@ function add(el) {
       i.emit('dropped');
       i.group = item.id;
     });
-    initDrop(item.element.renderer().container);
+    initDrop(item.element.renderer().container, {
+      accepts: (i) => i.type !== Elements.Group,
+      drop: (i) => item.emit('drop', i),
+    });
   }
 
   return item;
@@ -133,8 +138,20 @@ export function load() {
 
   items.forEach((item) => place(item));
 
-  const app = document.getElementById('app');
-  initDrop(app, true);
+  initDrop(dropOut, {
+    accepts: leavesGroup,
+    drop: (item) => move(item, undefined),
+  });
+
+  initDrop(document.getElementById('app'), {
+    accepts: (item) => item.type === Elements.Group,
+    drop: (item) => {
+      const renderer = item.element.renderer();
+      App.addGroup(renderer);
+      item.emit('dropped');
+      renderer.emit('loaded');
+    },
+  });
 
   bindFilter(filterInput, applyFilter);
 
@@ -194,7 +211,7 @@ function render(item) {
   setName();
 
   if (!isContainer) extra.remove();
-  const collapse = isContainer ? initExpand(li, extra) : () => {};
+  const setCollapsed = isContainer ? initExpand(li, extra) : () => {};
 
   if (item !== trashRef) {
     const EOL = new AbortController();
@@ -227,9 +244,15 @@ function render(item) {
   }
 
   initButtons(li, item);
-  initDrag(li, item);
+  initDrag(li);
+  if (item.type === Elements.Group) {
+    initDrop(li, {
+      accepts: (i) => i.type !== Elements.Group && i.group !== item.id && !item.trashed,
+      drop: (i) => move(i, item),
+    });
+  }
   item.emit('refresh');
-  return { li, extra, collapse };
+  return { li, extra, setCollapsed };
 }
 
 /**
@@ -256,7 +279,7 @@ function initExpand(li, extra) {
     setCollapsed(!extra.classList.contains('hidden'));
   }));
 
-  return () => setCollapsed(true);
+  return setCollapsed;
 }
 
 /**
@@ -298,36 +321,56 @@ function initButtons(container, item) {
   });
 }
 
-/**
- * @param {HTMLElement} container
- * @param {Item} item
- */
-function initDrag(container, item) {
+/** @param {HTMLElement} container */
+function initDrag(container) {
   container.addEventListener('dragstart', (e) => {
     dragSrc = container;
     container.classList.add('dragging');
     e.stopPropagation();
     e.dataTransfer.effectAllowed = 'move';
     closeTip();
+    requestAnimationFrame(refreshDropOut);
   });
 
   container.addEventListener('dragend', () => {
     container.classList.remove('dragging');
     removeClass('drag-over');
     dragSrc = undefined;
+    refreshDropOut();
   });
-
-  if (item.element.type !== Elements.Group) return;
-
-  // TODO Allow moving between groups?
 }
 
-/** @param {HTMLElement} container */
-function initDrop(container, allowGroups = false) {
+function dragged() {
+  if (!dragSrc) return undefined;
+  const { id, type } = dragSrc.dataset;
+  return (type === Elements.Group ? groups : items).get(id);
+}
+
+/** @param {Item} item */
+function leavesGroup(item) {
+  return item.type !== Elements.Group && !!item.group;
+}
+
+function refreshDropOut() {
+  const item = dragged();
+  dropOut.classList.toggle('hidden', !item || !leavesGroup(item));
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {{
+ *  accepts: (item: Item) => boolean;
+ *  drop: (item: Item) => void;
+ * }} target
+ */
+function initDrop(container, { accepts, drop }) {
+  function accepted() {
+    const item = dragged();
+    return item && accepts(item) ? item : undefined;
+  }
+
   container.addEventListener('dragover', (e) => {
-    if (!dragSrc) return;
-    const isGroup = dragSrc.dataset.type === Elements.Group;
-    if (allowGroups !== isGroup) return;
+    if (!accepted()) return;
     e.preventDefault();
     e.stopPropagation();
     removeClass('drag-over');
@@ -337,36 +380,41 @@ function initDrop(container, allowGroups = false) {
     container.classList.remove('drag-over');
   });
   container.addEventListener('drop', (e) => {
+    const item = accepted();
+    if (!item) return;
     e.stopPropagation();
-    const { id, type } = dragSrc.dataset;
-    const isGroup = type === Elements.Group;
-    const item = isGroup ? groups.get(id) : items.get(id);
     if (item.trashed) cascade(item, 'restore');
-    if (isGroup) {
-      const renderer = item.element.renderer();
-      App.addGroup(renderer);
-      item.emit('dropped');
-      renderer.emit('loaded');
-    } else {
-      const groupId = container.dataset.id;
-      const group = groups.get(groupId);
-      if (!group) {
-        console.error(`Group not found ${groupId}`);
-        return;
-      }
-      group.emit('drop', item);
-    }
+    drop(item);
   });
 }
 
+/**
+ * @param {Item} item
+ * @param {Item} group
+ */
+function move(item, group) {
+  const from = item.group ? groups.get(item.group) : undefined;
+  if (from) {
+    from.element.remove(item.id);
+    save(from.element);
+  }
+  if (group) {
+    group.element.content.push(item.id);
+    save(group.element);
+  }
+  item.group = group?.id;
+  place(item);
+  if (group) rowOf(group).setCollapsed(false);
+}
+
 function initTrash() {
-  const { li, extra, collapse } = rowOf(trashRef);
+  const { li, extra, setCollapsed } = rowOf(trashRef);
   list.trash = extra;
 
   trashRef.on('refresh', () => {
     const hidden = !trashed.size;
     li.classList.toggle('hidden', hidden);
-    if (hidden) collapse();
+    if (hidden) setCollapsed(true);
     refreshEmptyMessage();
   }).emit('refresh');
 
@@ -413,5 +461,5 @@ function refreshEmptyMessage() {
   const root = list.groups.parentElement;
   const filtering = root.classList.contains('filtering');
   empty.textContent = filtering ? 'No matches' : 'Empty, archive something';
-  empty.classList.toggle('hidden', !!root.querySelector(':scope > li:not(.hidden, .filtered)'));
+  empty.classList.toggle('hidden', !!root.querySelector(':scope > li:not(.hidden, .filtered, .drop-out)'));
 }
