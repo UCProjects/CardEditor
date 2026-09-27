@@ -202,13 +202,13 @@ input, textarea {
 }
 
 .helper .add-button {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   margin: 2px;
   padding: 0;
   display: grid;
   place-items: center;
-  font-size: 12px;
+  font-size: 18px;
   background: none;
   color: inherit;
   border: 1px dotted var(--border);
@@ -386,6 +386,26 @@ fieldset.soul {
   }
 }
 
+#editor [data-editing="rarity"] fieldset[name="custom"] .grid {
+  grid-template-columns: repeat(auto-fit, 24px);
+}
+
+#editor [data-editing="rarity"] fieldset[name="custom"] img {
+  max-width: 24px;
+  max-height: 24px;
+}
+
 #editor fieldset[name="custom"]:not(:has(> .grid > :not(.hidden))) {
   display: none;
+}
+
+@media (hover: none) {
+  #editor [data-editing="rarity"] fieldset[name="custom"] .grid {
+    grid-template-columns: repeat(auto-fit, 48px);
+  }
+
+  #editor [data-editing="rarity"] fieldset[name="custom"] img {
+    max-width: 48px;
+    max-height: 48px;
+  }
 }

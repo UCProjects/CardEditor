@@ -81,6 +81,11 @@
   padding: 5px 0;
 }
 
+.card .bottom .rarity img {
+  max-width: 24px;
+  max-height: 24px;
+}
+
 .card .bottom .health {
   width: 40px;
   border-left: 2px solid var(--border);
@@ -121,6 +126,7 @@
 .card .avatar {
   width: 100%;
   height: 100%;
+  object-fit: scale-down;
 }
 
 .card.spell .bottom .health,

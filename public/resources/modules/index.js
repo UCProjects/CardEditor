@@ -25,6 +25,7 @@ function ready() {
 
   loadCustomImages({ type: ImageType.Effect, section: 'effects', noun: 'effect' });
   loadCustomImages({ type: ImageType.Tribe, section: 'tribes', noun: 'tribe', dataKey: 'tribe' });
+  loadCustomImages({ type: ImageType.Rarity, section: 'rarity', noun: 'rarity', dataKey: 'rarity' });
 
   document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
 

@@ -7,7 +7,7 @@ import Module from './ImageModule.js';
 function updateActive(from, to) {
   if (from === to) return;
   from?.classList.remove('active');
-  to.classList.add('active');
+  to?.classList.add('active');
 }
 
 /** @type {HTMLTemplateElement} */
@@ -110,15 +110,14 @@ export default class CardModule extends Module {
       container.querySelector(`[data-rarity="${element.rarity || 'COMMON'}"]`),
     );
 
-    container.querySelectorAll('[data-rarity].selectable').forEach((el) => {
-      const { rarity } = el.dataset;
-      el.addEventListener('click', () => {
-        const active = container.querySelector('[data-rarity].active');
-        if (active === el) return;
-        updateActive(active, el);
-        editor.update(rarity, 'rarity');
-      }, { signal });
-    });
+    container.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-rarity].selectable');
+      if (!el) return;
+      const active = container.querySelector('[data-rarity].active');
+      if (active === el) return;
+      updateActive(active, el);
+      editor.update(el.dataset.rarity, 'rarity');
+    }, { signal });
 
     // effects
     const effects = new Map();

@@ -63,9 +63,8 @@ export default class CardRenderer extends Renderer {
 
   rarity() {
     const { rarity } = this.element;
-    this.query('.bottom .rarity img').src = `/rarity/${rarity || 'COMMON'}.png`;
-
-    // TODO Allow custom
+    const path = getURL(rarity, ImageType.Rarity) || `/rarity/${rarity || 'COMMON'}.png`;
+    this.query('.bottom .rarity img').src = path;
   }
 
   soul() {

@@ -14,7 +14,7 @@ export const ImageType = Object.freeze({
   Avatar: 'avatar',
   Artifact: 'artifact',
   Effect: 'effect',
-  // Rarity: 'rarity',
+  Rarity: 'rarity',
   Tribe: 'tribe',
 });
 
