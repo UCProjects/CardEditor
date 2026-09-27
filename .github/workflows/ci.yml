@@ -8,6 +8,8 @@ on:
     paths-ignore:
       - 'public/**'
   pull_request:
+    paths-ignore:
+      - 'public/**'
 jobs:
   check:
     name: Lint and test
