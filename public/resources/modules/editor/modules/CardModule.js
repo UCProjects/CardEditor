@@ -75,30 +75,34 @@ export default class CardModule extends Module {
       });
     }
 
-    container.querySelectorAll('[data-tribe].selectable').forEach((el) => {
-      refreshTribes(el);
+    function allTribes() {
+      return container.querySelectorAll('[data-tribe].selectable');
+    }
 
-      el.addEventListener('click', () => {
-        const { tribe } = el.dataset;
-        const tribes = [...element.tribes];
-        const index = tribes.indexOf(tribe);
-        if (!~index) { // Doesn't exist
-          if (tribe === 'all' || tribe === 'none') {
-            tribes.splice(0, tribes.length);
-          }
-          if (tribe !== 'none') {
-            if (tribe !== 'all' && tribes.includes('all')) {
-              tribes.splice(tribes.indexOf('all'), 1);
-            }
-            tribes.push(tribe);
-          }
-        } else {
-          tribes.splice(index, 1);
+    refreshTribes(...allTribes());
+
+    container.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-tribe].selectable');
+      if (!el) return;
+      const { tribe } = el.dataset;
+      const tribes = [...element.tribes];
+      const index = tribes.indexOf(tribe);
+      if (!~index) { // Doesn't exist
+        if (tribe === 'all' || tribe === 'none') {
+          tribes.splice(0, tribes.length);
         }
-        editor.update(tribes, 'tribes');
-        refreshTribes(...container.querySelectorAll('[data-tribe].selectable'));
-      }, { signal });
-    });
+        if (tribe !== 'none') {
+          if (tribe !== 'all' && tribes.includes('all')) {
+            tribes.splice(tribes.indexOf('all'), 1);
+          }
+          tribes.push(tribe);
+        }
+      } else {
+        tribes.splice(index, 1);
+      }
+      editor.update(tribes, 'tribes');
+      refreshTribes(...allTribes());
+    }, { signal });
 
     // rarity
     updateActive(

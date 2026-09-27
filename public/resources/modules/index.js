@@ -1,10 +1,10 @@
 import app, { loadStorage } from './UndercardEditor.js';
 import serviceWorker from './sw.register.js';
 import { ready as keywords } from './keywords.js';
-import { ready as images } from './imageBank.js';
+import { ImageType, ready as images } from './imageBank.js';
 import { error as errorToast } from './toast/index.js';
 import { load as loadStatus } from './status.js';
-import { load as loadCustomEffects } from './customEffects.js';
+import { load as loadCustomImages } from './customImages.js';
 
 const preloads = [
   serviceWorker(),
@@ -24,6 +24,7 @@ function ready() {
   });
 
   loadCustomImages({ type: ImageType.Effect, section: 'effects', noun: 'effect' });
+  loadCustomImages({ type: ImageType.Tribe, section: 'tribes', noun: 'tribe', dataKey: 'tribe' });
 
   document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
 
