@@ -1,25 +1,14 @@
 .settings {
-  margin-bottom: 5px;
-}
-
-.settings label {
   display: flex;
-  gap: 5px;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.setting::after {
-  font-family: 'Material Icons';
-  content: 'check_box_outline_blank';
-}
-
-input:checked + .setting::after {
-  content: 'check_box';
-}
-
+.settings label,
 [data-page="settings"] button:not(.hidden) {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  margin-top: 8px;
   padding: 8px;
   font: inherit;
   color: var(--text);
@@ -27,8 +16,34 @@ input:checked + .setting::after {
   border: 2px solid var(--border);
 }
 
+.settings label:hover,
 [data-page="settings"] button:not(.hidden):hover {
   background-color: rgb(56, 56, 56);
+}
+
+.settings label {
+  gap: 8px;
+  text-align: left;
+}
+
+.setting::after {
+  font-family: 'Material Icons';
+  font-size: 20px;
+  line-height: 1;
+  content: 'check_box_outline_blank';
+}
+
+.setting-name {
+  flex: 1;
+}
+
+input:checked + .setting::after {
+  content: 'check_box';
+}
+
+[data-page="settings"] button:not(.hidden) {
+  justify-content: center;
+  margin-top: 16px;
 }
 
 #corrupt-cleanup {
@@ -36,7 +51,6 @@ input:checked + .setting::after {
 }
 
 #reset-editor {
-  margin-top: 24px;
   color: rgb(255, 130, 130);
   border-color: rgb(200, 0, 0);
 }
