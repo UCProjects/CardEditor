@@ -54,6 +54,7 @@ export function load() {
 
   events.on('remove', (id) => {
     const el = list.querySelector(`[data-id="${id}"]`);
+    if (!el) return;
     /** @type {ImageTypes} */
     const type = el.dataset.type;
     const {items} = folders[type];
