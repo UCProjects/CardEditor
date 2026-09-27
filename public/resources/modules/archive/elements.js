@@ -65,7 +65,7 @@ function add(el) {
   });
   item.on('trash', () => {
     if (item.trashed) return;
-    remove(item);
+    remove(item.element);
     item.trashed = true;
     addItem(item, true);
     item.emit('refresh');
