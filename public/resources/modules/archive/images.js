@@ -1,4 +1,7 @@
 import { events, getAll, getName, getURL, ImageType, isUserImage, remove, rename } from '../imageBank.js';
+import { getAll as getElements } from '../elements/registry.js';
+import confirm from '../confirm/index.js';
+import { asArray } from '../utils/array.js';
 import { li, span } from '../utils/html.js';
 import { bindFilter, matches } from './filter.js';
 import { tryOrError } from '../toast/index.js';
@@ -82,6 +85,28 @@ function refresh(type) {
 }
 
 /** @param {string} id */
+function usedBy(id) {
+  return getElements().filter((element) => (
+    element.image === id ||
+    element.effects?.some((entry) => asArray(entry)[0] === id)
+  )).length;
+}
+
+/** @param {string} id */
+async function confirmRemove(id) {
+  const used = usedBy(id);
+  if (used) {
+    const accepted = await confirm({
+      title: 'Delete image',
+      body: `${getName(id) || 'This image'} is used by ${used} ${used === 1 ? 'element' : 'elements'}, which will lose it.`,
+      accept: 'Delete',
+    });
+    if (!accepted) return;
+  }
+  await tryOrError(() => remove(id), 'Failed to delete the image');
+}
+
+/** @param {string} id */
 function previewURL(id) {
   try {
     return getURL(id);
@@ -110,7 +135,7 @@ function newItem(item) {
   setName();
 
   wrapper.querySelector('[data-tip="Rename"]').addEventListener('click', () => startRename(id, name, setName));
-  wrapper.querySelector('[data-tip="Delete"]').addEventListener('click', () => remove(id));
+  wrapper.querySelector('[data-tip="Delete"]').addEventListener('click', () => confirmRemove(id));
 
   return wrapper;
 }
