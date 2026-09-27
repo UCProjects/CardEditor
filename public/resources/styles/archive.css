@@ -184,13 +184,16 @@
   color: var(--text);
   background-color: rgb(31, 31, 31);
   border: 2px solid var(--border);
-  color-scheme: dark;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .archive [data-page] > input[name="filter"]::-webkit-search-cancel-button {
   cursor: pointer;
   transform: scale(1.5);
   margin-left: 10px;
+  -webkit-appearance: searchfield-cancel-button;
 }
 
 .archive .filtered {

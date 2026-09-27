@@ -1,5 +1,7 @@
 :root {
   --background: rgb(0, 0, 0);
+
+  color-scheme: dark;
 }
 
 /* Undercards styling */
