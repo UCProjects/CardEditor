@@ -27,6 +27,15 @@ const commands = {
   }
 };
 
+const classes = {
+  ATK: 'attack',
+  DMG: 'damage',
+  G: 'gold',
+  HP: 'health',
+  KR: 'poison',
+  cost: 'COST',
+};
+
 export function getHTMLDescription(description = '') {
   return description
     .replaceAll('&', '&amp;')
@@ -55,21 +64,5 @@ function process(text = '') {
 }
 
 function getClass(keyword) {
-  switch (keyword) {
-    case 'ATK': return 'attack';
-    case 'HP': return 'health';
-    case 'DMG': return 'damage';
-    case 'KR': return 'poison';
-    case 'G': return 'gold';
-    case 'cost': return 'COST';
-    case 'DT':
-    case 'LEGENDARY':
-    case 'EPIC':
-    case 'RARE':
-    case 'COMMON':
-    case 'BASE':
-    case 'TOKEN':
-    case 'GENERATED': return keyword;
-    default: throw new Error(`Unknown Keyword: ${keyword}`);
-  }
+  return hasKey(classes, keyword) ? classes[keyword] : keyword;
 }
