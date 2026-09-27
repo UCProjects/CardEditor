@@ -10,6 +10,10 @@ on:
       - master
     paths:
       - 'public/**'
+      - 'firebase.json'
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
