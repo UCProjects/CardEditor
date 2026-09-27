@@ -136,15 +136,6 @@ export function load() {
   const app = document.getElementById('app');
   initDrop(app, true);
 
-  page.addEventListener('dragleave', (e) => {
-    if (!dragSrc || e.fromElement !== page) return;
-    // TODO render ghost element
-  });
-  page.addEventListener('dragenter', (e) => {
-    if (!dragSrc || e.fromElement !== page) return;
-    // TODO switch back to original element
-  });
-
   bindFilter(filterInput, applyFilter);
 
   refreshEmptyMessage();
