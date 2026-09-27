@@ -40,7 +40,7 @@ export function getProps(obj, ...ignore) {
 
 export function hasKey(obj, ...values) {
   if (!obj) return false;
-  return contains(Object.keys(obj), values);
+  return values.some((key) => Object.hasOwn(obj, key));
 }
 
 export function hasValue(obj, ...values) {
