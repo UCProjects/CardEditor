@@ -1,6 +1,7 @@
 import { uuidV6, uuidValidate, uuidValidateV6 } from './3rdparty/uuid.js';
 import EventEmitter from './utils/EventEmitter.js';
 import { hasValue } from './utils/funcs.js';
+import loadResource from './utils/resource.js';
 import { set as setImage, remove as removeImage } from './utils/imageDB.js';
 
 export const ready = Promise.all([
@@ -140,8 +141,7 @@ export async function save(id) {
 }
 
 async function fetchAvatars() {
-  const raw = await fetch(`/resources/data/avatars.json`);
-  const data = await raw.json();
+  const data = await loadResource('avatars');
   Object.entries(data).forEach(([key, value]) => {
     avatars.set(key, value);
   });

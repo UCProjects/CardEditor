@@ -1,3 +1,4 @@
+import loadResource from './utils/resource.js';
 import { add, ImageType } from './imageBank.js';
 
 export const effects = [];
@@ -5,8 +6,7 @@ export const effects = [];
 const container = document.getElementById('effects');
 
 export async function load() {
-  const res = await fetch(`/resources/data/status.json`);
-  const data = await res.json();
+  const data = await loadResource('status');
 
   effects.push(...data);
 

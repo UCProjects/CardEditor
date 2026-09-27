@@ -1,3 +1,5 @@
+import loadResource from './utils/resource.js';
+
 export const keywords = [];
 export const specials = ['ATK', 'DMG', 'HP', 'KR', 'cost', 'G', 'TOKEN', 'BASE', 'COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DT'];
 
@@ -8,11 +10,6 @@ function addType(type) {
   const el = document.createElement('span');
   el.innerText = type.replace('s?', '');
   div.append(el, ' ');
-}
-
-function load(resource) {
-  return fetch(`/resources/data/${resource}.json`)
-    .then((res) => res.json());
 }
 
 function addTribes() {
@@ -40,7 +37,7 @@ function getTribe(name) {
 
 const resources = ['keywords', 'extra'];
 
-export const ready = Promise.all(resources.map(load))
+export const ready = Promise.all(resources.map(loadResource))
   .then((res) => {
     // Populate effects array
     res.forEach((data) => keywords.push(...data));
