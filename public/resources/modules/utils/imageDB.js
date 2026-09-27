@@ -1,3 +1,5 @@
+import { error as errorToast } from '../toast/index.js';
+
 const DB_NAME = 'undercards';
 const DB_VERSION = 1;
 const STORE = 'images';
@@ -10,7 +12,13 @@ const db = new Promise((resolve, reject) => {
   };
   request.onsuccess = (e) => {
     const conn = e.target.result;
-    conn.onversionchange = () => conn.close();
+    conn.onversionchange = () => {
+      conn.close();
+      errorToast({
+        title: 'Editor Updated',
+        body: 'The Editor was updated in another tab. Reload this page to keep saving images.',
+      });
+    };
     resolve(conn);
   };
   request.onerror = (e) => reject(e.target.error);
