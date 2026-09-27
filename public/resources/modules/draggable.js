@@ -9,6 +9,9 @@ const options = {
   exclude: { plugins: [Draggable.Plugins.Focusable, Draggable.Plugins.Announcement] },
 };
 
+/** @type {WeakMap<HTMLElement, GroupElement>} */
+const groups = new WeakMap();
+
 export const sortGroup = new Sortable([document.getElementById('app')], {
   ...options,
   draggable: '.element.group',
@@ -41,14 +44,22 @@ const sortElement = new Sortable([], {
   }
 
   save(from.id);
+}).on('sortable:sorted', (e) => {
+  registerContainer(e.oldContainer);
+  if (e.newContainer !== e.oldContainer) registerContainer(e.newContainer);
 });
+
+function registerContainer(container) {
+  const element = groups.get(container);
+  if (element) register(element);
+}
 
 /** @param {import('./render/GroupRenderer.js').default} group */
 export default function setup({ container, element }) {
   const content = container.querySelector('.content');
   if (sortElement.containers.includes(content)) return;
+  groups.set(content, element);
   sortElement.addContainer(content);
-  sortElement.on('sortable:sorted', () => register(element));
 }
 
 export function isDragging() {
