@@ -96,6 +96,15 @@ describe('trash', () => {
     expect(row('card')).toBe(li);
   });
 
+  it('sends a lone child to the trash folder, not its group', () => {
+    const child = row('child');
+    click('child', 'trash');
+    expect(row('child')).toBe(child);
+    expect(child.parentElement).toBe(trashList());
+    click('child', 'restore');
+    expect(child.parentElement).toBe(row('group').querySelector('ul.extra'));
+  });
+
   it('carries group children into the trash', () => {
     const child = row('child');
     click('group', 'trash');

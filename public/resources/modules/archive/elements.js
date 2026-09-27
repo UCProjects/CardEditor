@@ -159,8 +159,8 @@ function place(item) {
   if (item.isActive()) return;
   const { li } = rowOf(item);
   const group = item.group ? groups.get(item.group) : undefined;
-  if (group) rowOf(group).extra.append(li);
-  else if (item.trashed) list.trash.append(li);
+  if (item.trashed && !group?.trashed) list.trash.append(li);
+  else if (group) rowOf(group).extra.append(li);
   else if (item.type === Elements.Group) list.groups.before(li);
   else list.items.before(li);
   if (item.type === Elements.Group) forEach(item, place);
