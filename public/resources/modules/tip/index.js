@@ -1,6 +1,5 @@
 import style from '../../styles/tip.css' with { type: 'css' };
 import editor from '../editor/editor.js';
-import { contains } from '../utils/array.js';
 import { adoptStyle, hasKey, isElementInViewport } from '../utils/funcs.js';
 
 adoptStyle(style);
@@ -56,8 +55,7 @@ function hide(event) {
   if (
     !tip.matches(':popover-open') ||
     event.target.contains(event.toElement || event.relatedTarget) ||
-    !event.target.dataset ||
-    !contains(keys, Object.keys(event.target.dataset))
+    !hasKey(event.target.dataset, ...keys)
   ) return;
   close();
 }
