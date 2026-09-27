@@ -2,6 +2,7 @@
     "scripts": {
         "deploy": "firebase deploy --only hosting -m",
         "deploy:test": "firebase deploy --only hosting --project test -m",
+        "lint": "eslint .",
         "start": "firebase serve --host 0.0.0.0 --only hosting",
         "test": "vitest run"
     },
