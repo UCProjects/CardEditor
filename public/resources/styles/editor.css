@@ -187,7 +187,7 @@ input, textarea {
   justify-self: center;
 }
 
-.helper .addEffects {
+.helper .add-custom {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -196,12 +196,12 @@ input, textarea {
   margin-top: 5px;
 }
 
-.helper .addEffects > input,
-.helper .addEffects > .warn {
+.helper .add-custom > input,
+.helper .add-custom > .warn {
   flex: 1 0 100%;
 }
 
-.helper .addEffect {
+.helper .add-button {
   width: 16px;
   height: 16px;
   margin: 2px;
@@ -379,13 +379,13 @@ fieldset.soul {
     width: 48px;
   }
 
-  .helper .addEffect {
+  .helper .add-button {
     width: 32px;
     height: 32px;
     font-size: 24px;
   }
 }
 
-#editor fieldset[name="custom"]:not(:has(#customEffects > :not(.hidden))) {
+#editor fieldset[name="custom"]:not(:has(> .grid > :not(.hidden))) {
   display: none;
 }

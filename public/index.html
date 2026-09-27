@@ -131,18 +131,9 @@
             <fieldset>
               <legend>Effects</legend>
               <div id="effects" class="grid"></div>
-              <div class="addEffects external">
-                <button type="button" class="addEffect material-icons" data-source="file" data-tip="New File" aria-label="Add custom effect from file">add</button>
-                <button type="button" class="addEffect material-icons" data-source="url" data-tip="Link" aria-label="Add custom effect from link">link</button>
-                <input name="effect" type="file" accept="image/*" class="hidden" autocomplete="off" />
-                <input name="effectUrl" type="url" pattern="https?://.*" placeholder="https://example.com" class="hidden" autocomplete="off" />
-                <div class="warn hidden">Failed to load image</div>
-              </div>
+              <div data-template="addCustom" class="add-custom external"></div>
             </fieldset>
-            <fieldset name="custom">
-              <legend>Custom</legend>
-              <div id="customEffects" class="grid"></div>
-            </fieldset>
+            <fieldset name="custom" data-template="customGrid"></fieldset>
             <fieldset name="effects">
               <legend>Applied</legend>
               <div class="activeList"></div>
@@ -375,6 +366,17 @@
         </div>
         <ul class="extra hidden" data-type="trashFolder,group"></ul>
       </li>
+    </template>
+    <template id="addCustom">
+      <button type="button" class="add-button material-icons" data-source="file" data-tip="New File">add</button>
+      <button type="button" class="add-button material-icons" data-source="url" data-tip="Link">link</button>
+      <input type="file" accept="image/*" class="hidden" autocomplete="off" />
+      <input type="url" pattern="https?://.*" placeholder="https://example.com" class="hidden" autocomplete="off" />
+      <div class="warn hidden">Failed to load image</div>
+    </template>
+    <template id="customGrid">
+      <legend>Custom</legend>
+      <div class="grid"></div>
     </template>
     <template id="imageItem">
       <li>

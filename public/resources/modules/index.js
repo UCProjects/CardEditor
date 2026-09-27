@@ -23,7 +23,7 @@ function ready() {
     el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load '${template}'`;
   });
 
-  loadCustomEffects();
+  loadCustomImages({ type: ImageType.Effect, section: 'effects', noun: 'effect' });
 
   document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
 
