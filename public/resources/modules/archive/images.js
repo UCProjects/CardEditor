@@ -71,7 +71,7 @@ function refresh(type) {
 
 /** @param {ImageStore} item */
 function newItem(item) {
-  const { id, type, file } = item;
+  const { id, type = 'misc', file } = item;
   const wrapper = document.importNode(template, true).querySelector('li');
   wrapper.dataset.id = id;
   wrapper.dataset.type = type;
