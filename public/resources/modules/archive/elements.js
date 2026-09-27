@@ -262,8 +262,7 @@ function initButtons(container, item) {
           if (!isTrashFolder) container.remove();
         }
         if (isTrashFolder) {
-          // Items must be restored first
-          getTrash().reverse().forEach(mark);
+          getTrash().sort(childrenFirst).forEach(mark);
           list.trash.innerHTML = '';
         } else {
           if (isGroup) forEach(item, mark);
@@ -364,6 +363,14 @@ function getTrash() {
     ...groups.values(),
     ...items.values(),
   ].filter((i) => i.trashed);
+}
+
+/**
+ * @param {Item} a
+ * @param {Item} b
+ */
+function childrenFirst(a, b) {
+  return Number(a.type === Elements.Group) - Number(b.type === Elements.Group);
 }
 
 function forEach(group, callback) {
