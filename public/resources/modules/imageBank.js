@@ -133,10 +133,10 @@ export function hasFile(id, file) {
 export async function save(id) {
   const image = images.get(id);
   if (!image) throw new Error('Failed to find image');
-  if (!(image.file instanceof File)) throw new Error('Tried to save generic image');
-  // eslint-disable-next-line no-unused-vars
-  const { src, ...data } = image;
-  await setImage(id, data);
+  const { src, file, ...data } = image;
+  if (file instanceof File) return setImage(id, { ...data, file });
+  if (!src || src.startsWith('blob:')) throw new Error('Tried to save generic image');
+  return setImage(id, { ...data, src });
 }
 
 async function fetchAvatars() {
