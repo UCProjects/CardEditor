@@ -89,7 +89,7 @@
   gap: 10px;
 }
 
-.archive div > ul > li:nth-child(even of :not(.hidden, .group-label)) {
+.archive div > ul > li:nth-child(even of :not(.hidden, .filtered, .group-label)) {
   background-color: rgb(31, 31, 31);
 }
 
@@ -173,4 +173,30 @@
   .archive {
     width: 100%;
   }
+}
+
+.archive [data-page] > input[name="filter"] {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background-color: rgb(31, 31, 31);
+  border: 2px solid var(--border);
+  color-scheme: dark;
+}
+
+.archive [data-page] > input[name="filter"]::-webkit-search-cancel-button {
+  cursor: pointer;
+  transform: scale(1.5);
+  margin-left: 10px;
+}
+
+.archive .filtered {
+  display: none;
+}
+
+.archive ul.filtering > li > ul.extra.hidden {
+  display: block;
 }

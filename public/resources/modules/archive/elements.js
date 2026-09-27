@@ -4,6 +4,7 @@ import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
 import { contains } from '../utils/array.js';
 import { removeClass } from '../utils/funcs.js';
+import { bindFilter, matches } from './filter.js';
 import Item from './Item.js';
 import App from '../UndercardEditor.js';
 import editor from '../editor/editor.js';
@@ -25,6 +26,8 @@ const list = {
 };
 /** @type {HTMLTemplateElement} */
 const listItem = document.getElementById('elementItem');
+/** @type {HTMLInputElement} */
+const filterInput = page.querySelector('input[name="filter"]');
 
 /** @type {Map<string, Item>} */
 const items = new Map();
@@ -41,7 +44,6 @@ const trashRef = new Item({
 
 let dragSrc;
 
-// TODO search
 function add(el) {
   const item = new Item(el);
   const isGroup = el.type === Elements.Group;
@@ -114,6 +116,8 @@ export function load() {
     // TODO switch back to original element
   });
 
+  bindFilter(filterInput, applyFilter);
+
   refreshEmptyMessage();
 }
 
@@ -136,6 +140,7 @@ function render(item, {
   function setName() {
     name.dataset.tip = item.name;
     name.textContent = item.name || '(blank)';
+    li.dataset.search = [item.name, item.element.description].filter(Boolean).join(' ');
   }
   setName();
   if (!isTrashFolder) {
@@ -369,6 +374,25 @@ function forEach(group, callback) {
   });
 }
 
+function applyFilter(query) {
+  const root = list.groups.parentElement;
+  root.classList.toggle('filtering', !!query);
+  root.querySelectorAll(':scope > li[data-id]').forEach((row) => {
+    const self = matches(row, query);
+    let child = false;
+    row.querySelectorAll(':scope > ul.extra > li[data-id]').forEach((nested) => {
+      const show = self || matches(nested, query);
+      nested.classList.toggle('filtered', !show);
+      if (show && query) child = true;
+    });
+    row.classList.toggle('filtered', !!query && !self && !child);
+  });
+  refreshEmptyMessage();
+}
+
 function refreshEmptyMessage() {
-  empty.classList.toggle('hidden', !!list.groups.parentElement.querySelector(':scope > li:not(.hidden)'));
+  const root = list.groups.parentElement;
+  const filtering = root.classList.contains('filtering');
+  empty.textContent = filtering ? 'No matches' : 'Empty, archive something';
+  empty.classList.toggle('hidden', !!root.querySelector(':scope > li:not(.hidden, .filtered)'));
 }

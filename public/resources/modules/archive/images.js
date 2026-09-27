@@ -1,5 +1,6 @@
 import { events, getAll, ImageType, remove } from '../imageBank.js';
 import { li, span } from '../utils/html.js';
+import { bindFilter, matches } from './filter.js';
 
 /**
  * @typedef {import('../imageBank.js').StoredImage} StoredImage
@@ -21,8 +22,6 @@ const template = document.getElementById('imageItem').content;
 const container = document.querySelector('.archive [data-page="images"]');
 const input = container.querySelector('input');
 const list = container.querySelector('ul');
-
-input.classList.add('hidden'); // TODO search/filter
 
 export function load() {
   Object.entries(getAll()).forEach(([id, store]) => {
@@ -63,11 +62,22 @@ export function load() {
     el.remove();
     refresh(type);
   });
+
+  bindFilter(input, applyFilter);
 }
 
 /** @param {ImageTypes} type */
+function applyFilter(query) {
+  list.classList.toggle('filtering', !!query);
+  list.querySelectorAll('li[data-id]').forEach((row) => {
+    row.classList.toggle('filtered', !matches(row, query));
+  });
+  Object.keys(folders).forEach(refresh);
+}
+
 function refresh(type) {
-  list.querySelector(`.group-label[data-type="${type}"]`).classList.toggle('hidden', !folders[type].items.length);
+  const visible = list.querySelectorAll(`li[data-id][data-type="${type}"]:not(.filtered)`).length;
+  list.querySelector(`.group-label[data-type="${type}"]`).classList.toggle('hidden', !visible);
 }
 
 /** @param {StoredImage} item */
