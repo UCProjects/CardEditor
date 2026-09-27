@@ -6,16 +6,25 @@ workbox.core.setCacheNameDetails({
   prefix: 'undercard-editor',
 });
 
+workbox.core.skipWaiting();
+workbox.core.clientsClaim();
+
 // Cache index
 workbox.routing.registerRoute(
   /index\.html$|\/$/,
-  new workbox.strategies.NetworkFirst(),
+  new workbox.strategies.NetworkFirst({
+    networkTimeoutSeconds: 10,
+    fetchOptions: { cache: 'no-store' },
+  }),
 );
 
 // Cache local js/css files
 workbox.routing.registerRoute(
-  /\.(?:js|css)$/,
-  new workbox.strategies.StaleWhileRevalidate(),
+  /\.(?:js|css|json)$/,
+  new workbox.strategies.NetworkFirst({
+    networkTimeoutSeconds: 10,
+    fetchOptions: { cache: 'no-store' },
+  }),
 );
 
 // Cache 3rd party files

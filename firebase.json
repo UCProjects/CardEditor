@@ -8,6 +8,17 @@
       "**/.*",
       "**/node_modules/**",
       "*.ignore*"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|html|json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
     ]
   }
 }
