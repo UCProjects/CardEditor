@@ -79,10 +79,18 @@ export default class Module extends EventEmitter {
       };
     }
 
-    descriptionInput.addEventListener('keyup', (e) => {
-      if (picker.isOpen || !NAV_KEYS.has(e.key)) return;
+    function syncPicker() {
       const token = colorTokenAtCursor();
-      if (token) picker.open(token);
+      if (!picker.isOpen) {
+        if (token) picker.open(token);
+      } else if (!token || token.pos !== picker.position) {
+        picker.close(true);
+      }
+    }
+
+    descriptionInput.addEventListener('keyup', (e) => {
+      if (!NAV_KEYS.has(e.key)) return;
+      syncPicker();
     }, { signal });
 
     descriptionInput.addEventListener('keydown', (e) => {
@@ -97,13 +105,8 @@ export default class Module extends EventEmitter {
       }
     }, { signal });
 
-    descriptionInput.addEventListener('click', (e) => {
-      if (picker.isOpen) return;
-      setTimeout(() => {
-        if (picker.isOpen) return;
-        const token = colorTokenAtCursor();
-        if (token) picker.open(token);
-      });
+    descriptionInput.addEventListener('click', () => {
+      setTimeout(syncPicker);
     }, { signal });
 
     // Generic hide soul

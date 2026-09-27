@@ -105,6 +105,10 @@ export default class Picker extends EventEmitter {
     return picker.matches(':popover-open');
   }
 
+  get position() {
+    return this.#position;
+  }
+
   get recent() {
     return recent.querySelector('[data-hex]').dataset.hex;
   }
@@ -141,6 +145,7 @@ export default class Picker extends EventEmitter {
       this.commit(this.#current);
     } else {
       this.commit(this.#original);
+      this.#removeEmpty();
     }
 
     picker.hidePopover();
@@ -196,6 +201,18 @@ export default class Picker extends EventEmitter {
     else x += left;
     picker.style.left = Math.max(x, GAP) + 'px';
     picker.showPopover({ source: this.#editor });
+  }
+
+  #removeEmpty() {
+    const pos = this.#position;
+    if (pos < 1) return;
+    const text = this.#editor.value;
+    if (text[pos - 1] !== '{') return;
+    const close = text.indexOf('}', pos);
+    if (!~close || text.substring(pos, close) !== '|') return;
+    this.#editor.value = text.substring(0, pos - 1) + text.substring(close + 1);
+    this.#editor.setSelectionRange(pos - 1, pos - 1);
+    this.emit('updated');
   }
 
   /** @param {HTMLButtonElement} button */
