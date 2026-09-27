@@ -66,8 +66,8 @@ export default class Module extends EventEmitter {
       if (start > 1 && value[start - 2] === '{') return null;
       if (!start || pos < start) return null;
       const close = value.indexOf('}', start);
-      if (!!~close && close < pos) return null;
-      const text = value.substring(start, close);
+      if (~close && close < pos) return null;
+      const text = value.substring(start, ~close ? close : value.length);
       const [color, ...rest] = text.split('|');
       if (rest.length !== 1) return null;
       const hash = color[0] === '#';
