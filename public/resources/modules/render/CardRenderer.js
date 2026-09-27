@@ -2,7 +2,7 @@ import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './ImageRenderer.js';
 import { asArray, filter } from '../utils/array.js';
 import resize from '../utils/resize.js';
-import { getName, getURL, ImageType } from '../imageBank.js';
+import { getName, getURL, ImageType, isUserImage } from '../imageBank.js';
 import { adoptStyle } from '../utils/funcs.js';
 import settings, { Settings } from '../settings.js';
 
@@ -63,7 +63,9 @@ export default class CardRenderer extends Renderer {
 
   rarity() {
     const { rarity } = this.element;
-    const path = getURL(rarity, ImageType.Rarity) || `/rarity/${rarity || 'COMMON'}.png`;
+    const path = isUserImage(rarity) ?
+      getURL(rarity, ImageType.Rarity) :
+      `/rarity/${rarity || 'COMMON'}.png`;
     this.query('.bottom .rarity img').src = path;
   }
 
