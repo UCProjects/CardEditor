@@ -47,12 +47,6 @@ export function hasValue(obj, ...values) {
   return contains(Object.values(obj), values);
 }
 
-export function isBase64(string = '', checkPrefix = false) {
-  const [prefix, data=prefix] = string.split(',');
-  const pass = !checkPrefix || (prefix !== data && prefix.startsWith('data:image/') && prefix.endsWith(';base64'));
-  return pass && /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}=)|([0-9a-zA-Z+/]{3}))?=$/.test(data);
-}
-
 /** @param {HTMLElement} el  */
 export function isElementInViewport(el) {
   const rect = el.getBoundingClientRect();
