@@ -7,7 +7,6 @@ const keys = {
   colors: `${APP}colors`,
   corrupt: (key, time = Date.now()) => `${CORRUPT}${key}:${time}`,
   groups: `${APP}groups`,
-  setting: (key) => `${APP}setting:${key}`, // TODO
   settings: `${APP}settings`,
   version: `${APP}version`,
 };
