@@ -8,9 +8,20 @@ import EventEmitter from '../utils/EventEmitter.js';
 adoptStyle(style);
 
 /** @param {InputEvent} e  */
-function hexInputListener(e) {
-  if (e.inputType !== 'insertText') return;
-  if (!/^[0-9a-fA-F]{0,6}$/.test(e.data)) e.preventDefault();
+export function hexInputListener(e) {
+  const raw = e.data || e.dataTransfer?.getData('text');
+  if (raw == null) return;
+  const el = e.target;
+  const data = raw.replace(/^#/, '');
+  const next = el.value.slice(0, el.selectionStart) + data + el.value.slice(el.selectionEnd);
+  if (!/^[0-9a-fA-F]{0,6}$/.test(next)) {
+    e.preventDefault();
+    return;
+  }
+  if (data === raw) return;
+  e.preventDefault();
+  el.setRangeText(data, el.selectionStart, el.selectionEnd, 'end');
+  el.dispatchEvent(new InputEvent('input', { bubbles: true }));
 }
 
 const PRESETS = [
