@@ -27,9 +27,17 @@ function ready() {
   app.init();
 }
 
-Promise.all(preloads)
-  .then(ready)
-  .catch((err) => {
-    console.error(err);
-    errorToast({ body: 'Failed to load Editor' });
-  });
+function failed(...errors) {
+  errors.forEach((error) => console.error(error));
+  errorToast({ body: 'Failed to load Editor' });
+}
+
+Promise.allSettled(preloads)
+  .then((results) => {
+    const errors = results
+      .filter(({ status }) => status === 'rejected')
+      .map(({ reason }) => reason);
+    if (errors.length) return failed(...errors);
+    return ready();
+  })
+  .catch(failed);
