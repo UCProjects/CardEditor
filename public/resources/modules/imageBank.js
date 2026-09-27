@@ -35,16 +35,11 @@ const avatars = new Map();
 const images = new Map();
 
 /**
- * @param {string | ImageStore} data
+ * @param {ImageStore} data
  * @returns {string | false} id, false if exists
  */
 export function add(data) {
   if (!data) throw new Error('No image data');
-  if (typeof data === 'string') {
-    const id = uuidV6();
-    images.set(id, { src: data });
-    return id;
-  }
   const {
     id = uuidV6(),
     ...store
