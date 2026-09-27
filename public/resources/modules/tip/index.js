@@ -66,6 +66,11 @@ export function close() {
   tip.hidePopover();
 }
 
+document.addEventListener('toggle', (event) => {
+  if (event.target === tip || event.newState !== 'closed') return;
+  close();
+}, true);
+
 document.addEventListener('mouseover', show);
 document.addEventListener('focus', show);
 document.addEventListener('mouseout', hide);
