@@ -1,5 +1,6 @@
 import style from '../../styles/archive.css' with { type: 'css' };
 import { adoptStyle } from '../utils/funcs.js';
+import VarStore from '../utils/VarStore.js';
 import { load as loadItems } from './elements.js';
 import { load as loadImages } from './images.js';
 import { load as loadSettings } from './settings.js';
@@ -21,8 +22,16 @@ export function isOpen() {
   return archive.matches(':popover-open');
 }
 
+const { CloseWatcher } = window;
+const closeWatcher = new VarStore();
+
 archive.addEventListener('toggle', () => {
-  button.classList.toggle('hidden', archive.matches(':popover-open'));
+  const open = archive.matches(':popover-open');
+  button.classList.toggle('hidden', open);
+  closeWatcher.consume()?.destroy();
+  if (!open || !CloseWatcher) return;
+  const watcher = closeWatcher.set(new CloseWatcher());
+  watcher.onclose = () => archive.hidePopover();
 });
 
 button.addEventListener('click', () => {
@@ -41,6 +50,6 @@ archive.querySelectorAll('input[name="page"]').forEach((el) => {
 });
 
 document.addEventListener('mousedown', (e) => {
-  if (!isOpen() || archive.contains(e.target) || e.target.closest('dialog')) return;
+  if (e.button !== 0 || !isOpen() || archive.contains(e.target) || e.target.closest('dialog')) return;
   archive.hidePopover();
 });

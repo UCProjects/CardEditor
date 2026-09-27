@@ -261,7 +261,7 @@ export default class Picker extends EventEmitter {
       else this.commit(color);
     }, opts);
     document.addEventListener('mousedown', (e) => {
-      if (!this.isOpen || e.target === this.#editor || picker.contains(e.target)) return;
+      if (e.button !== 0 || !this.isOpen || e.target === this.#editor || picker.contains(e.target)) return;
       this.close(true);
     }, opts);
   }
