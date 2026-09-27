@@ -1,10 +1,11 @@
 const APP = 'app:';
 const DATA = 'data:';
+const CORRUPT = `${APP}corrupt:`;
 
 const keys = {
   element: (id) => `${DATA}el:${id}`,
   colors: `${APP}colors`,
-  corrupt: (key) => `${APP}corrupt:${key}`,
+  corrupt: (key, time = Date.now()) => `${CORRUPT}${key}:${time}`,
   groups: `${APP}groups`,
   setting: (key) => `${APP}setting:${key}`, // TODO
   settings: `${APP}settings`,
