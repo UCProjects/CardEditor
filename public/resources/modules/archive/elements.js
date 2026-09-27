@@ -158,7 +158,7 @@ function render(item, {
         const group = groups.get(item.group);
         if (!group) return;
         group.element.remove(item.id);
-        save(group);
+        save(group.element);
       }
       li.remove();
       EOL.abort();
