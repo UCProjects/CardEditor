@@ -12,9 +12,9 @@ const db = new Promise((resolve, reject) => {
   request.onerror = (e) => reject(e.target.error);
 });
 
-/** @typedef {import('../imageBank.js').ImageStore} ImageStore */
+/** @typedef {import('../imageBank.js').StoredImage} StoredImage */
 
-/** @returns {Promise<ImageStore | undefined>} */
+/** @returns {Promise<StoredImage | undefined>} */
 export async function get(id) {
   const store = await transaction('readonly');
   return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ export async function remove(id) {
   });
 }
 
-/** @returns {Promise<ImageStore[]>} */
+/** @returns {Promise<StoredImage[]>} */
 export async function getAll() {
   const store = await transaction('readonly');
   return new Promise((resolve, reject) => {

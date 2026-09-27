@@ -2,11 +2,11 @@ import { events, getAll, ImageType, remove } from '../imageBank.js';
 import { li, span } from '../utils/html.js';
 
 /**
- * @typedef {import('../imageBank.js').ImageStore} ImageStore
+ * @typedef {import('../imageBank.js').StoredImage} StoredImage
  * @typedef {import('../imageBank.js').ImageTypes | 'misc'} ImageTypes
  */
 
-/** @type {Record<ImageTypes, { label: string; items: ImageStore[]}>} */
+/** @type {Record<ImageTypes, { label: string; items: StoredImage[]}>} */
 const folders = {};
 
 Object.values(ImageType).forEach((type) => folders[type] = {
@@ -40,7 +40,7 @@ export function load() {
   });
 
   events.on('new',
-    /** @param {ImageStore} store  */
+    /** @param {StoredImage} store  */
     (store) => {
       const { type = 'misc' } = store;
       if (!store.file) return;
@@ -70,7 +70,7 @@ function refresh(type) {
   list.querySelector(`.group-label[data-type="${type}"]`).classList.toggle('hidden', !folders[type].items.length);
 }
 
-/** @param {ImageStore} item */
+/** @param {StoredImage} item */
 function newItem(item) {
   const { id, type = 'misc', file } = item;
   const wrapper = document.importNode(template, true).querySelector('li');

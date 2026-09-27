@@ -30,6 +30,7 @@ export const ImageType = Object.freeze({
  * @typedef {ImageBase & { file: File; src?: string; }} FileImage
  *
  * @typedef {SourceImage | FileImage} ImageStore
+ * @typedef {ImageStore & { id: string }} StoredImage
  */
 
 /** @type {Map<string, string>} */
