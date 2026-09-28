@@ -34,12 +34,18 @@ export default class TextRenderer extends Renderer {
     this.resize();
   }
 
+  #nextSize() {
+    const { size = TextSizes.Normal } = this.element;
+    const sizes = Number(getComputedStyle(this.container).getPropertyValue('--sizes')) || 3;
+    if (sizes > 2 || size === TextSizes.Short) return NextSize[size];
+    return TextSizes.Short;
+  }
+
   /** @param {HTMLDivElement} menu  */
   bindMenu(menu) {
     super.bindMenu(menu);
     menu.querySelector('[data-tip="Resize"]').addEventListener('click', () => {
-      const { size = TextSizes.Normal } = this.element;
-      this.element.emit('update', { size: NextSize[size] });
+      this.element.emit('update', { size: this.#nextSize() });
       saveElement(this.element);
     });
   }
