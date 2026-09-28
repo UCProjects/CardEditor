@@ -69,6 +69,14 @@ class UndercardEditor {
   /** @param {GroupRenderer} renderer  */
   addGroup(renderer, after = 0) {
     renderer.on(Elements.Group, () => this.newGroup(this.#groups.indexOf(renderer) + 1));
+    renderer.on('duplicate', () => {
+      const copy = renderer.element.duplicate();
+      const copyRender = copy.renderer();
+      this.addGroup(copyRender, this.#groups.indexOf(renderer) + 1);
+      copyRender.emit('save');
+      copyRender.emit('loaded');
+      this.save();
+    });
     renderer.on('archive', (trash = false) => {
       const index = this.#groups.indexOf(renderer);
       if (!~index) return;

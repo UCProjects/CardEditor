@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import registryEvents from '../elements/registryEvents.js';
 import settings, { Settings } from '../settings.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
@@ -33,7 +34,10 @@ vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() }
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => makeElement(props),
-  register: (el) => store.set(el.id, el),
+  register: (el) => {
+    store.set(el.id, el);
+    registryEvents.emit('add', el);
+  },
   remove: (el) => store.delete(el.id),
   save: vi.fn(),
 }));

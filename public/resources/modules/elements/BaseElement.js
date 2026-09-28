@@ -55,6 +55,12 @@ export default class BaseElement extends EventEmitter {
     return new Element(this.toJSON());
   }
 
+  /** @returns {this} */
+  duplicate() {
+    const Element = Reflect.getPrototypeOf(this).constructor;
+    return new Element({ ...this.toJSON(), id: undefined });
+  }
+
   newRenderer() {
     throw new Error('Must be overridden');
   }

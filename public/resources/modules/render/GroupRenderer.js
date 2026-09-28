@@ -82,6 +82,19 @@ export default class GroupRenderer extends Renderer {
   #addElementEvents(render) {
     render.addMenu();
     const archivedController = new AbortController();
+
+    render.on('duplicate', () => {
+      const { content } = this.element;
+      const index = content.indexOf(render.element.id);
+      if (!~index) return;
+      const copy = render.element.duplicate();
+      content.splice(index + 1, 0, copy.id);
+      const copyRender = copy.renderer();
+      this.#addElementEvents(copyRender);
+      render.container.after(copyRender.container);
+      copyRender.render();
+      copyRender.emit('save');
+    }, { signal: archivedController.signal });
     render.one('save', () => this.emit('save'), { signal: archivedController.signal });
 
     render.on('archive', (trash = false) => render.emit('archived', trash), { signal: archivedController.signal });

@@ -62,6 +62,9 @@ function bindMenu(renderer, menu) {
     editor.open(renderer);
   });
 
+  // Duplicate
+  menu.querySelector('[data-tip="Duplicate"]').addEventListener('click', () => renderer.emit('duplicate'));
+
   // Save
   menu.querySelector('[data-tip="Download"]').addEventListener('click', () => {
     saveImage(renderer.container, renderer.element.name || type);

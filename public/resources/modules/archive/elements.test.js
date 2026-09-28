@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import registryEvents from '../elements/registryEvents.js';
 import settings, { Settings } from '../settings.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
@@ -10,10 +11,15 @@ vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() }
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => element(props),
-  register: (el) => store.set(el.id, el),
+  register: (el) => {
+    store.set(el.id, el);
+    registryEvents.emit('add', el);
+  },
   remove: (el) => store.delete(el.id),
   save: vi.fn(),
 }));
+
+let copies = 0;
 
 function element({ id, type, content }) {
   const el = new EventEmitter();
@@ -27,6 +33,10 @@ function element({ id, type, content }) {
     renderer: () => renderer,
     isSpell: () => false,
     toJSON: () => ({ id, type, name: id, content: el.content }),
+    duplicate() {
+      copies += 1;
+      return element({ id: `copy-${copies}`, type, content: el.content && [...el.content] });
+    },
   });
   if (type === 'group') {
     el.content = content ?? [];
@@ -236,6 +246,33 @@ describe('leaving a group', () => {
     const li = await dragStart('card');
     expect(hidden(dropOut())).toBe(true);
     fire(li, 'dragend');
+  });
+});
+
+describe('duplicate', () => {
+  const fixture = ['card', 'child', 'group', 'other', 'trash'];
+  const extras = () => [...root().querySelectorAll('li[data-id]')]
+    .filter((li) => !fixture.includes(li.dataset.id));
+
+  it('adds a copy under a new id at the top level', () => {
+    click('card', 'duplicate');
+    expect(extras()).toHaveLength(1);
+
+    const [copy] = extras();
+    expect(copy.dataset.id).not.toBe('card');
+    expect(copy.parentElement).toBe(root());
+    expect(store.has(copy.dataset.id)).toBe(true);
+
+    click(copy.dataset.id, 'destroy');
+  });
+
+  it('puts a grouped copy in the group, and in its content', () => {
+    click('child', 'duplicate');
+    expect(extras()).toHaveLength(1);
+
+    const [copy] = extras();
+    expect(copy.parentElement).toBe(extraOf('other'));
+    expect(store.get('other').content).toContain(copy.dataset.id);
   });
 });
 

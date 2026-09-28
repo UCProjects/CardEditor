@@ -123,7 +123,7 @@ events.on('add', (element) => {
   if (element.type === Elements.Group ? groups.has(element.id) : items.has(element.id)) return;
   const item = add(element);
   if (item.type !== Elements.Group) {
-    item.group = element.renderer().container.closest('.element.group').dataset.id;
+    item.group = element.renderer().container.closest('.element.group')?.dataset.id;
   }
 });
 
@@ -208,7 +208,12 @@ function place(item) {
   else if (group) rowOf(group).extra.append(li);
   else if (item.type === Elements.Group) list.groups.before(li);
   else list.items.before(li);
-  if (item.type === Elements.Group) forEach(item, place);
+  if (item.type === Elements.Group) {
+    forEach(item, (child) => {
+      child.group = item.id;
+      place(child);
+    });
+  }
   item.emit('refresh');
   refreshEmptyMessage();
 }
@@ -332,6 +337,19 @@ const actions = {
       document.querySelector('.archive').showPopover();
     }, { signal: editController.signal });
     editor.open(item.element.renderer());
+  },
+  duplicate(item) {
+    const copy = item.element.duplicate();
+    const created = add(copy);
+    created.group = item.group;
+    register(copy);
+    save(copy);
+    const group = item.group ? groups.get(item.group) : undefined;
+    if (group) {
+      group.element.content.push(copy.id);
+      save(group.element);
+    }
+    place(created);
   },
   trash: (item) => cascade(item, 'trash'),
   restore: (item) => cascade(item, 'restore'),
