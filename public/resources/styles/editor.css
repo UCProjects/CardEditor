@@ -15,8 +15,8 @@ input, textarea {
   border-radius: 15px;
   padding: 0;
   color: var(--text);
-  margin-block: 5vh auto;
-  max-height: 90vh;
+  margin-block: 5dvh auto;
+  max-height: 90dvh;
 }
 
 #editor::backdrop {
