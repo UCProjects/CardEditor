@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import settings, { Settings } from '../settings.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
 const { store } = vi.hoisted(() => ({ store: new Map() }));
@@ -8,6 +9,7 @@ vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn() } }));
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
+  init: (props) => element(props),
   register: (el) => store.set(el.id, el),
   remove: (el) => store.delete(el.id),
   save: vi.fn(),
@@ -24,6 +26,7 @@ function element({ id, type, content }) {
     description: '',
     renderer: () => renderer,
     isSpell: () => false,
+    toJSON: () => ({ id, type, name: id, content: el.content }),
   });
   if (type === 'group') {
     el.content = content ?? [];
@@ -41,6 +44,7 @@ const trashFolder = () => row('trash');
 const trashList = () => trashFolder().querySelector('ul.extra');
 const click = (id, name) => row(id).querySelector(`button[name="${name}"]`).click();
 const extraOf = (id) => row(id).querySelector('ul.extra');
+const trashKey = (id) => `data:trash:${id}`;
 const dropOut = () => document.querySelector('.archive [data-page="elements"] .drop-out');
 const hidden = (el) => el.classList.contains('hidden');
 
@@ -69,6 +73,10 @@ async function drag(id, target) {
 }
 
 beforeAll(async () => {
+  localStorage.setItem('data:trash:stale', JSON.stringify({
+    id: 'stale',
+    element: { type: 'card', name: 'stale' },
+  }));
   store.set('card', element({ id: 'card', type: 'card' }));
   store.set('child', element({ id: 'child', type: 'card' }));
   store.set('group', element({ id: 'group', type: 'group', content: ['child'] }));
@@ -78,6 +86,12 @@ beforeAll(async () => {
 });
 
 describe('load', () => {
+  it('keeps persisted trash for this session, then forgets it', () => {
+    expect(row('stale').parentElement).toBe(trashList());
+    expect(localStorage.getItem('data:trash:stale')).toBe(null);
+    click('stale', 'destroy');
+  });
+
   it('renders one row per element', () => {
     expect(root().querySelectorAll('li[data-id]')).toHaveLength(5);
   });
@@ -225,6 +239,44 @@ describe('leaving a group', () => {
   });
 });
 
+describe('enabling persistence later', () => {
+  it('backfills whatever is already in the trash', () => {
+    click('card', 'trash');
+    expect(localStorage.getItem('data:trash:card')).toBe(null);
+
+    settings.set(Settings.KeepTrash, true);
+
+    const stored = JSON.parse(localStorage.getItem('data:trash:card'));
+    expect(stored.id).toBe('card');
+    expect(row('card').parentElement).toBe(trashList());
+  });
+});
+
+describe('toggling persistence repeatedly', () => {
+  it('only writes while enabled, and catches up on re-enable', () => {
+    settings.set(Settings.KeepTrash, false);
+    click('child', 'trash');
+    expect(localStorage.getItem(trashKey('child'))).toBe(null);
+
+    settings.set(Settings.KeepTrash, true);
+    expect(JSON.parse(localStorage.getItem(trashKey('child'))).group).toBe('other');
+
+    settings.set(Settings.KeepTrash, false);
+    settings.set(Settings.KeepTrash, true);
+    expect(JSON.parse(localStorage.getItem(trashKey('child'))).id).toBe('child');
+  });
+
+  it('does not resurrect something restored while disabled', () => {
+    settings.set(Settings.KeepTrash, false);
+    click('child', 'restore');
+    expect(localStorage.getItem(trashKey('child'))).toBe(null);
+
+    settings.set(Settings.KeepTrash, true);
+    expect(localStorage.getItem(trashKey('child'))).toBe(null);
+    expect(row('child').parentElement).toBe(extraOf('other'));
+  });
+});
+
 describe('destroy', () => {
   it('re-hides the trash folder once the last entry is gone', () => {
     click('card', 'trash');
@@ -233,4 +285,8 @@ describe('destroy', () => {
     expect(row('card')).toBe(null);
     expect(trashFolder().classList.contains('hidden')).toBe(true);
   });
+});
+
+it('never swallowed a handler error', () => {
+  expect([...document.querySelectorAll('#breadbox .toast.error')].map((t) => t.textContent)).toEqual([]);
 });

@@ -4,6 +4,7 @@ import { getSettings, setSettings } from './utils/storage.js';
 export const Settings = Object.freeze({
   MonsterSoul: 'monsterSoul',
   SaveOnClose: 'editorSave',
+  KeepTrash: 'keepTrash',
 });
 
 /**
@@ -28,6 +29,9 @@ const baseSettings = [{
   key: Settings.SaveOnClose,
   name: 'Save editor on close',
   checked: true,
+}, {
+  key: Settings.KeepTrash,
+  name: 'Keep trash between sessions',
 }];
 
 class SettingManager extends EventEmitter {

@@ -1,9 +1,11 @@
 const APP = 'app:';
 const DATA = 'data:';
 const CORRUPT = `${APP}corrupt:`;
+const TRASH = `${DATA}trash:`;
 
 const keys = {
   element: (id) => `${DATA}el:${id}`,
+  trash: (id) => `${TRASH}${id}`,
   colors: `${APP}colors`,
   corrupt: (key, time = Date.now()) => `${CORRUPT}${key}:${time}`,
   groups: `${APP}groups`,
@@ -50,6 +52,42 @@ export function setElement(id, data) {
 
 export function removeElement(id) {
   localStorage.removeItem(keys.element(id));
+}
+
+/**
+ * @typedef {{
+ *  id: string;
+ *  group?: string;
+ *  element: object;
+ * }} TrashRecord
+ *
+ * @returns {TrashRecord[]}
+ */
+export function getTrashed() {
+  const records = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key.startsWith(TRASH)) continue;
+    const record = read(key);
+    if (record?.id) records.push(record);
+  }
+  return records;
+}
+
+/** @param {TrashRecord} record */
+export function setTrashed(record) {
+  write(keys.trash(record.id), JSON.stringify(record, reducer));
+}
+
+export function removeTrashed(id) {
+  localStorage.removeItem(keys.trash(id));
+}
+
+export function clearTrashed() {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i);
+    if (key.startsWith(TRASH)) localStorage.removeItem(key);
+  }
 }
 
 /** @returns {string[]} */

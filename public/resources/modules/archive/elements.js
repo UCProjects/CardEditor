@@ -1,4 +1,6 @@
-import { getAll, register, remove, save } from '../elements/registry.js';
+import { getAll, init, register, remove, save } from '../elements/registry.js';
+import settings, { Settings } from '../settings.js';
+import { clearTrashed, getTrashed, removeTrashed, setTrashed } from '../utils/storage.js';
 import events from '../elements/registryEvents.js';
 import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
@@ -85,6 +87,7 @@ function add(el) {
     if (!item.trashed) return;
     register(item.element);
     save(item.element);
+    removeTrashed(item.id);
     item.trashed = false;
     trashed.delete(item);
     place(item);
@@ -92,6 +95,7 @@ function add(el) {
   });
   item.on('trash', () => {
     if (item.trashed) return;
+    if (settings.enabled(Settings.KeepTrash)) setTrashed(record(item));
     remove(item.element);
     item.trashed = true;
     trashed.add(item);
@@ -121,12 +125,36 @@ events.on('add', (element) => {
   if (item.type !== Elements.Group) {
     item.group = element.renderer().container.closest('.element.group').dataset.id;
   }
-}).on('remove', (element) => {
-  // TODO this is technically a centralized archive/trash location
 });
+
+/**
+ * @param {Item} item
+ * @returns {import('../utils/storage.js').TrashRecord}
+ */
+function record(item) {
+  const element = item.element.toJSON();
+  if (item.element.content) element.content = [...item.element.content];
+  return { id: item.id, group: item.group, element };
+}
+
+function loadTrash() {
+  getTrashed().forEach(({ id, group, element }) => {
+    const item = add(init({ ...element, id }));
+    item.group = group;
+    item.trashed = true;
+    trashed.add(item);
+  });
+  if (!settings.enabled(Settings.KeepTrash)) clearTrashed();
+}
 
 export function load() {
   getAll().forEach(add);
+
+  loadTrash();
+
+  settings.on(Settings.KeepTrash, (enabled) => {
+    if (enabled) trashed.forEach((item) => setTrashed(record(item)));
+  });
 
   groups.forEach((group) => forEach(group, (child) => {
     child.group = group.id;
@@ -229,6 +257,7 @@ function render(item) {
     item.on('update', setName, options);
     item.on('destroy', () => {
       (item.type === Elements.Group ? groups : items).delete(item.id);
+      removeTrashed(item.id);
       trashed.delete(item);
       discard();
       trashRef.emit('refresh');
