@@ -3,6 +3,11 @@
   --border: rgb(255, 255, 255);
   --text: rgb(255, 255, 255);
   --text-alt: rgb(0, 0, 0);
+  --surface: rgb(31, 31, 31);
+  --surface-hi: rgb(56, 56, 56);
+  --danger: rgb(200, 0, 0);
+  --danger-text: rgb(255, 130, 130);
+  --danger-fill: rgba(200, 0, 0, 0.6);
   --shadow-color: var(--background);
   --text-shadow: -1px -1px 0 var(--shadow-color),
     1px 1px 0 var(--shadow-color),

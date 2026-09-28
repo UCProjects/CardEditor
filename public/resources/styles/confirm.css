@@ -35,22 +35,22 @@
   padding: 6px 14px;
   font: inherit;
   color: var(--text);
-  background-color: rgb(31, 31, 31);
+  background-color: var(--surface);
   border: 2px solid var(--border);
   border-radius: 10px;
 }
 
 #confirm button:hover {
-  background-color: rgb(56, 56, 56);
+  background-color: var(--surface-hi);
 }
 
 #confirm.destructive .accept {
-  color: rgb(255, 130, 130);
-  border-color: rgb(200, 0, 0);
+  color: var(--danger-text);
+  border-color: var(--danger);
 }
 
 #confirm.destructive .accept:hover {
   color: var(--text);
-  background-color: rgba(200, 0, 0, 0.6);
-  border-color: rgb(200, 0, 0);
+  background-color: var(--danger-fill);
+  border-color: var(--danger);
 }

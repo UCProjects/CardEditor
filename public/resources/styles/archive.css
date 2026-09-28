@@ -30,7 +30,7 @@
 .archive header {
   display: flex;
   text-align: center;
-  background-color: rgb(31, 31, 31);
+  background-color: var(--surface);
 }
 
 .archive header input {
@@ -90,7 +90,7 @@
 }
 
 .archive div > ul > li:nth-child(even of :not(.hidden, .filtered, .group-label, .drop-out)) {
-  background-color: rgb(31, 31, 31);
+  background-color: var(--surface);
 }
 
 .archive .info {
@@ -130,7 +130,7 @@
 .archive .drop-out {
   margin: 10px 0;
   padding: 10px;
-  background-color: rgb(31, 31, 31);
+  background-color: var(--surface);
   border: 2px dashed var(--border);
 }
 
@@ -200,7 +200,7 @@
   font: inherit;
   text-align: left;
   color: var(--text);
-  background-color: rgb(31, 31, 31);
+  background-color: var(--surface);
   border: 2px solid var(--border);
   border-radius: 0;
   appearance: none;
@@ -228,7 +228,7 @@
   padding: 0 2px;
   font: inherit;
   color: var(--text);
-  background-color: rgb(31, 31, 31);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0;
   appearance: none;
