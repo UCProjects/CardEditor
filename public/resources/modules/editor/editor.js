@@ -70,6 +70,7 @@ class Editor extends EventEmitter {
     this.on('close', () => {
       this.#module[this.element.type].unload();
       delete editor.dataset.editing;
+      this.#renderer.unload();
       this.#renderer = null;
       this.#original = null;
     });

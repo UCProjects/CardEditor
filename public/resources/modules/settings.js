@@ -2,9 +2,10 @@ import EventEmitter from './utils/EventEmitter.js';
 import { getSettings, setSettings } from './utils/storage.js';
 
 export const Settings = Object.freeze({
+  AddDetermination: 'addDetermination',
+  KeepTrash: 'keepTrash',
   MonsterSoul: 'monsterSoul',
   SaveOnClose: 'editorSave',
-  KeepTrash: 'keepTrash',
 });
 
 /**
@@ -25,6 +26,10 @@ export const Settings = Object.freeze({
 const baseSettings = [{
   key: Settings.MonsterSoul,
   name: 'Enable monster souls',
+}, {
+  key: Settings.AddDetermination,
+  name: 'Automatically add heart to DT cards',
+  checked: true,
 }, {
   key: Settings.SaveOnClose,
   name: 'Save editor on close',
