@@ -17,6 +17,8 @@ input, textarea {
   color: var(--text);
   margin-block: 5dvh auto;
   max-height: 90dvh;
+  width: 800px;
+  max-width: 95dvw;
 }
 
 #editor::backdrop {
@@ -33,7 +35,7 @@ input, textarea {
 .editor-wrapper {
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr fit-content(620px);
+  grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
 }
 
@@ -180,15 +182,15 @@ input, textarea {
 
 #editor legend {
   text-transform: uppercase;
+  text-align: start;
 }
 
 .helper .grid {
   display: grid;
   grid-gap: 5px;
   align-items: center;
-  width: 250px;
   grid-template-columns: repeat(auto-fit, 16px);
-  justify-self: center;
+  justify-content: center;
 }
 
 .helper .add-custom {
@@ -233,6 +235,10 @@ input, textarea {
 fieldset.soul {
   width: min-content;
   justify-self: center;
+}
+
+fieldset.rarity {
+  text-align: start;
 }
 
 #editor .element.group,
@@ -335,11 +341,6 @@ fieldset.soul {
     border-left: 0;
     border-top: 2px solid var(--border);
     min-width: 0;
-  }
-
-  .helper .grid {
-    width: auto;
-    max-width: 100%;
   }
 
   #editor[data-editing="description"] > .editor-wrapper > header > .swap {
