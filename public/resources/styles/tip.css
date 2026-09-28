@@ -1,5 +1,6 @@
 [popover="hint"].tooltip {
   position-area: block-start;
+  position-try-fallbacks: flip-block;
   inset: unset;
   bottom: calc(anchor(top) + 5px);
   justify-self: anchor-center;
@@ -7,9 +8,4 @@
   padding: 8px;
   border-radius: 6px;
   border: 1px solid var(--background);
-}
-
-[popover="hint"].tooltip.flip {
-  inset: unset;
-  top: calc(anchor(bottom) + 5px);
 }

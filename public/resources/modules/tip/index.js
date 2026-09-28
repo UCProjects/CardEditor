@@ -1,6 +1,6 @@
 import style from '../../styles/tip.css' with { type: 'css' };
 import editor from '../editor/editor.js';
-import { adoptStyle, hasKey, isElementInViewport } from '../utils/funcs.js';
+import { adoptStyle, hasKey } from '../utils/funcs.js';
 
 adoptStyle(style);
 
@@ -29,9 +29,7 @@ function show(event) {
   const currentText = text || `Edit ${editorText}`;
   tip.textContent = currentText;
   tip.hidePopover();
-  tip.classList.remove('flip');
   tip.showPopover({ source });
-  tip.classList.toggle('flip', !isElementInViewport(tip));
 
   currentObserver?.disconnect();
   const observer = new MutationObserver(() => {
