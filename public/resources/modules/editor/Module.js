@@ -54,7 +54,9 @@ export default class Module extends EventEmitter {
       instance.update(descriptionInput.value, 'description');
       if (picker.isOpen) return;
       const pos = descriptionInput.selectionStart - 1;
-      if (descriptionInput.value[pos] === '#') picker.open({ pos });
+      const { value } = descriptionInput;
+      const opensColor = value[pos - 1] === '{' && value[pos - 2] !== '{';
+      if (value[pos] === '#' && opensColor) picker.open({ pos });
     }
     descriptionInput.addEventListener('input', updateDescription, { signal });
 
