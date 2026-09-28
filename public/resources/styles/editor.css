@@ -166,6 +166,10 @@ input, textarea {
   display: inline;
 }
 
+#editor fieldset.active {
+  display: revert;
+}
+
 #editor .extra {
   display: none;
 }

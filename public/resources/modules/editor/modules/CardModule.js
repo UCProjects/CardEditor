@@ -105,15 +105,17 @@ export default class CardModule extends Module {
     }, { signal });
 
     // rarity
+    const rarities = container.querySelector('[data-editing="rarity"]');
+
     updateActive(
-      container.querySelector('[data-rarity].active'),
-      container.querySelector(`[data-rarity="${element.rarity || 'COMMON'}"]`),
+      rarities.querySelector('[data-rarity].active'),
+      rarities.querySelector(`[data-rarity="${element.rarity || 'COMMON'}"]`),
     );
 
-    container.addEventListener('click', (e) => {
+    rarities.addEventListener('click', (e) => {
       const el = e.target.closest('[data-rarity].selectable');
       if (!el) return;
-      const active = container.querySelector('[data-rarity].active');
+      const active = rarities.querySelector('[data-rarity].active');
       if (active === el) return;
       updateActive(active, el);
       editor.update(el.dataset.rarity, 'rarity');

@@ -1,9 +1,18 @@
 :root {
-  --ARTIFACT: rgb(66, 139, 202);
+  --ARTIFACT_BG: rgb(66, 139, 202);
+  --ARTIFACT: var(--COMMON);
 }
 
 .element.text {
   --sizes: 3;
+}
+
+.element.text[data-rarity="LEGENDARY"] {
+  --ARTIFACT: var(--LEGENDARY);
+}
+
+.element.text[data-rarity="TOKEN"] {
+  --ARTIFACT: var(--TOKEN);
 }
 
 .group .element.text {
@@ -41,7 +50,8 @@
 }
 
 .element.text .artifact > header {
-  background-color: var(--ARTIFACT);
+  background-color: var(--ARTIFACT_BG);
+  color: var(--ARTIFACT);
   padding: 15px;
 }
 

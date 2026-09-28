@@ -3,10 +3,12 @@ import BaseElement from './ImageElement.js';
 import { Elements, TextSizes } from './types.js';
 
 export default class TextElement extends BaseElement {
+  rarity;
   /** @type {TextSizes[keyof TextSizes]} */
   #size;
 
   constructor({
+      rarity = '',
       size,
       ...rest
     } = {}) {
@@ -15,6 +17,7 @@ export default class TextElement extends BaseElement {
       ...rest,
       type: Elements.Text,
     });
+    this.rarity = rarity;
     this.size = size;
   }
 

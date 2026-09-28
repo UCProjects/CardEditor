@@ -77,6 +77,10 @@
               <legend>Soul</legend>
               <div data-template="selectSoul"></div>
             </fieldset>
+            <fieldset class="rarity" data-type="text">
+              <legend>Rarity</legend>
+              <div data-template="selectArtifactRarity"></div>
+            </fieldset>
           </div>
           <div id="descriptionTip" data-editing="description">
             <fieldset>
@@ -224,6 +228,11 @@
       </form>
     </dialog>
     <div id="breadbox"></div>
+    <template id="selectArtifactRarity">
+      <span class="selectable active" data-rarity="">Common</span>
+      <span class="selectable LEGENDARY" data-rarity="LEGENDARY">Legendary</span>
+      <span class="selectable TOKEN" data-rarity="TOKEN">Token</span>
+    </template>
     <template id="selectSoul">
       <span class="selectable active">NONE</span>
       <span class="selectable KINDNESS">KINDNESS</span>
