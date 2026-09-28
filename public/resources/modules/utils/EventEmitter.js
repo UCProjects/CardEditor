@@ -71,6 +71,7 @@ export default class EventEmitter {
   /** @param {string} event */
   emit(event, ...args) {
     const events = this.#events[event] || [];
-    [...events].forEach(fn => tryOrErrorSync(() => fn(...args)));
+    const message = import.meta.env ? `Failed to handle '${event}'` : '';
+    [...events].forEach(fn => tryOrErrorSync(() => fn(...args), message));
   }
 }
