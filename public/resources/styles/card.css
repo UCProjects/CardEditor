@@ -3,7 +3,16 @@
   --border: rgb(255, 255, 255);
   --cost: rgb(52, 185, 254);
   --health: rgb(107, 204, 0);
+  --SOUL: var(--text);
 }
+
+.element.card[data-soul="KINDNESS"] { --SOUL: var(--KINDNESS); }
+.element.card[data-soul="INTEGRITY"] { --SOUL: var(--INTEGRITY); }
+.element.card[data-soul="PATIENCE"] { --SOUL: var(--PATIENCE); }
+.element.card[data-soul="JUSTICE"] { --SOUL: var(--JUSTICE); }
+.element.card[data-soul="BRAVERY"] { --SOUL: var(--BRAVERY); }
+.element.card[data-soul="PERSEVERANCE"] { --SOUL: var(--PERSEVERANCE); }
+.element.card[data-soul="DETERMINATION"] { --SOUL: var(--DETERMINATION); }
 
 .element > .card {
   border: 2px solid var(--border);
@@ -32,6 +41,7 @@
   white-space: nowrap;
   overflow: hidden;
   align-content: center;
+  color: var(--SOUL);
 }
 
 .card .top .cost {

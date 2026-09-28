@@ -2,6 +2,7 @@ import { getAll, getURL, ImageType } from '../../imageBank.js';
 import settings, { Settings } from '../../settings.js';
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
+import { Souls } from '../../elements/types.js';
 import Module from './ImageModule.js';
 
 function updateActive(from, to) {
@@ -50,7 +51,7 @@ export default class CardModule extends Module {
 
     updateActive(
       container.querySelector('.soul .selectable.active'),
-      container.querySelector(`.soul .selectable${element.soul ? `.${element.soul}` : ''}`),
+      container.querySelector(`.soul .selectable${Souls.includes(element.soul) ? `.${element.soul}` : ''}`),
     );
 
     container.querySelectorAll('.soul .selectable').forEach((el) => {

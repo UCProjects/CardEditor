@@ -34,11 +34,11 @@ export default class TextRenderer extends Renderer {
 
   rarity() {
     const { rarity } = this.element;
-    const { dataset } = this.container;
+    const { dataset, style: inline } = this.container;
     delete dataset.rarity;
-    this.container.style.removeProperty('--ARTIFACT');
+    inline.removeProperty('--ARTIFACT');
     if (Rarities.includes(rarity)) dataset.rarity = rarity;
-    else if (isHashHex(rarity)) this.container.style.setProperty('--ARTIFACT', rarity);
+    else if (isHashHex(rarity)) inline.setProperty('--ARTIFACT', rarity);
   }
 
   render() {

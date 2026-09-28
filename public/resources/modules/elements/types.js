@@ -9,3 +9,13 @@ export const TextSizes = Object.freeze({
   Stretch: 'stretch',
   Short: 'short',
 });
+
+export const Souls = Object.freeze([
+  'KINDNESS',
+  'INTEGRITY',
+  'PATIENCE',
+  'JUSTICE',
+  'BRAVERY',
+  'PERSEVERANCE',
+  'DETERMINATION',
+]);

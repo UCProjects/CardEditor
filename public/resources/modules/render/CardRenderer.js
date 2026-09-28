@@ -1,9 +1,11 @@
 import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './ImageRenderer.js';
-import { asArray, filter } from '../utils/array.js';
+import { asArray } from '../utils/array.js';
 import resize from '../utils/resize.js';
 import { getName, getURL, ImageType, isUserImage } from '../imageBank.js';
 import { adoptStyle } from '../utils/funcs.js';
+import { isHashHex } from '../utils/color.js';
+import { Souls } from '../elements/types.js';
 import settings, { Settings } from '../settings.js';
 
 adoptStyle(style);
@@ -88,12 +90,14 @@ export default class CardRenderer extends Renderer {
   }
 
   soul() {
-    const list = this.query('.name').classList;
-    list.remove(...filter(list, 'name'));
+    const { dataset, style: inline } = this.container;
+    delete dataset.soul;
+    inline.removeProperty('--SOUL');
     const { soul } = this.element;
     if (!soul) return;
-    if (this.element.isSpell() || settings.enabled(Settings.MonsterSoul)) list.add(soul);
-    // TODO Allow custom
+    if (!this.element.isSpell() && !settings.enabled(Settings.MonsterSoul)) return;
+    if (Souls.includes(soul)) dataset.soul = soul;
+    else if (isHashHex(soul)) inline.setProperty('--SOUL', soul);
   }
 
   tribes() {
