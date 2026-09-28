@@ -1,0 +1,62 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings label,
+[data-page="settings"] button:not(.hidden) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  font: inherit;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 2px solid var(--border);
+}
+
+.settings label:hover,
+[data-page="settings"] button:not(.hidden):hover {
+  background-color: var(--surface-hi);
+}
+
+.settings label {
+  gap: 8px;
+  text-align: left;
+}
+
+.setting::after {
+  font-family: 'Material Icons';
+  font-size: 20px;
+  line-height: 1;
+  content: 'check_box_outline_blank';
+}
+
+.setting-name {
+  flex: 1;
+}
+
+input:checked + .setting::after {
+  content: 'check_box';
+}
+
+[data-page="settings"] button:not(.hidden) {
+  justify-content: center;
+  margin-top: 16px;
+}
+
+#corrupt-cleanup {
+  border-style: dashed;
+}
+
+#reset-editor {
+  color: var(--danger-text);
+  border-color: var(--danger);
+}
+
+#reset-editor:hover {
+  color: var(--text);
+  background-color: var(--danger-fill);
+  border-color: var(--danger);
+}

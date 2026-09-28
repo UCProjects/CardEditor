@@ -1,0 +1,75 @@
+import style from '../../styles/tip.css' with { type: 'css' };
+import editor from '../editor/editor.js';
+import { adoptStyle, hasKey } from '../utils/funcs.js';
+
+adoptStyle(style);
+
+const tip = document.createElement('div');
+tip.popover = 'hint';
+tip.classList.add('tooltip');
+
+document.body.append(tip);
+
+let currentObserver;
+
+/** @param {HTMLElement} el */
+function getSource(el) {
+  if (hasKey(el.dataset, 'tip', 'editable')) return el;
+  const parent = el.parentElement;
+  if (hasKey(parent?.dataset, 'tip', 'editable')) return parent;
+}
+
+/** @param {MouseEvent} event */
+function show(event) {
+  const source = getSource(event.target);
+  if (!source) return;
+  const editorText = editor.isOpen && (source.dataset.editableFor || source.dataset.editable);
+  const text = source.dataset.tip;
+  if (!text && !editorText) return;
+  const currentText = text || `Edit ${editorText}`;
+  tip.textContent = currentText;
+  tip.hidePopover();
+  tip.showPopover({ source });
+
+  currentObserver?.disconnect();
+  const observer = new MutationObserver(() => {
+    if (!source.isConnected || !source.offsetParent) {
+      tip.hidePopover();
+      observer.disconnect();
+      if (currentObserver === observer) currentObserver = null;
+    } else if (tip.textContent !== currentText) {
+      observer.disconnect();
+      if (currentObserver === observer) currentObserver = null;
+    }
+  });
+  observer.observe(source, { attributes: true, attributeFilter: ['style', 'class'] });
+  observer.observe(source.parentElement, { attributes: true, attributeFilter: ['style', 'class'] });
+  currentObserver = observer;
+}
+
+/** @param {MouseEvent} event  */
+function hide(event) {
+  const keys = ['tip', editor.isOpen && 'editable'];
+  if (
+    !tip.matches(':popover-open') ||
+    event.target.contains(event.toElement || event.relatedTarget) ||
+    !hasKey(event.target.dataset, ...keys)
+  ) return;
+  close();
+}
+
+export function close() {
+  currentObserver?.disconnect();
+  currentObserver = null;
+  tip.hidePopover();
+}
+
+document.addEventListener('toggle', (event) => {
+  if (event.target === tip || event.newState !== 'closed') return;
+  close();
+}, true);
+
+document.addEventListener('mouseover', show);
+document.addEventListener('focus', show);
+document.addEventListener('mouseout', hide);
+document.addEventListener('blur', hide);
