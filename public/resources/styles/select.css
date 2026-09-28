@@ -52,7 +52,7 @@
   position-try-fallbacks: flip-block;
   inset: unset;
   width: anchor-size(width);
-  max-width: calc(100vw - 16px);
+  max-width: 100%;
   background: var(--background);
   border: 1.5px solid var(--border);
   border-radius: 12px;
