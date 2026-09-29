@@ -221,20 +221,24 @@ input, textarea {
   cursor: pointer;
 }
 
-.helper [data-rarity],
+.helper img[data-rarity],
 .helper [data-tribe] {
   opacity: 0.4;
 }
 
-.helper [data-rarity].active,
+.helper img[data-rarity].active,
 .helper [data-tribe].active {
   opacity: 1;
   filter: var(--shadow-filter);
 }
 
+.helper [data-soul].active,
+.helper span[data-rarity].active {
+  text-decoration: underline;
+}
+
 fieldset.soul {
-  width: min-content;
-  justify-self: center;
+  text-align: start;
 }
 
 fieldset.rarity {
