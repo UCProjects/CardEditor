@@ -51,16 +51,15 @@ export default class CardModule extends Module {
 
     updateActive(
       container.querySelector('.soul .selectable.active'),
-      container.querySelector(`.soul .selectable${Souls.includes(element.soul) ? `.${element.soul}` : ''}`),
+      container.querySelector(`.soul .selectable[data-soul="${Souls.includes(element.soul) ? element.soul : ''}"]`),
     );
 
     container.querySelectorAll('.soul .selectable').forEach((el) => {
       el.addEventListener('click', () => {
-        const active = container.querySelector('.soul span.selectable.active');
+        const active = container.querySelector('.soul .selectable.active');
         if (active === el) return;
         updateActive(active, el);
-        const soul = el.textContent;
-        editor.update(soul === 'NONE' ? '' : soul, 'soul');
+        editor.update(el.dataset.soul, 'soul');
       }, { signal });
     });
 
