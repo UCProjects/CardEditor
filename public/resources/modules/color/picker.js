@@ -1,7 +1,6 @@
-import getCoordinates from 'https://ga.jspm.io/npm:textarea-caret@3.1.0/index.js';
 import style from '../../styles/picker.css' with { type: 'css' };
 import { adoptStyle } from '../utils/funcs.js';
-import { getHex, isFullHex, isHashHex } from '../utils/color.js';
+import { isFullHex, isHashHex } from '../utils/color.js';
 import { getColors, setColors } from '../utils/storage.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
@@ -84,50 +83,75 @@ function buildSwatches() {
   swatches.forEach((color) => addSwatch(color));
 }
 
+export const PICKER_WIDTH = 224;
+export const PICKER_GAP = 8;
+
 export default class Picker extends EventEmitter {
   #controller = new AbortController();
 
   #original = '';
   #current;
-  #position = -1;
-
-  /** @type {HTMLTextAreaElement | HTMLInputElement} */
-  #editor;
-
-  constructor(element) {
-    super();
-    if (!['TEXTAREA', 'INPUT'].includes(element?.nodeName)) throw new Error('Must provide TextArea or Input');
-
-    this.#editor = element;
-  }
 
   get isOpen() {
     return picker.matches(':popover-open');
-  }
-
-  get position() {
-    return this.#position;
   }
 
   get recent() {
     return recent.querySelector('[data-hex]').dataset.hex;
   }
 
-  open({
-    pos = this.#editor.selectionStart,
-    hex = null,
-    focus = true,
-  } = {}) {
+  get current() {
+    return this.#current;
+  }
+
+  get original() {
+    return this.#original;
+  }
+
+  get signal() {
+    return this.#controller.signal;
+  }
+
+  /**
+   * The element the popover anchors to and returns focus to.
+   * @returns {HTMLElement}
+   */
+  get source() {
+    return document.body;
+  }
+
+  /** @returns {string} the hex the picker should open on, without a leading # */
+  read() {
+    return '';
+  }
+
+  /** Deliver the chosen colour to whatever this picker targets. */
+  write() {}
+
+  /** Runs when the picker closes without committing. */
+  cleanup() {}
+
+  /** Runs after the popover hides, to drop any per-session state. */
+  reset() {}
+
+  canCommit() {
+    return true;
+  }
+
+  isSource(target) {
+    return target === this.source;
+  }
+
+  open({ hex = null, focus = true } = {}) {
     if (this.isOpen) return;
 
-    const container = this.#editor.closest('dialog') || document.body;
+    const container = this.source.closest('dialog') || document.body;
     if (!container.contains(picker)) container.append(picker);
 
     buildSwatches();
 
     const editing = !!hex;
-    this.#original = getHex(hex || this.#editor.value.substring(pos)) || '';
-    this.#position = pos;
+    this.#original = this.read(hex) || '';
     this.setPosition();
     this.apply(this.#original || this.recent, !editing, focus);
     if (focus) setTimeout(() => {
@@ -145,18 +169,18 @@ export default class Picker extends EventEmitter {
       this.commit(this.#current);
     } else {
       this.commit(this.#original);
-      this.#removeEmpty();
+      this.cleanup();
     }
 
     picker.hidePopover();
 
     this.#original = null;
-    this.#position = -1;
+    this.reset();
 
     this.#controller.abort();
     this.#controller = new AbortController();
 
-    this.#editor.focus();
+    this.source.focus();
   }
 
   apply(color, commit = true, move = true) {
@@ -171,52 +195,28 @@ export default class Picker extends EventEmitter {
     if (commit) this.commit(color, move);
   }
 
-  commit(color = '', move = this.#position === this.#editor.selectionStart) {
-    if (this.#position < 0) return;
-    const pos = this.#position;
-    const text = this.#editor.value;
-    const isHash = text[pos] === '#';
-    const tail = text.substring(pos + isHash);
-    const [written = ''] = tail.match(/^[^|]*/) || [];
-    const hasColor = !!color;
-    const isNotPipe = hasColor && tail[written.length] !== '|';
-    this.#editor.value = `${text.substring(0, pos)}${hasColor ? '#' : ''}${color}${isNotPipe ? '|}' : ''}${tail.substring(written.length)}`;
+  commit(color = '', ...rest) {
+    if (!this.canCommit()) return;
+    this.write(color, ...rest);
     const { isNew, button } = addSwatch(color);
-    if (isNew) this.#initButton(button);
-    const end = pos + color.length + (hasColor && isHash) + isNotPipe;
-    if (move || (this.#editor.selectionStart >= pos && this.#editor.selectionStart < end)) {
-      this.#editor.setSelectionRange(end, end);
-    }
+    if (isNew) this.initButton(button);
     this.emit('updated');
   }
 
   setPosition() {
-    const GAP = 8;
-    const width = 224;
-    const index = this.#position;
-    const { left } = this.#editor.getBoundingClientRect();
-    /** @type {{ top: number; left: number; height: number; }} */
-    let { left: x } = getCoordinates(this.#editor, index);
-    if (x + left + width > window.innerWidth) x = window.innerWidth - width;
-    else x += left;
-    picker.style.left = Math.max(x, GAP) + 'px';
-    picker.showPopover({ source: this.#editor });
+    const { left } = this.source.getBoundingClientRect();
+    const x = Math.min(left, window.innerWidth - PICKER_WIDTH);
+    picker.style.left = Math.max(x, PICKER_GAP) + 'px';
+    picker.showPopover({ source: this.source });
   }
 
-  #removeEmpty() {
-    const pos = this.#position;
-    if (pos < 1) return;
-    const text = this.#editor.value;
-    if (text[pos - 1] !== '{') return;
-    const close = text.indexOf('}', pos);
-    if (!~close || text.substring(pos, close) !== '|') return;
-    this.#editor.value = text.substring(0, pos - 1) + text.substring(close + 1);
-    this.#editor.setSelectionRange(pos - 1, pos - 1);
-    this.emit('updated');
+  setLeft(x) {
+    picker.style.left = Math.max(x, PICKER_GAP) + 'px';
+    picker.showPopover({ source: this.source });
   }
 
   /** @param {HTMLButtonElement} button */
-  #initButton(button) {
+  initButton(button) {
     const { signal } = this.#controller;
     const { hex } = button.dataset;
     button.addEventListener('click', () => this.apply(hex, true), { signal });
@@ -239,7 +239,7 @@ export default class Picker extends EventEmitter {
         this.close(true);
       }
     }, opts);
-    recent.querySelectorAll('button').forEach((el) => this.#initButton(el));
+    recent.querySelectorAll('button').forEach((el) => this.initButton(el));
     native.addEventListener('change', () => {
       const v = native.value;
       if (isHashHex(v)) this.apply(v.substring(1), true);
@@ -261,7 +261,7 @@ export default class Picker extends EventEmitter {
       else this.commit(color);
     }, opts);
     document.addEventListener('mousedown', (e) => {
-      if (e.button !== 0 || !this.isOpen || e.target === this.#editor || picker.contains(e.target)) return;
+      if (e.button !== 0 || !this.isOpen || this.isSource(e.target) || picker.contains(e.target)) return;
       this.close(true);
     }, opts);
   }

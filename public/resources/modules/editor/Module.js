@@ -1,4 +1,4 @@
-import Picker from '../color/picker.js';
+import TextPicker from '../color/textPicker.js';
 import { isFullHex } from '../utils/color.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
@@ -15,7 +15,7 @@ export default class Module extends EventEmitter {
     super();
     this.#editor = instance;
 
-    this.#picker = new Picker(this.container.querySelector('textarea[name="description"]'));
+    this.#picker = new TextPicker(this.container.querySelector('textarea[name="description"]'));
   }
 
   get container() {

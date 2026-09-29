@@ -1,5 +1,6 @@
 import { expect } from 'vitest';
-import Picker, { hexInputListener } from './picker.js';
+import { hexInputListener } from './picker.js';
+import TextPicker from './textPicker.js';
 
 function inputType({ data, paste }) {
   if (paste !== undefined) return 'insertFromPaste';
@@ -38,12 +39,12 @@ function edit(initial, [start, end], options = {}) {
   return result;
 }
 
-describe('Picker', () => {
+describe('TextPicker', () => {
   it('Requires a text entry element', () => {
-    expect(() => new Picker(document.createElement('div'))).toThrow();
-    expect(() => new Picker(null)).toThrow();
-    expect(() => new Picker(document.createElement('textarea'))).not.toThrow();
-    expect(() => new Picker(document.createElement('input'))).not.toThrow();
+    expect(() => new TextPicker(document.createElement('div'))).toThrow();
+    expect(() => new TextPicker(null)).toThrow();
+    expect(() => new TextPicker(document.createElement('textarea'))).not.toThrow();
+    expect(() => new TextPicker(document.createElement('input'))).not.toThrow();
   });
 });
 
