@@ -3,7 +3,6 @@ import ValuePicker from './valuePicker.js';
 
 let shown = false;
 
-/** happy-dom has no Popover API, which isOpen/open/close rely on */
 beforeAll(() => {
   const el = document.getElementById('picker');
   const matches = el.matches.bind(el);

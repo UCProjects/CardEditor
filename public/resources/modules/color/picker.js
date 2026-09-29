@@ -122,26 +122,20 @@ export default class Picker extends EventEmitter {
     return this.#controller.signal;
   }
 
-  /**
-   * The element the popover anchors to and returns focus to.
-   * @returns {HTMLElement}
-   */
+  /** @returns {HTMLElement} */
   get source() {
     return document.body;
   }
 
-  /** @returns {string} the hex the picker should open on, without a leading # */
+  /** @returns {string} */
   read() {
     return '';
   }
 
-  /** Deliver the chosen colour to whatever this picker targets. */
   write() {}
 
-  /** Runs when the picker closes without committing. */
   cleanup() {}
 
-  /** Runs after the popover hides, to drop any per-session state. */
   reset() {}
 
   canCommit() {

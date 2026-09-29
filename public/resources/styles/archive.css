@@ -5,6 +5,16 @@
   right: anchor(right);
   bottom: 5px;
   font-size: 100px;
+  isolation: isolate;
+}
+
+.archive-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--background);
+  clip-path: polygon(49% 10%, 86% 29%, 85% 70%, 50% 91%, 14% 71%, 15% 29%);
+  z-index: -1;
 }
 
 .archive-button:hover {

@@ -2,14 +2,13 @@ import ValuePicker from '../../color/valuePicker.js';
 import { isHashHex } from '../../utils/color.js';
 
 /**
- * Wires the [data-custom] option of a text picker to a color picker.
  * @param {object} options
- * @param {HTMLElement} options.root container holding the .selectable options
- * @param {string} options.name dataset key the options carry their value in
- * @param {readonly string[]} options.presets values that are not custom colors
- * @param {string} options.value the element's current value
- * @param {(value: string) => void} options.activate marks the option for a preset value
- * @param {(value: string) => void} options.update writes a value to the element
+ * @param {HTMLElement} options.root
+ * @param {string} options.name
+ * @param {readonly string[]} options.presets
+ * @param {string} options.value
+ * @param {(value: string) => void} options.activate
+ * @param {(value: string) => void} options.update
  */
 export default function customColor({ root, name, presets, value, activate, update }) {
   const custom = root.querySelector('[data-custom]');
