@@ -8,8 +8,8 @@ export default class TextPicker extends Picker {
   /** @type {HTMLTextAreaElement | HTMLInputElement} */
   #editor;
 
-  constructor(element) {
-    super();
+  constructor(element, options) {
+    super(options);
     if (!['TEXTAREA', 'INPUT'].includes(element?.nodeName)) throw new Error('Must provide TextArea or Input');
 
     this.#editor = element;

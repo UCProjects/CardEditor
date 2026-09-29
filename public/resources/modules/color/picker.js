@@ -23,7 +23,7 @@ export function hexInputListener(e) {
   el.dispatchEvent(new InputEvent('input', { bubbles: true }));
 }
 
-const PRESETS = [
+export const PRESETS = [
   '#e63946','#f4a261','#ffd166','#06d6a0','#4ff76b',
   '#118ab2','#9b5de5','#ff99c8','#c9ada7','#adb5bd',
 ];
@@ -72,10 +72,10 @@ function addSwatch(color, insert = false) {
   return { isNew, button };
 }
 
-function buildSwatches() {
+function buildSwatches(presets = PRESETS) {
   recent.innerHTML = '';
-  for (let i = 0, count = 16 - swatches.length; i < PRESETS.length && count > 0; i++) {
-    const color = PRESETS[i];
+  for (let i = 0, count = 16 - swatches.length; i < presets.length && count > 0; i++) {
+    const color = presets[i];
     if (swatches.includes(color)) continue;
     addSwatch(color);
     count -= 1;
@@ -91,6 +91,16 @@ export default class Picker extends EventEmitter {
 
   #original = '';
   #current;
+  #presets;
+
+  constructor({ presets = PRESETS } = {}) {
+    super();
+    this.#presets = presets;
+  }
+
+  get presets() {
+    return this.#presets;
+  }
 
   get isOpen() {
     return picker.matches(':popover-open');
@@ -148,7 +158,7 @@ export default class Picker extends EventEmitter {
     const container = this.source.closest('dialog') || document.body;
     if (!container.contains(picker)) container.append(picker);
 
-    buildSwatches();
+    buildSwatches(this.#presets);
 
     const editing = !!hex;
     this.#original = this.read(hex) || '';

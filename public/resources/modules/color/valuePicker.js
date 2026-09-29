@@ -6,8 +6,8 @@ export default class ValuePicker extends Picker {
   #trigger;
   #value = '';
 
-  constructor(trigger) {
-    super();
+  constructor(trigger, options) {
+    super(options);
     if (!(trigger instanceof HTMLElement)) throw new Error('Must provide an element');
 
     this.#trigger = trigger;
