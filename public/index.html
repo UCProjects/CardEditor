@@ -310,27 +310,25 @@
     </template>
     <template id="card">
       <div class="card handlee">
-        <div class="top row">
-          <div class="name" data-editable="name"></div>
-          <div class="cost center" data-editable="number" data-editable-for="cost"></div>
+        <div class="background"></div>
+        <div class="header"></div>
+        <div class="footer"></div>
+        <div class="frame"></div>
+        <div class="name" data-editable="name"></div>
+        <div class="cost center" data-editable="number" data-editable-for="cost"></div>
+        <div class="image" data-editable="image">
+          <img src="" class="avatar" draggable="false" />
         </div>
-        <div class="middle">
-          <div class="image" data-editable="image">
-            <img src="" class="avatar" draggable="false" />
-          </div>
-          <div class="status" data-editable="effects"></div>
-          <div class="tribes" data-editable="tribes" data-template="selectTribe"></div>
-        </div>
+        <div class="status" data-editable="effects"></div>
+        <div class="tribes" data-editable="tribes" data-template="selectTribe"></div>
         <div class="description center" data-editable="description">
           <div></div>
         </div>
-        <div class="bottom row">
-          <div class="attack center" data-editable="number" data-editable-for="attack"></div>
-          <div class="rarity center" data-editable="rarity">
-            <img src="" draggable="false">
-          </div>
-          <div class="health center" data-editable="number" data-editable-for="health"></div>
+        <div class="attack center" data-editable="number" data-editable-for="attack"></div>
+        <div class="rarity center" data-editable="rarity">
+          <img src="" draggable="false">
         </div>
+        <div class="health center" data-editable="number" data-editable-for="health"></div>
       </div>
       <footer>undercard.feildmaster.com</footer>
     </template>

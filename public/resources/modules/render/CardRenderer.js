@@ -34,11 +34,11 @@ export default class CardRenderer extends Renderer {
   }
 
   attack() {
-    this.query('.bottom .attack').textContent = this.element.attack;
+    this.query('.card > .attack').textContent = this.element.attack;
   }
 
   cost() {
-    this.query('.top .cost').textContent = this.element.cost;
+    this.query('.card > .cost').textContent = this.element.cost;
   }
 
   description() {
@@ -68,16 +68,16 @@ export default class CardRenderer extends Renderer {
       span.append(img);
       return span;
     });
-    this.query('.middle .status').replaceChildren(...effects);
+    this.query('.card > .status').replaceChildren(...effects);
   }
 
   health() {
-    this.query('.bottom .health').textContent = this.element.health;
+    this.query('.card > .health').textContent = this.element.health;
   }
 
   name() {
     super.name();
-    resize(this.query('.top .name'), { height: false, size: 16 });
+    resize(this.query('.card > .name'), { height: false, size: 14 });
   }
 
   rarity() {
@@ -85,7 +85,7 @@ export default class CardRenderer extends Renderer {
     const path = isUserImage(rarity) ?
       getURL(rarity, ImageType.Rarity) :
       `/rarity/${rarity || 'COMMON'}.png`;
-    this.query('.bottom .rarity img').src = path;
+    this.query('.card > .rarity img').src = path;
     this.effects();
   }
 
@@ -135,7 +135,7 @@ export default class CardRenderer extends Renderer {
 
   getElement() {
     const element = super.getElement();
-    element.classList.toggle('spell', this.element.isSpell());
+    element.querySelector('.card').classList.toggle('spell', this.element.isSpell());
     return element;
   }
 

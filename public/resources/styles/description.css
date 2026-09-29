@@ -3,8 +3,8 @@
   --COST: rgb(0, 208, 255);
   --GOLD: rgb(255, 215, 0);
   --LEGENDARY: var(--GOLD);
-  --ATTACK: rgb(255, 0, 0);
-  --DETERMINATION: var(--ATTACK);
+  --ATTACK: rgb(240, 0, 60);
+  --DETERMINATION: rgb(255, 0, 0);
   --HEALTH: rgb(13, 208, 0);
   --KINDNESS: rgb(0, 192, 0);
   --TOKEN: rgb(0, 200, 0);
