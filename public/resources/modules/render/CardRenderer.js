@@ -96,8 +96,10 @@ export default class CardRenderer extends Renderer {
     const { soul } = this.element;
     if (!soul) return;
     if (!this.element.isSpell() && !settings.enabled(Settings.MonsterSoul)) return;
-    if (Souls.includes(soul)) dataset.soul = soul;
-    else if (isHashHex(soul)) inline.setProperty('--SOUL', soul);
+    const isCustom = isHashHex(soul);
+    if (!isCustom && !Souls.includes(soul)) return;
+    dataset.soul = isCustom ? 'CUSTOM' : soul;
+    if (isCustom) inline.setProperty('--SOUL', soul);
   }
 
   tribes() {
