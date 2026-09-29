@@ -26,6 +26,11 @@ export default class CardRenderer extends Renderer {
       settings.on(Settings.MonsterSoul, () => this.soul(), { signal });
     }
     settings.on(Settings.AddDetermination, () => this.effects(), { signal });
+    settings.on(Settings.GameTextSize, () => {
+      this.gameText();
+      this.name();
+      this.description();
+    }, { signal });
   }
 
   /** @type {import('../elements/CardElement.js').default} */
@@ -43,7 +48,8 @@ export default class CardRenderer extends Renderer {
 
   description() {
     super.description();
-    resize(this.query('.description'));
+    const size = settings.enabled(Settings.GameTextSize) ? 12 : 12.8;
+    resize(this.query('.description'), { size });
   }
 
   effects() {
@@ -75,9 +81,14 @@ export default class CardRenderer extends Renderer {
     this.query('.card > .health').textContent = this.element.health;
   }
 
+  gameText() {
+    this.container.toggleAttribute('data-game-text', settings.enabled(Settings.GameTextSize));
+  }
+
   name() {
     super.name();
-    resize(this.query('.card > .name'), { height: false, size: 14 });
+    const size = settings.enabled(Settings.GameTextSize) ? 12 : 16;
+    resize(this.query('.card > .name'), { height: false, size });
   }
 
   rarity() {
@@ -123,6 +134,7 @@ export default class CardRenderer extends Renderer {
   }
 
   render() {
+    this.gameText();
     super.render();
     this.attack();
     this.cost();

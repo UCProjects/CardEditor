@@ -194,6 +194,21 @@
   }
 }
 
+[data-game-text] > .card {
+  > .name {
+    font-size: 12px;
+  }
+
+  > .cost {
+    font-size: 20px;
+  }
+
+  > .description {
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+}
+
 [data-overlay] {
   position: relative;
   text-shadow: var(--text-shadow);

@@ -3,6 +3,7 @@ import { getSettings, setSettings } from './utils/storage.js';
 
 export const Settings = Object.freeze({
   AddDetermination: 'addDetermination',
+  GameTextSize: 'gameTextSize',
   KeepTrash: 'keepTrash',
   MonsterSoul: 'monsterSoul',
   SaveOnClose: 'editorSave',
@@ -26,6 +27,9 @@ export const Settings = Object.freeze({
 const baseSettings = [{
   key: Settings.MonsterSoul,
   name: 'Enable monster souls',
+}, {
+  key: Settings.GameTextSize,
+  name: 'Match in-game text size',
 }, {
   key: Settings.AddDetermination,
   name: 'Automatically add heart to DT cards',
