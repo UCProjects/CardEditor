@@ -233,6 +233,7 @@ input, textarea {
 }
 
 .helper [data-soul].active,
+.helper [data-custom].active,
 .helper span[data-rarity].active {
   text-decoration: underline;
 }

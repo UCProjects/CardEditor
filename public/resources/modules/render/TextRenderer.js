@@ -1,6 +1,6 @@
 import style from '../../styles/text.css' with { type: 'css' };
 import { save as saveElement } from '../elements/registry.js';
-import { TextSizes } from '../elements/types.js';
+import { Rarities, TextSizes } from '../elements/types.js';
 import { adoptStyle } from '../utils/funcs.js';
 import { isHashHex } from '../utils/color.js';
 import Renderer from './ImageRenderer.js';
@@ -12,8 +12,6 @@ const NextSize = {
   [TextSizes.Stretch]: TextSizes.Short,
   [TextSizes.Short]: TextSizes.Normal,
 };
-
-export const Rarities = ['LEGENDARY', 'TOKEN'];
 
 export default class TextRenderer extends Renderer {
   /** @type {import('../elements/TextElement.js').default} */

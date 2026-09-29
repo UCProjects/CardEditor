@@ -10,6 +10,11 @@ export const TextSizes = Object.freeze({
   Short: 'short',
 });
 
+export const Rarities = Object.freeze([
+  'LEGENDARY',
+  'TOKEN',
+]);
+
 export const Souls = Object.freeze([
   'KINDNESS',
   'INTEGRITY',

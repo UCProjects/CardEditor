@@ -2,7 +2,9 @@ import { getAll, getURL, ImageType } from '../../imageBank.js';
 import settings, { Settings } from '../../settings.js';
 import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
+import { isHashHex } from '../../utils/color.js';
 import { Souls } from '../../elements/types.js';
+import customColor from './customColor.js';
 import Module from './ImageModule.js';
 
 function updateActive(from, to) {
@@ -49,14 +51,28 @@ export default class CardModule extends Module {
       el.classList.toggle('hidden', extra === 'soul' ? !enableSoul : element.isSpell());
     });
 
-    updateActive(
-      container.querySelector('.soul .selectable.active'),
-      container.querySelector(`.soul .selectable[data-soul="${Souls.includes(element.soul) ? element.soul : ''}"]`),
-    );
+    const souls = container.querySelector('.soul');
+    const presetSoul = (soul) => souls.querySelector(`.selectable[data-soul="${Souls.includes(soul) ? soul : ''}"]`);
+    const activeSoul = () => souls.querySelector('.selectable.active');
 
-    container.querySelectorAll('.soul .selectable').forEach((el) => {
+    const soul = customColor({
+      root: souls,
+      name: 'soul',
+      presets: Souls,
+      value: element.soul,
+      activate: (value) => updateActive(activeSoul(), isHashHex(value) ? soul.element : presetSoul(value)),
+      update: (value) => editor.update(value, 'soul'),
+    });
+
+    updateActive(activeSoul(), soul?.isCustom ? soul.element : presetSoul(element.soul));
+
+    souls.querySelectorAll('.selectable').forEach((el) => {
       el.addEventListener('click', () => {
-        const active = container.querySelector('.soul .selectable.active');
+        const active = activeSoul();
+        if (el === soul?.element) {
+          soul.open(element.soul);
+          return;
+        }
         if (active === el) return;
         updateActive(active, el);
         editor.update(el.dataset.soul, 'soul');

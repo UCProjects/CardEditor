@@ -1,6 +1,6 @@
 import style from '../../styles/picker.css' with { type: 'css' };
 import { adoptStyle } from '../utils/funcs.js';
-import { isFullHex, isHashHex } from '../utils/color.js';
+import { getHex, isFullHex, isHashHex } from '../utils/color.js';
 import { getColors, setColors } from '../utils/storage.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
@@ -152,7 +152,7 @@ export default class Picker extends EventEmitter {
     return target === this.source;
   }
 
-  open({ hex = null, focus = true } = {}) {
+  open({ hex = null, focus = true, preview = !hex, seed = '' } = {}) {
     if (this.isOpen) return;
 
     const container = this.source.closest('dialog') || document.body;
@@ -160,10 +160,9 @@ export default class Picker extends EventEmitter {
 
     buildSwatches(this.#presets);
 
-    const editing = !!hex;
     this.#original = this.read(hex) || '';
     this.setPosition();
-    this.apply(this.#original || this.recent, !editing, focus);
+    this.apply(this.#original || getHex(seed) || this.recent, preview, focus);
     if (focus) setTimeout(() => {
       input.focus();
       input.select();
