@@ -1,3 +1,5 @@
+import { stripEmpty } from './funcs.js';
+
 const APP = 'app:';
 const DATA = 'data:';
 const CORRUPT = `${APP}corrupt:`;
@@ -47,7 +49,7 @@ export function getElement(id) {
 }
 
 export function setElement(id, data) {
-  write(keys.element(id), JSON.stringify(data, reducer));
+  write(keys.element(id), JSON.stringify(data, stripEmpty));
 }
 
 export function removeElement(id) {
@@ -76,7 +78,7 @@ export function getTrashed() {
 
 /** @param {TrashRecord} record */
 export function setTrashed(record) {
-  write(keys.trash(record.id), JSON.stringify(record, reducer));
+  write(keys.trash(record.id), JSON.stringify(record, stripEmpty));
 }
 
 export function removeTrashed(id) {
@@ -126,15 +128,6 @@ export function clear() {
     const key = localStorage.key(i);
     if (key.startsWith(DATA) || key.startsWith(APP)) localStorage.removeItem(key);
   }
-}
-
-function reducer(_, value) {
-  if (Array.isArray(value)) {
-    if (!value.length) return undefined;
-  } else if (typeof value === 'string') {
-    return value.trim() || undefined;
-  }
-  return value;
 }
 
 function write(key, value) {

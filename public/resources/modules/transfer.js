@@ -3,6 +3,7 @@ import { get, init, register, save } from './elements/registry.js';
 import { Elements } from './elements/types.js';
 import { asArray } from './utils/array.js';
 import { read } from './utils/file.js';
+import { stripEmpty } from './utils/funcs.js';
 
 export const VERSION = 1;
 
@@ -59,7 +60,7 @@ export async function pack(element, { withAssets = true } = {}) {
   async function addElement(el) {
     if (!el || seen.has(el.id)) return;
     seen.add(el.id);
-    elements.push(el.toJSON());
+    elements.push(JSON.parse(JSON.stringify(el.toJSON(), stripEmpty)));
     if (withAssets) for (const id of assetIds(el)) await addAsset(id);
     if (el.type !== Elements.Group) return;
     for (const id of el.content) await addElement(get(id));

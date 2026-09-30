@@ -50,3 +50,12 @@ export function hasValue(obj, ...values) {
 export function clampNumber(number, max = 999, min = 0) {
   return Math.min(Math.max(min, Number(number)), max);
 }
+
+export function stripEmpty(_, value) {
+  if (Array.isArray(value)) {
+    if (!value.length) return undefined;
+  } else if (typeof value === 'string') {
+    return value.trim() || undefined;
+  }
+  return value;
+}

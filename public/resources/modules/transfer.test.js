@@ -110,6 +110,11 @@ describe('pack', () => {
     expect(bundle.assets).toEqual({});
   });
 
+  it('leaves empty fields out of bundled elements', async () => {
+    const bundle = await pack(card('c1', { cost: 0, frame: '', rarity: ' ', soul: '', tribes: [], effects: [] }));
+    expect(bundle.elements[0]).toEqual({ id: 'c1', type: 'card', cost: 0 });
+  });
+
   it('skips cached blob urls', async () => {
     images['img-1'] = { src: 'blob:http://localhost/abc' };
     const bundle = await pack(card('c1', { rarity: 'img-1' }));
