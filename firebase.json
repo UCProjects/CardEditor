@@ -6,6 +6,8 @@
       "package.json",
       "package-lock.json",
       "**/.*",
+      "**/images/skins/**",
+      "**/data/skins.json",
       "**/node_modules/**",
       "**/*.test.js",
       "**/*.ignore.*"

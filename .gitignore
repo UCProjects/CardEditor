@@ -69,3 +69,6 @@ functions/package-lock.json
 functions/index.js
 
 *.ignore*
+
+/public/resources/images/skins/
+/public/resources/data/skins.json
