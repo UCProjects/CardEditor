@@ -8,6 +8,7 @@ export default class CardElement extends BaseElement {
   cost;
   /** @type {string[]} */
   effects = [];
+  frame;
   /** @type {number | undefined} */
   #health;
   rarity;
@@ -19,6 +20,7 @@ export default class CardElement extends BaseElement {
     attack,
     cost = 0,
     effects = [],
+    frame = '',
     health,
     rarity = '',
     soul = '',
@@ -32,6 +34,7 @@ export default class CardElement extends BaseElement {
     this.#attack = attack;
     this.cost = cost;
     this.effects.push(...effects);
+    this.frame = frame;
     this.#health = health;
     this.rarity = rarity;
     this.soul = soul;

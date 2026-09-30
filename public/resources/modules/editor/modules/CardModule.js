@@ -4,6 +4,7 @@ import { asArray } from '../../utils/array.js';
 import { clampNumber } from '../../utils/funcs.js';
 import { isHashHex } from '../../utils/color.js';
 import { Souls } from '../../elements/types.js';
+import { FrameSkins, frameId, parseFrame, Shiny } from '../../frames.js';
 import customColor from './customColor.js';
 import Module from './ImageModule.js';
 
@@ -78,6 +79,23 @@ export default class CardModule extends Module {
         editor.update(el.dataset.soul, 'soul');
       }, { signal });
     });
+
+    // frame
+    const frames = container.querySelector('select[name="frame"]');
+    const shinyLabels = [
+      [Shiny.None, ''],
+      [Shiny.Still, ' (shiny)'],
+      [Shiny.Animated, ' (shiny, animated)'],
+    ];
+    frames.replaceChildren(...FrameSkins.map(({ id, name }) => {
+      const group = document.createElement('optgroup');
+      group.label = name;
+      group.append(...shinyLabels.map(([shiny, suffix]) => new Option(`${name}${suffix}`, frameId(id, shiny))));
+      return group;
+    }));
+    const { skin, shiny } = parseFrame(element.frame);
+    frames.value = frameId(skin, shiny);
+    frames.addEventListener('change', () => editor.update(frames.value, 'frame'), { signal });
 
     // tribes
     function refreshTribes(...elements) {

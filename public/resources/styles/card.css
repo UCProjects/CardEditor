@@ -27,7 +27,7 @@
   > .background {
     position: absolute;
     width: 160px;
-    height: 230px;
+    height: var(--background-height);
     left: 8px;
     top: 8px;
     background: #000;
@@ -61,16 +61,34 @@
     height: 246px;
     left: 0;
     top: 0;
-    background: url('/resources/images/frames/Undertale/frame_monster.png') no-repeat;
+    background: no-repeat;
     z-index: 3;
+  }
+
+  > .shinySlot {
+    display: none;
+    pointer-events: none;
+    position: absolute;
+    width: 176px;
+    height: 246px;
+    left: 0;
+    top: 0;
+    opacity: 0.7;
+    mix-blend-mode: multiply;
+    background: var(--shiny) no-repeat;
+    z-index: 4;
+  }
+
+  &.shiny > .shinySlot {
+    display: block;
   }
 
   > .name {
     position: absolute;
-    width: 120px;
+    width: calc(128px - var(--name-left));
     height: 28px;
-    left: 8px;
-    top: 6px;
+    left: var(--name-left);
+    top: calc(var(--name-top) - 2px);
     padding: 0 5px;
     font-size: 16px;
     line-height: 28px;
@@ -94,20 +112,20 @@
 
   > .cost {
     left: 128px;
-    top: 6px;
+    top: calc(var(--name-top) - 2px);
     font-size: 1.2rem;
     color: var(--COST);
   }
 
   > .attack {
     left: 8px;
-    top: 210px;
+    top: calc(var(--stats-top) - 2px);
     color: var(--ATTACK);
   }
 
   > .health {
     left: 128px;
-    top: 210px;
+    top: calc(var(--stats-top) - 2px);
     color: var(--HEALTH);
   }
 
@@ -156,7 +174,7 @@
     width: 160px;
     height: 80px;
     left: 8px;
-    top: 130px;
+    top: var(--desc-top);
     text-align: center;
     font-size: 0.8rem;
     overflow: hidden;
@@ -169,7 +187,7 @@
     width: 80px;
     height: 28px;
     left: 48px;
-    top: 210px;
+    top: calc(var(--rarity-top) - 2px);
     z-index: 5;
   }
 
@@ -184,14 +202,14 @@
     object-fit: scale-down;
   }
 
-  &.spell > .frame {
-    background-image: url('/resources/images/frames/Undertale/frame_spell.png');
-  }
-
   &.spell > .health,
   &.spell > .attack {
     display: none;
   }
+}
+
+.element.saving > .card > .shinySlot {
+  background-image: var(--shiny-still);
 }
 
 [data-game-text] > .card {

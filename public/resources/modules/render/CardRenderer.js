@@ -4,6 +4,7 @@ import { asArray } from '../utils/array.js';
 import resize from '../utils/resize.js';
 import { getName, getURL, ImageType, isUserImage } from '../imageBank.js';
 import { adoptStyle } from '../utils/funcs.js';
+import { frameLayout, frameURL, parseFrame } from '../frames.js';
 import { isHashHex } from '../utils/color.js';
 import { Souls } from '../elements/types.js';
 import settings, { Settings } from '../settings.js';
@@ -81,6 +82,25 @@ export default class CardRenderer extends Renderer {
     this.query('.card > .health').textContent = this.element.health;
   }
 
+  frame() {
+    const { skin, shiny } = parseFrame(this.element.frame);
+    const kind = this.element.isSpell() ? 'spell' : 'monster';
+    this.query('.card > .frame').style.backgroundImage = `url('${frameURL(skin, kind)}')`;
+    const overlay = this.query('.card > .shinySlot');
+    overlay.style.setProperty('--shiny', shiny ? `url('${frameURL(skin, shiny)}')` : 'none');
+    overlay.style.setProperty('--shiny-still', shiny ? `url('${frameURL(skin, 'shiny')}')` : 'none');
+    const card = this.query('.card');
+    card.classList.toggle('shiny', Boolean(shiny));
+
+    const layout = frameLayout(skin);
+    card.style.setProperty('--background-height', `${layout.backgroundHeight}px`);
+    card.style.setProperty('--desc-top', `${layout.descTop}px`);
+    card.style.setProperty('--name-left', `${layout.nameLeft}px`);
+    card.style.setProperty('--name-top', `${layout.nameTop}px`);
+    card.style.setProperty('--rarity-top', `${layout.rarityTop}px`);
+    card.style.setProperty('--stats-top', `${layout.statsTop}px`);
+  }
+
   gameText() {
     this.container.toggleAttribute('data-game-text', settings.enabled(Settings.GameTextSize));
   }
@@ -139,6 +159,7 @@ export default class CardRenderer extends Renderer {
     this.attack();
     this.cost();
     this.effects();
+    this.frame();
     this.health();
     this.rarity();
     this.soul();

@@ -27,6 +27,7 @@ input, textarea {
 
 #editor .stretch,
 #editor input,
+#editor select,
 #editor textarea {
   width: -moz-available;
   width: stretch;
