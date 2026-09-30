@@ -45,13 +45,13 @@
 }
 
 .element.text .artifact {
-  border: 2px solid var(--border);
+  border: 2px solid var(--ARTIFACT);
   height: stretch;
 }
 
 .element.text .artifact > header {
   background-color: var(--ARTIFACT_BG);
-  color: var(--ARTIFACT);
+  color: var(--text);
   padding: 15px;
 }
 
