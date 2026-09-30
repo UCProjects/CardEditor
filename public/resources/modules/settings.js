@@ -33,7 +33,7 @@ const baseSettings = [{
   name: 'Match in-game text size',
 }, {
   key: Settings.AddDetermination,
-  name: 'Automatically add heart to DT cards',
+  name: 'Automatically add <img src="/resources/images/effects/Determination.png" /> to <span class="DETERMINATION">DT</span> cards',
   checked: true,
 }, {
   key: Settings.SilenceOverlay,
