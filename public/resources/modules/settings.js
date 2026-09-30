@@ -7,6 +7,7 @@ export const Settings = Object.freeze({
   KeepTrash: 'keepTrash',
   MonsterSoul: 'monsterSoul',
   SaveOnClose: 'editorSave',
+  SilenceOverlay: 'silenceOverlay',
 });
 
 /**
@@ -34,6 +35,9 @@ const baseSettings = [{
   key: Settings.AddDetermination,
   name: 'Automatically add heart to DT cards',
   checked: true,
+}, {
+  key: Settings.SilenceOverlay,
+  name: 'Show silence over silenced cards',
 }, {
   key: Settings.SaveOnClose,
   name: 'Save editor on close',

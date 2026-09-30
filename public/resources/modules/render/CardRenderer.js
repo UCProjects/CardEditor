@@ -27,6 +27,7 @@ export default class CardRenderer extends Renderer {
       settings.on(Settings.MonsterSoul, () => this.soul(), { signal });
     }
     settings.on(Settings.AddDetermination, () => this.effects(), { signal });
+    settings.on(Settings.SilenceOverlay, () => this.silence(), { signal });
     settings.on(Settings.GameTextSize, () => {
       this.gameText();
       this.name();
@@ -76,6 +77,14 @@ export default class CardRenderer extends Renderer {
       return span;
     });
     this.query('.card > .status').replaceChildren(...effects);
+    this.silence();
+  }
+
+  silence() {
+    const silenced = !this.element.isSpell() &&
+      settings.enabled(Settings.SilenceOverlay) &&
+      this.element.effects.some((entry) => asArray(entry)[0] === 'Silenced');
+    this.query('.card').classList.toggle('silenced', silenced);
   }
 
   health() {
