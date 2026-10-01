@@ -2,6 +2,7 @@ const { join, resolve, basename } = require('node:path');
 const fs = require('node:fs/promises');
 const fetch = require('node-fetch');
 
+const DOMAIN = 'https://undercards.net';
 const base = join('public', 'resources');
 
 const effects = new Set([
@@ -38,6 +39,13 @@ async function updateFile(path, data) {
   await fs.writeFile(path, JSON.stringify(newData, undefined, 0));
 }
 
+async function getAllCards() {
+  const data = await fetch(`${DOMAIN}/card-data/latest.json`);
+  if (!data?.ok) throw new Error(`Failed to retrieve latest card data: ${data.statusText}`,);
+  const { url } = await data.json();
+  return fetch(`${DOMAIN}/${url}`);
+}
+
 async function download(url, file) {
   try {
     const image = await fetch(url);
@@ -57,7 +65,7 @@ async function downloadAvatars(images) {
   await fs.mkdir(path, { recursive: true });
   let failed = 0;
   for (const name of images) {
-    const url = `https://undercards.net/images/cards/${name}.png`;
+    const url = `${DOMAIN}/images/cards/${name}.png`;
     if (!await download(url, resolve(path, `${name}.png`))) failed += 1;
   }
   console.log(`Avatars: ${images.length - failed} saved, ${failed} failed`);
@@ -69,7 +77,7 @@ async function downloadEffects() {
   await fs.mkdir(path, { recursive: true });
   let failed = 0;
   for (const effect of effects.values()) {
-    const url = `https://undercards.net/images/powers/${effect}.png`;
+    const url = `${DOMAIN}/images/powers/${effect}.png`;
     if (!await download(url, resolve(path, `${effect}.png`))) failed += 1;
   }
   console.log(`Effects: ${effects.size - failed} saved, ${failed} failed`);
@@ -77,7 +85,7 @@ async function downloadEffects() {
 }
 
 async function run() {
-  const res = await fetch('https://undercards.net/AllCards');
+  const res = await getAllCards();
   if (!res.ok) throw new Error(`AllCards: HTTP ${res.status}`);
 
   const { cards } = await res.json();
