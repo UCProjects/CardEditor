@@ -25,7 +25,7 @@ jobs:
         with:
           oauth-client-id: ${{ vars.TS_OAUTH_CLIENT_ID }}
           audience: ${{ vars.TS_AUDIENCE }}
-          tags: tag:ci
+          tags: tag:ci-proxy
       - name: Download resources
         run: node scripts/downloadResources.js
         env:
