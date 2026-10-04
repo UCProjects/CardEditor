@@ -7,6 +7,9 @@ const args = process.argv.slice(2);
 const rawPath = args.find((arg) => !arg.startsWith('--')) ?? join('scripts', 'skins.ignore.json');
 const dataOnly = args.includes('--no-images');
 const concurrency = 4;
+const manifestPath = resolve(__dirname, 'skin-etags.ignore.json');
+
+let etags = {};
 
 const types = {
   1: 'full',
@@ -72,6 +75,19 @@ async function saveData(entries) {
   console.log(`Skins: ${Object.keys(sorted).length} in data (${entries.size} from this list)`);
 }
 
+async function loadEtags() {
+  try {
+    etags = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  } catch {
+    etags = {};
+  }
+}
+
+async function saveEtags() {
+  const sorted = Object.fromEntries(Object.entries(etags).sort(([a], [b]) => a.localeCompare(b)));
+  await fs.writeFile(manifestPath, JSON.stringify(sorted, undefined, 2) + '\n');
+}
+
 async function exists(file) {
   try {
     return (await fs.stat(file)).size > 0;
@@ -80,16 +96,21 @@ async function exists(file) {
   }
 }
 
-async function download(image, file) {
-  if (await exists(file)) return 'existing';
+async function download(image, file, key) {
+  const had = await exists(file);
   try {
-    const res = await fetch(`https://undercards.net/images/cards/${encodeURIComponent(image)}.png`);
+    const headers = {};
+    if (had && etags[key]) headers['If-None-Match'] = etags[key];
+    const res = await fetch(`https://undercards.net/images/cards/${encodeURIComponent(image)}.png`, { headers });
+    if (res.status === 304) return 'existing';
     if (res.status === 404) return 'missing';
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const partial = `${file}.part`;
     await fs.writeFile(partial, res.body);
     await fs.rename(partial, file);
-    return 'saved';
+    const etag = res.headers.get('etag');
+    if (etag) etags[key] = etag;
+    return had ? 'updated' : 'saved';
   } catch (e) {
     console.error('Failed to save', image, e.message || e);
     return 'failed';
@@ -100,17 +121,17 @@ async function downloadImages(entries) {
   const path = join(base, 'images', 'skins');
   await fs.mkdir(path, { recursive: true });
   const queue = [...entries.entries()];
-  const counts = { existing: 0, failed: 0, missing: 0, saved: 0 };
+  const counts = { existing: 0, failed: 0, missing: 0, saved: 0, updated: 0 };
 
   async function worker() {
     while (queue.length) {
       const [file, { image }] = queue.shift();
-      counts[await download(image, resolve(path, `${file}.png`))] += 1;
+      counts[await download(image, resolve(path, `${file}.png`), file)] += 1;
     }
   }
 
   await Promise.all(Array.from({ length: concurrency }, worker));
-  console.log(`Images: ${counts.saved} saved, ${counts.existing} already had, ${counts.missing} missing, ${counts.failed} failed`);
+  console.log(`Images: ${counts.saved} saved, ${counts.updated} updated, ${counts.existing} unchanged, ${counts.missing} missing, ${counts.failed} failed`);
   return counts.failed;
 }
 
@@ -119,7 +140,9 @@ async function run() {
   console.log(`Skins: ${entries.size} read from ${rawPath}${skipped ? `, ${skipped} skipped` : ''}`);
   await saveData(entries);
   if (dataOnly) return;
+  await loadEtags();
   const failed = await downloadImages(entries);
+  await saveEtags();
   if (failed) throw new Error(`${failed} download(s) failed`);
 }
 
