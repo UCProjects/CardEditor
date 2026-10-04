@@ -4,6 +4,10 @@ const fetch = require('./fetch');
 
 const DOMAIN = 'https://undercards.net';
 const base = join('public', 'resources');
+const manifestPath = resolve(__dirname, 'image-etags.json');
+const CONCURRENCY = 10;
+
+let etags = {};
 
 const effects = new Set([
   'BonusCost',
@@ -47,13 +51,45 @@ async function getAllCards() {
   return fetch(`${DOMAIN}/${url}`);
 }
 
-async function download(url, file) {
+async function loadEtags() {
   try {
-    const image = await fetch(url);
+    etags = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  } catch {
+    etags = {};
+  }
+}
+
+async function saveEtags() {
+  const sorted = Object.fromEntries(Object.entries(etags).sort(([a], [b]) => a.localeCompare(b)));
+  await fs.writeFile(manifestPath, JSON.stringify(sorted, undefined, 2) + '\n');
+}
+
+async function exists(file) {
+  return fs.access(file).then(() => true, () => false);
+}
+
+async function mapLimit(items, limit, fn) {
+  const queue = [...items];
+  const results = [];
+  await Promise.all(Array.from({ length: limit }, async () => {
+    while (queue.length) results.push(await fn(queue.shift()));
+  }));
+  return results;
+}
+
+async function download(url, file) {
+  const key = url.slice(DOMAIN.length);
+  try {
+    const headers = {};
+    if (etags[key] && await exists(file)) headers['If-None-Match'] = etags[key];
+    const image = await fetch(url, { headers });
+    if (image.status === 304) return true;
     if (!image.ok) {
       throw new Error(`HTTP ${image.status}`);
     }
     await fs.writeFile(file, image.body);
+    const etag = image.headers.get('etag');
+    if (etag) etags[key] = etag;
     return true;
   } catch (e) {
     console.error('Failed to save', basename(file), e.message || e);
@@ -64,11 +100,11 @@ async function download(url, file) {
 async function downloadAvatars(images) {
   const path = join(base, 'images', 'avatars');
   await fs.mkdir(path, { recursive: true });
-  let failed = 0;
-  for (const name of images) {
-    const url = `${DOMAIN}/images/cards/${name}.png`;
-    if (!await download(url, resolve(path, `${name}.png`))) failed += 1;
-  }
+  const results = await mapLimit(images, CONCURRENCY, (name) => download(
+    `${DOMAIN}/images/cards/${name}.png`,
+    resolve(path, `${name}.png`),
+  ));
+  const failed = results.filter((ok) => !ok).length;
   console.log(`Avatars: ${images.length - failed} saved, ${failed} failed`);
   return failed;
 }
@@ -76,16 +112,17 @@ async function downloadAvatars(images) {
 async function downloadEffects() {
   const path = join(base, 'images', 'effects');
   await fs.mkdir(path, { recursive: true });
-  let failed = 0;
-  for (const effect of effects.values()) {
-    const url = `${DOMAIN}/images/powers/${effect}.png`;
-    if (!await download(url, resolve(path, `${effect}.png`))) failed += 1;
-  }
+  const results = await mapLimit([...effects.values()], CONCURRENCY, (effect) => download(
+    `${DOMAIN}/images/powers/${effect}.png`,
+    resolve(path, `${effect}.png`),
+  ));
+  const failed = results.filter((ok) => !ok).length;
   console.log(`Effects: ${effects.size - failed} saved, ${failed} failed`);
   return failed;
 }
 
 async function run() {
+  await loadEtags();
   const res = await getAllCards();
   if (!res.ok) throw new Error(`AllCards: HTTP ${res.status}`);
 
@@ -104,6 +141,8 @@ async function run() {
     downloadAvatars(Object.values(avatars)),
     downloadEffects(),
   ]);
+
+  await saveEtags();
 
   const failed = avatarsFailed + effectsFailed;
   if (failed) throw new Error(`${failed} download(s) failed`);
