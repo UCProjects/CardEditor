@@ -23,6 +23,7 @@ const effects = new Set([
   'Invulnerable',
   'Silenced',
   'Ranged',
+  'Created',
 ]);
 
 async function updateFile(path, data) {
