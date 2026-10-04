@@ -6,7 +6,8 @@
     },
     "private": true,
     "dependencies": {
-        "node-fetch": "^2.6.7"
+        "node-fetch": "^2.6.7",
+        "socks-proxy-agent": "^8.0.5"
     },
     "devDependencies": {
         "@underscript/eslint-config": "^1.0.1",
