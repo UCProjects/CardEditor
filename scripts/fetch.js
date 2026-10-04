@@ -4,7 +4,7 @@ function createAgent() {
   const proxy = process.env.ALL_PROXY;
   if (!proxy) return undefined;
   const { SocksProxyAgent } = require('socks-proxy-agent');
-  return new SocksProxyAgent(proxy);
+  return new SocksProxyAgent(proxy, { keepAlive: true });
 }
 
 const agent = createAgent();
