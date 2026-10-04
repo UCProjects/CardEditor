@@ -6,7 +6,10 @@ on:
 jobs:
   build:
     name: Update resources
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     outputs:
       pushed: ${{ steps.push.outputs.pushed }}
     steps:
@@ -18,8 +21,15 @@ jobs:
         with:
           node-version: 24
       - run: npm clean-install
+      - uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ vars.TS_OAUTH_CLIENT_ID }}
+          audience: ${{ vars.TS_AUDIENCE }}
+          tags: tag:ci
       - name: Download resources
         run: node scripts/downloadResources.js
+        env:
+          ALL_PROXY: socks5h://100.115.6.118:1080
       - name: Commit and push
         uses: EndBug/add-and-commit@v9
         with:

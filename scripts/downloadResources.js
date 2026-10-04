@@ -1,6 +1,6 @@
 const path = require('node:path');
 const fs = require('node:fs/promises');
-const fetch = require('node-fetch');
+const fetch = require('./fetch');
 
 const base = path.join('public', 'resources');
 

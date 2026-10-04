@@ -1,6 +1,6 @@
 const { join, resolve, basename } = require('node:path');
 const fs = require('node:fs/promises');
-const fetch = require('node-fetch');
+const fetch = require('./fetch');
 
 const DOMAIN = 'https://undercards.net';
 const base = join('public', 'resources');

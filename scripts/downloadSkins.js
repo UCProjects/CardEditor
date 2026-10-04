@@ -1,6 +1,6 @@
 const { join, resolve } = require('node:path');
 const fs = require('node:fs/promises');
-const fetch = require('node-fetch');
+const fetch = require('./fetch');
 
 const base = join('public', 'resources');
 const args = process.argv.slice(2);
