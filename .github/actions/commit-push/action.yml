@@ -1,0 +1,18 @@
+name: Commit and push
+description: Commit all changes with the github-actions bot and push, reporting whether anything was pushed
+inputs:
+  message:
+    description: Commit message (the run number is appended)
+    required: true
+outputs:
+  pushed:
+    description: 'true if a commit was pushed, otherwise false'
+    value: ${{ steps.commit.outputs.pushed }}
+runs:
+  using: composite
+  steps:
+    - id: commit
+      shell: bash
+      env:
+        MESSAGE: ${{ inputs.message }}
+      run: node scripts/commit.js "$MESSAGE"

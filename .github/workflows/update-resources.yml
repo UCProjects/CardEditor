@@ -25,17 +25,16 @@ jobs:
         with:
           oauth-client-id: ${{ vars.TS_OAUTH_CLIENT_ID }}
           audience: ${{ vars.TS_AUDIENCE }}
-          tags: tag:ci
+          tags: tag:ci-proxy
       - name: Download resources
         run: node scripts/downloadResources.js
         env:
           ALL_PROXY: socks5h://100.115.6.118:1080
       - name: Commit and push
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: 'Update new resources (${{ github.run_number }})'
-          pathspec_error_handling: ignore
         id: push
+        uses: ./.github/actions/commit-push
+        with:
+          message: Update new resources
   deploy:
     name: Trigger deploy
     needs: build
