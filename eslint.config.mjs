@@ -8,6 +8,9 @@ import globals from 'globals';
 
 export default defineConfig([
   {
+    ignores: ['public/resources/vendor/**'],
+  },
+  {
     files: ['**/*.js'],
     plugins: {
       importPlugin,

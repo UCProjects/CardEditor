@@ -17,6 +17,7 @@
     <!-- initialize the SDK after all desired features are loaded -->
     <!--<script defer src="/__/firebase/init.js"></script>-->
 
+    <script src="./resources/vendor/simpletoast.core.js"></script>
     <script type="module" src="./resources/modules/index.js"></script>
   </head>
   <body>
@@ -231,7 +232,7 @@
         </menu>
       </form>
     </dialog>
-    <div id="breadbox"></div>
+    <div id="AlertToast"></div>
     <template id="selectArtifactRarity">
       <span class="selectable active" data-rarity="">Common</span>
       <span class="selectable LEGENDARY" data-rarity="LEGENDARY">Legendary</span>
@@ -351,10 +352,10 @@
         </div>
       </div>
     </template>
-    <template id="toast">
-      <header></header>
-      <div></div>
-      <footer></footer>
+    <template id="simpletoast-template">
+      <header class="simpletoast-title"></header>
+      <div class="simpletoast-body"></div>
+      <footer class="simpletoast-footer"></footer>
     </template>
     <template id="effectRow">
       <div class="effect-row external">

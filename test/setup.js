@@ -11,3 +11,6 @@ GlobalRegistrator.register({
 const file = path.resolve(__dirname, '../public/index.html');
 const content = fs.readFileSync(file, 'utf8');
 document.body.innerHTML = content;
+
+const simpletoast = path.resolve(__dirname, '../public/resources/vendor/simpletoast.core.js');
+(0, eval)(fs.readFileSync(simpletoast, 'utf8'));

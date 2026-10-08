@@ -123,5 +123,5 @@ describe('persisted trash', () => {
 });
 
 it('never swallowed a handler error', () => {
-  expect([...document.querySelectorAll('#breadbox .toast.error')].map((t) => t.textContent)).toEqual([]);
+  expect([...document.querySelectorAll('.simpletoast.error')].map((t) => t.textContent)).toEqual([]);
 });

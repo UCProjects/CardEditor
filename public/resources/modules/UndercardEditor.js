@@ -104,13 +104,14 @@ class UndercardEditor {
   }
 
   versionToast(force = false) {
-    if (this.#toast?.isOpen || (
+    if (this.#toast?.exists() || (
       !force && getVersion() === version
     )) return;
     this.#toast = toast({
       title: `Editor v${version}`,
       body: document.querySelector('#versionText').innerHTML,
-    }).on('close', () => setVersion(version));
+      onClose: () => setVersion(version),
+    });
   }
 }
 
