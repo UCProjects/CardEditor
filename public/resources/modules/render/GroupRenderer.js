@@ -71,8 +71,7 @@ export default class GroupRenderer extends Renderer {
     }, { signal: editController.signal });
     editor.on('close', () => {
       editController.abort();
-      element.emit('delete');
-      this.emit('save');
+      render.emit('archived', true);
     }, { signal: editController.signal });
 
     editor.open(render);
