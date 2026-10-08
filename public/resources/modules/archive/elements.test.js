@@ -324,6 +324,16 @@ describe('destroy', () => {
   });
 });
 
+describe('dropping onto a group on the canvas', () => {
+  it('asks the group to save, which registers a group that was never saved', async () => {
+    const group = store.get('group');
+    const saved = vi.fn();
+    group.renderer().on('save', saved);
+    expect(await drag('child', group.renderer().container)).toBe(true);
+    expect(saved).toHaveBeenCalledOnce();
+  });
+});
+
 it('never swallowed a handler error', () => {
   expect([...document.querySelectorAll('.simpletoast.error')].map((t) => t.textContent)).toEqual([]);
 });

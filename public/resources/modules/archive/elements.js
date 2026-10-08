@@ -107,7 +107,7 @@ function add(el) {
   if (isGroup) {
     item.on('drop', (i) => {
       item.element.renderer().emit('drop', i.element);
-      save(item.element);
+      item.element.renderer().emit('save');
       i.emit('dropped');
       i.group = item.id;
     });
