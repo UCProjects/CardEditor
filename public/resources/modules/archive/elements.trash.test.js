@@ -122,6 +122,31 @@ describe('persisted trash', () => {
   });
 });
 
+describe('trashing a group from the canvas', () => {
+  it('trashes the cards inside it too', () => {
+    const card = makeElement({ id: 'inner', type: 'card' });
+    const group = makeElement({ id: 'crate', type: 'group', content: ['inner'] });
+    [card, group].forEach((el) => {
+      store.set(el.id, el);
+      registryEvents.emit('add', el);
+    });
+
+    group.emit('delete');
+
+    expect(store.has('crate')).toBe(false);
+    expect(store.has('inner')).toBe(false);
+    expect(row('inner').classList.contains('trashed')).toBe(true);
+    expect(row('inner').parentElement).toBe(row('crate').querySelector('ul.extra'));
+  });
+
+  it('removes the cards for good when the group is destroyed', () => {
+    click('crate', 'destroy');
+    expect(row('crate')).toBe(null);
+    expect(row('inner')).toBe(null);
+    expect(store.has('inner')).toBe(false);
+  });
+});
+
 it('never swallowed a handler error', () => {
   expect([...document.querySelectorAll('.simpletoast.error')].map((t) => t.textContent)).toEqual([]);
 });

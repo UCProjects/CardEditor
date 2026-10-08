@@ -95,6 +95,7 @@ function add(el) {
   });
   item.on('trash', () => {
     if (item.trashed) return;
+    if (isGroup) forEach(item, (child) => child.emit('trash'));
     if (settings.enabled(Settings.KeepTrash)) setTrashed(record(item));
     remove(item.element);
     item.trashed = true;
@@ -351,7 +352,7 @@ const actions = {
     }
     place(created);
   },
-  trash: (item) => cascade(item, 'trash'),
+  trash: (item) => item.emit('trash'),
   restore: (item) => cascade(item, 'restore'),
   destroy: (item) => cascade(item, 'destroy'),
   restoreAll: () => getTrash().forEach((i) => i.emit('restore')),
