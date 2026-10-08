@@ -1,5 +1,6 @@
 import { Draggable, Sortable } from 'https://ga.jspm.io/npm:@shopify/draggable@1.2.1/build/esm/index.mjs';
 import { get, register, save } from './elements/registry.js';
+import { rendererOf } from './render/renderers.js';
 import { swap } from './utils/array.js';
 
 /** @typedef {import('./elements/GroupElement.js').default} GroupElement */
@@ -40,6 +41,8 @@ const sortElement = new Sortable([], {
     const to = get(e.newContainer.closest('[data-id]').dataset.id);
     const [moved] = from.content.splice(e.oldIndex, 1);
     to.content.splice(e.newIndex, 0, moved);
+    const renderer = rendererOf(e.dragEvent.originalSource);
+    if (renderer) to.renderer().adopt(renderer);
     save(to.id);
   }
 

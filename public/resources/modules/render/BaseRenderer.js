@@ -2,6 +2,7 @@ import editor from '../editor/editor.js';
 import { Elements } from '../elements/types.js';
 import EventEmitter from '../utils/EventEmitter.js';
 import { getHTMLDescription } from './util.js';
+import { track } from './renderers.js';
 import style from '../../styles/menu.css' with { type: 'css' };
 import style2 from '../../styles/description.css' with { type: 'css' };
 import saveImage from '../3rdparty/saveImage.js';
@@ -81,12 +82,14 @@ export default class BaseRenderer extends EventEmitter {
   #container;
   /** @type {BaseElement} */
   #element;
+  #preview = false;
 
   /** @param {BaseElement} element  */
   constructor(element) {
     super();
     this.#element = element;
     this.#container = this.getElement();
+    track(this);
     this.render();
 
     this.element.on('updated', (keys) => {
@@ -95,9 +98,15 @@ export default class BaseRenderer extends EventEmitter {
     });
 
     this.on('save', () => {
+      if (this.#preview) return;
       register(element);
       save(element);
     });
+  }
+
+  asPreview() {
+    this.#preview = true;
+    return this;
   }
 
   get container() {

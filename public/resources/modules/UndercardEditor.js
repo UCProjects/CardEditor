@@ -20,6 +20,9 @@ const version = document.querySelector('template#version').innerHTML;
 
 /** @typedef {import('./render/GroupRenderer.js').default} GroupRenderer */
 
+/** @type {WeakMap<GroupRenderer, AbortController>} */
+const groupBindings = new WeakMap();
+
 class UndercardEditor {
   /** @type {Array<GroupRenderer>} */
   #groups = [];
@@ -68,7 +71,11 @@ class UndercardEditor {
 
   /** @param {GroupRenderer} renderer  */
   addGroup(renderer, after = 0) {
-    renderer.on(Elements.Group, () => this.newGroup(this.#groups.indexOf(renderer) + 1));
+    groupBindings.get(renderer)?.abort();
+    const controller = new AbortController();
+    groupBindings.set(renderer, controller);
+    const { signal } = controller;
+    renderer.on(Elements.Group, () => this.newGroup(this.#groups.indexOf(renderer) + 1), { signal });
     renderer.on('duplicate', () => {
       const copy = renderer.element.duplicate();
       const copyRender = copy.renderer();
@@ -76,14 +83,14 @@ class UndercardEditor {
       copyRender.emit('save');
       copyRender.emit('loaded');
       this.save();
-    });
+    }, { signal });
     renderer.on('archive', (trash = false) => {
       const index = this.#groups.indexOf(renderer);
       if (!~index) return;
       this.#groups.splice(index, 1);
       renderer.emit('archived', trash);
       if (!this.#groups.length) this.newGroup();
-    });
+    }, { signal });
     if (after) {
       this.#groups[after - 1].container.after(renderer.container);
       this.#groups.splice(after, 0, renderer);

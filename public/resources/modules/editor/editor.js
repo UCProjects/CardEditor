@@ -97,7 +97,7 @@ class Editor extends EventEmitter {
     setActive('none');
 
     this.#original = renderer;
-    this.#renderer = element.clone().renderer();
+    this.#renderer = element.clone().renderer().asPreview();
 
     editor.querySelector('.preview').replaceChildren(this.#renderer.container);
 

@@ -10,6 +10,9 @@ adoptStyle(style);
 
 const buttonHTML = document.querySelector('#groupButtons').innerHTML;
 
+/** @type {WeakMap<Renderer, AbortController>} */
+const elementBindings = new WeakMap();
+
 export default class GroupRenderer extends Renderer {
   #deleteController = new AbortController();
 
@@ -35,6 +38,11 @@ export default class GroupRenderer extends Renderer {
     )).filter(_ => _);
     this.query('.buttons').before(...elements);
     return this.container;
+  }
+
+  /** @param {import('./BaseRenderer.js').default} render */
+  adopt(render) {
+    this.#addElementEvents(render);
   }
 
   addButtons() {
@@ -80,7 +88,9 @@ export default class GroupRenderer extends Renderer {
   /** @param {import('./BaseRenderer.js').default} render */
   #addElementEvents(render) {
     render.addMenu();
+    elementBindings.get(render)?.abort();
     const archivedController = new AbortController();
+    elementBindings.set(render, archivedController);
 
     render.on('duplicate', () => {
       const { content } = this.element;
