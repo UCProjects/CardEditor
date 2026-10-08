@@ -39,7 +39,7 @@ export default class Module extends EventEmitter {
     const picker = this.#picker;
 
     // Bind generic events
-    container.querySelectorAll('input[name]:not([type="file"], [type="number"], .external > input)').forEach((input) => {
+    container.querySelectorAll('input[name="name"]').forEach((input) => {
       const key = input.name;
       input.value = element[key];
       input.addEventListener('input', () => {
