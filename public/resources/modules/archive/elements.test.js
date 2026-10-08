@@ -324,6 +324,36 @@ describe('destroy', () => {
   });
 });
 
+describe('filter', () => {
+  const input = () => document.querySelector('.archive [data-page="elements"] input[name="filter"]');
+  const message = () => document.querySelector('.archive [data-page="elements"] > div');
+  const search = (value) => {
+    input().value = value;
+    fire(input(), 'input');
+  };
+
+  it('keeps matching rows and hides the empty message', () => {
+    search('other');
+    expect(row('other').classList.contains('filtered')).toBe(false);
+    expect(row('group').classList.contains('filtered')).toBe(true);
+    expect(hidden(message())).toBe(true);
+  });
+
+  it('says no matches when nothing is left', () => {
+    search('no-such-element');
+    expect(root().classList.contains('filtering')).toBe(true);
+    expect(message().textContent).toBe('No matches');
+    expect(hidden(message())).toBe(false);
+  });
+
+  it('shows everything again when the search is cleared', () => {
+    search('');
+    expect(root().classList.contains('filtering')).toBe(false);
+    expect(row('group').classList.contains('filtered')).toBe(false);
+    expect(hidden(message())).toBe(true);
+  });
+});
+
 describe('dropping onto a group on the canvas', () => {
   it('asks the group to save, which registers a group that was never saved', async () => {
     const group = store.get('group');

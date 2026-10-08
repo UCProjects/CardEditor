@@ -5,7 +5,7 @@ import events from '../elements/registryEvents.js';
 import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
 import { removeClass } from '../utils/funcs.js';
-import { bindFilter, matches } from './filter.js';
+import { bindFilter, filterRows } from './filter.js';
 import Item from './Item.js';
 import App from '../UndercardEditor.js';
 import editor from '../editor/editor.js';
@@ -491,18 +491,7 @@ function forEach(group, callback) {
 }
 
 function applyFilter(query) {
-  const root = list.groups.parentElement;
-  root.classList.toggle('filtering', !!query);
-  root.querySelectorAll(':scope > li[data-id]').forEach((row) => {
-    const self = matches(row, query);
-    let child = false;
-    row.querySelectorAll(':scope > ul.extra > li[data-id]').forEach((nested) => {
-      const show = self || matches(nested, query);
-      nested.classList.toggle('filtered', !show);
-      if (show && query) child = true;
-    });
-    row.classList.toggle('filtered', !!query && !self && !child);
-  });
+  filterRows(list.groups.parentElement, query);
   refreshEmptyMessage();
 }
 
