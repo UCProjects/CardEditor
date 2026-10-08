@@ -1,0 +1,56 @@
+#confirm {
+  font-family: 'DTM-Mono';
+  background-color: var(--background);
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  color: var(--text);
+  max-width: 420px;
+  padding: 20px;
+}
+
+#confirm::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+#confirm h2 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+}
+
+#confirm p {
+  margin: 0 0 20px;
+  overflow-wrap: anywhere;
+}
+
+#confirm menu {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 0;
+}
+
+#confirm button {
+  cursor: pointer;
+  padding: 6px 14px;
+  font: inherit;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+}
+
+#confirm button:hover {
+  background-color: var(--surface-hi);
+}
+
+#confirm.destructive .accept {
+  color: var(--danger-text);
+  border-color: var(--danger);
+}
+
+#confirm.destructive .accept:hover {
+  color: var(--text);
+  background-color: var(--danger-fill);
+  border-color: var(--danger);
+}

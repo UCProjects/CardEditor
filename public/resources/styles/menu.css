@@ -1,0 +1,93 @@
+:root {
+  --hover-color: rgb(243, 65, 33);
+  --shadow-filter: drop-shadow(1px 1px 1px var(--hover-color))
+    drop-shadow(1px -1px 1px var(--hover-color))
+    drop-shadow(-1px 1px 1px var(--hover-color))
+    drop-shadow(-1px -1px 1px var(--hover-color));
+}
+
+@position-try --menu-viewport {
+  position-area: start span-all;
+  right: auto;
+  left: 0;
+}
+
+@position-try --group-menu-viewport {
+  position-area: end span-all;
+  right: auto;
+  left: 0;
+}
+
+.menu {
+  position-area: start;
+  inset: unset;
+  bottom: anchor(top);
+  right: anchor(right);
+  position-try-fallbacks: --menu-viewport;
+  max-width: 100dvw;
+  max-height: 100dvh;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.menu:popover-open {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* :first-of-type */
+.group > .menu {
+  position-area: end start;
+  inset: unset;
+  top: anchor(bottom);
+  right: anchor(right);
+  position-try-fallbacks: --group-menu-viewport;
+  border-top: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.menu button {
+  border: 0;
+  background-color: transparent;
+  height: 35px;
+  padding: 0 8px;
+}
+
+.menu button:hover {
+  margin: 0;
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
+.menu button:hover img {
+  filter: var(--shadow-filter);
+}
+
+.menu [data-shift] {
+  display: none;
+}
+
+@media only screen and (max-width: 640px) {
+  .menu [data-shift] {
+    display: block;
+  }
+}
+
+.menu.shift [data-shift] {
+  display: block;
+}
+
+.menu.shift [data-no-shift] {
+  display: none;
+}

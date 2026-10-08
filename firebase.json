@@ -6,8 +6,11 @@
       "package.json",
       "package-lock.json",
       "**/.*",
+      "**/images/skins/**",
+      "**/data/skins.json",
       "**/node_modules/**",
-      "*.ignore*"
+      "**/*.test.js",
+      "**/*.ignore.*"
     ],
     "headers": [
       {
