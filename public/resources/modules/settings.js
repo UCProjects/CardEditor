@@ -48,6 +48,8 @@ const baseSettings = [{
 }];
 
 class SettingManager extends EventEmitter {
+  #loading = false;
+
   /** @type {Map<Setting['key'], Setting>} */
   #settings = new Map(baseSettings.map((setting) => [setting.key, {
     ...setting,
@@ -80,10 +82,12 @@ class SettingManager extends EventEmitter {
 
   load() {
     const settings = getSettings();
+    this.#loading = true;
     this.#settings.forEach(({ checked = false, key }) => this.set(
       key,
       settings.includes(key) !== checked,
     ));
+    this.#loading = false;
   }
 
   save() {
@@ -101,6 +105,7 @@ class SettingManager extends EventEmitter {
     if (current === enabled) return;
     setting.enabled = enabled;
     this.emit(key, enabled, current);
+    if (!this.#loading) this.save();
   }
 }
 

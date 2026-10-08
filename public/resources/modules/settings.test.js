@@ -1,5 +1,6 @@
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 import settings, { Settings } from './settings.js';
+import { getSettings, setSettings } from './utils/storage.js';
 
 
 describe('SettingsManager', () => {
@@ -28,5 +29,30 @@ describe('SettingsManager', () => {
     expect(setting.enabled).toBeTruthy();
   });
 
-  it('saves/loads');
+  it('saves a change straight away', () => {
+    const key = Settings.SilenceOverlay;
+    settings.set(key, true);
+    expect(getSettings()).toContain(key);
+    settings.set(key, false);
+    expect(getSettings()).not.toContain(key);
+  });
+
+  it('stores a default-on setting only while it is turned off', () => {
+    const key = Settings.SaveOnClose;
+    settings.set(key, false);
+    expect(getSettings()).toContain(key);
+    settings.set(key, true);
+    expect(getSettings()).not.toContain(key);
+  });
+
+  it('loads what was stored without writing while it loads', () => {
+    const key = Settings.KeepTrash;
+    setSettings([key]);
+    const write = vi.spyOn(Storage.prototype, 'setItem');
+    settings.load();
+    expect(write).not.toHaveBeenCalled();
+    expect(settings.enabled(key)).toBe(true);
+    write.mockRestore();
+    settings.set(key, false);
+  });
 });

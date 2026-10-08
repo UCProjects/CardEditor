@@ -39,6 +39,7 @@ class UndercardEditor {
     sortGroup.on('sortable:stop', (e) => {
       if (e.oldIndex === e.newIndex) return;
       swap(this.#groups, e.oldIndex, e.newIndex);
+      this.save();
     });
   }
 
@@ -90,6 +91,7 @@ class UndercardEditor {
       this.#groups.splice(index, 1);
       renderer.emit('archived', trash);
       if (!this.#groups.length) this.newGroup();
+      this.save();
     }, { signal });
     if (after) {
       this.#groups[after - 1].container.after(renderer.container);
@@ -100,7 +102,7 @@ class UndercardEditor {
     }
     renderer.content();
     setup(renderer);
-    // renderer.one('save', () => this.save());
+    renderer.one('save', () => this.save());
   }
 
   save() {

@@ -177,6 +177,7 @@ export function load() {
     drop: (item) => {
       const renderer = item.element.renderer();
       App.addGroup(renderer);
+      App.save();
       item.emit('dropped');
       renderer.emit('loaded');
     },
