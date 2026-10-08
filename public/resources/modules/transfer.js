@@ -1,8 +1,8 @@
 import { add as addImage, getAll as getImages, isUserImage, save as saveImage } from './imageBank.js';
 import { get, init, register, save } from './elements/registry.js';
 import { Elements } from './elements/types.js';
-import { asArray } from './utils/array.js';
 import { read } from './utils/file.js';
+import { imageRefs } from './utils/imageRefs.js';
 import { stripEmpty } from './utils/funcs.js';
 
 export const VERSION = 1;
@@ -26,9 +26,8 @@ function groupsLast(a, b) {
 }
 
 /** @param {import('./elements/BaseElement.js').default} element */
-function assetIds({ effects = [], image, rarity, tribes = [] }) {
-  return [image, rarity, ...tribes, ...effects.map((entry) => asArray(entry)[0])]
-    .filter((id) => id && isUserImage(id));
+function assetIds(element) {
+  return imageRefs(element).filter((id) => id && isUserImage(id));
 }
 
 /**

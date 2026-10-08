@@ -1,7 +1,7 @@
 import { events, getAll, getName, getURL, ImageType, isUserImage, remove, rename } from '../imageBank.js';
 import { getAll as getElements } from '../elements/registry.js';
 import confirm from '../confirm/index.js';
-import { asArray } from '../utils/array.js';
+import { imageRefs } from '../utils/imageRefs.js';
 import { li, span } from '../utils/html.js';
 import { bindFilter, matches } from './filter.js';
 import { tryOrError } from '../toast/index.js';
@@ -86,10 +86,7 @@ function refresh(type) {
 
 /** @param {string} id */
 function usedBy(id) {
-  return getElements().filter((element) => (
-    element.image === id ||
-    element.effects?.some((entry) => asArray(entry)[0] === id)
-  )).length;
+  return getElements().filter((element) => imageRefs(element).includes(id)).length;
 }
 
 /** @param {string} id */
