@@ -1,0 +1,29 @@
+name: CI
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'public/**'
+      - 'firebase.json'
+  pull_request:
+    paths-ignore:
+      - 'public/**'
+jobs:
+  check:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm clean-install
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test

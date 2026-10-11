@@ -1,0 +1,85 @@
+import { error as errorToast } from '../toast/index.js';
+
+const DB_NAME = 'undercards';
+const DB_VERSION = 1;
+const STORE = 'images';
+
+// Cache the connection promise so we only open once
+const db = new Promise((resolve, reject) => {
+  const request = indexedDB.open(DB_NAME, DB_VERSION);
+  request.onupgradeneeded = (e) => {
+    e.target.result.createObjectStore(STORE, { keyPath: 'id' });
+  };
+  request.onsuccess = (e) => {
+    const conn = e.target.result;
+    conn.onversionchange = () => {
+      conn.close();
+      errorToast({
+        title: 'Editor Updated',
+        body: 'The Editor was updated in another tab. Reload this page to keep saving images.',
+      });
+    };
+    resolve(conn);
+  };
+  request.onerror = (e) => reject(e.target.error);
+  request.onblocked = () => reject(new Error('Image database upgrade blocked by another tab'));
+});
+
+db.catch((e) => console.error('Failed to open the image database', e));
+
+/** @typedef {import('../imageBank.js').StoredImage} StoredImage */
+
+/** @returns {Promise<StoredImage | undefined>} */
+export async function get(id) {
+  const store = await transaction('readonly');
+  return new Promise((resolve, reject) => {
+    const request = store.get(id);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/** @returns {Promise<void>} */
+export async function set(id, data) {
+  const store = await transaction('readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.put({ ...data, id });
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/** @returns {Promise<void>} */
+export async function remove(id) {
+  const store = await transaction('readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.delete(id);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/** @returns {Promise<StoredImage[]>} */
+export async function getAll() {
+  const store = await transaction('readonly');
+  return new Promise((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/** @returns {Promise<void>} */
+export async function clear() {
+  const store = await transaction('readwrite');
+  return new Promise((resolve, reject) => {
+    const request = store.clear();
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function transaction(mode) {
+  const conn = await db;
+  return conn.transaction(STORE, mode).objectStore(STORE);
+}

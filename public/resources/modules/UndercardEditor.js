@@ -1,0 +1,145 @@
+import { events, get as getElement, init, load as loadElement } from './elements/registry.js';
+import './editor/editor.js';
+import './tip/index.js';
+import { load as loadArchive } from './archive/index.js';
+import style from '../styles/index.css' with { type: 'css' };
+import { toast, tryOrErrorSync } from './toast/index.js';
+import { Elements } from './elements/types.js';
+import setup, { sortGroup } from './draggable.js';
+import { swap } from './utils/array.js';
+import { adoptStyle } from './utils/funcs.js';
+import settings from './settings.js';
+import { getGroups, getVersion, setGroups, setVersion, getKeys } from './utils/storage.js';
+import { getAll as getAllImages } from './utils/imageDB.js';
+import { add as addImage } from './imageBank.js';
+
+adoptStyle(style);
+
+const app = document.getElementById('app');
+const version = document.querySelector('template#version').innerHTML;
+
+/** @typedef {import('./render/GroupRenderer.js').default} GroupRenderer */
+
+/** @type {WeakMap<GroupRenderer, AbortController>} */
+const groupBindings = new WeakMap();
+
+class UndercardEditor {
+  /** @type {Array<GroupRenderer>} */
+  #groups = [];
+
+  /** @type {Readonly<{ isOpen: boolean; }>} */
+  #toast;
+
+  constructor() {
+    window.addEventListener('beforeunload', () => {
+      this.save();
+      settings.save();
+    });
+
+    sortGroup.on('sortable:stop', (e) => {
+      if (e.oldIndex === e.newIndex) return;
+      swap(this.#groups, e.oldIndex, e.newIndex);
+      this.save();
+    });
+  }
+
+
+  init() {
+    settings.load();
+    this.versionToast();
+
+    const loaded = getGroups().map((id) => tryOrErrorSync(
+      () => {
+        const renderer = getElement(id).renderer();
+        this.addGroup(renderer);
+        return renderer;
+      },
+      `Error adding Group[${id}]`
+    ));
+
+    setTimeout(() => requestAnimationFrame(() => loaded.forEach((el) => el?.emit('loaded'))), 100);
+
+    if (!this.#groups.length) this.newGroup();
+
+    loadArchive();
+  }
+
+  newGroup(index) {
+    const group = init({ type: Elements.Group });
+    this.addGroup(group.renderer(), index);
+    events.emit('add', group);
+  }
+
+  /** @param {GroupRenderer} renderer  */
+  addGroup(renderer, after = 0) {
+    groupBindings.get(renderer)?.abort();
+    const controller = new AbortController();
+    groupBindings.set(renderer, controller);
+    const { signal } = controller;
+    renderer.on(Elements.Group, () => this.newGroup(this.#groups.indexOf(renderer) + 1), { signal });
+    renderer.on('duplicate', () => {
+      const copy = renderer.element.duplicate();
+      const copyRender = copy.renderer();
+      this.addGroup(copyRender, this.#groups.indexOf(renderer) + 1);
+      copyRender.emit('save');
+      copyRender.emit('loaded');
+      this.save();
+    }, { signal });
+    renderer.on('archive', (trash = false) => {
+      const index = this.#groups.indexOf(renderer);
+      if (!~index) return;
+      this.#groups.splice(index, 1);
+      renderer.emit('archived', trash);
+      if (!this.#groups.length) this.newGroup();
+      this.save();
+    }, { signal });
+    if (after) {
+      this.#groups[after - 1].container.after(renderer.container);
+      this.#groups.splice(after, 0, renderer);
+    } else {
+      app.append(renderer.container);
+      this.#groups.push(renderer);
+    }
+    renderer.content();
+    setup(renderer);
+    renderer.one('save', () => this.save());
+  }
+
+  save() {
+    const groups = this.#groups
+      .filter(({ element: { id } }) => getElement(id)) // Only save groups that are registered
+      .map(({ element: { id } }) => id); // Convert to IDs
+    setGroups(groups);
+  }
+
+  versionToast(force = false) {
+    if (this.#toast?.exists() || (
+      !force && getVersion() === version
+    )) return;
+    this.#toast = toast({
+      title: `Editor v${version}`,
+      body: document.querySelector('#versionText').innerHTML,
+      onClose: () => setVersion(version),
+    });
+  }
+}
+
+export async function loadStorage() {
+  for (const key of getKeys()) {
+    const [, prefix, id] = key.split(':');
+    if (prefix === 'el') {
+      tryOrErrorSync(
+        () => loadElement(id),
+        `Error loading Element[${id}]`,
+      );
+    }
+  }
+  const images = await getAllImages();
+  images.forEach((image) => {
+    tryOrErrorSync(() => {
+      addImage(image);
+    }, `Error loading Image[${image.id}]`);
+  });
+}
+
+export default new UndercardEditor();

@@ -1,20 +1,48 @@
+import app, { loadStorage } from './UndercardEditor.js';
 import serviceWorker from './sw.register.js';
-import newGroup from './group.js';
-import { ready as effects } from './effects.js';
+import { ready as keywords } from './keywords.js';
+import { ImageType, ready as images } from './imageBank.js';
+import { error as errorToast } from './toast/index.js';
+import { load as loadStatus } from './status.js';
+import { load as loadCustomImages } from './customImages.js';
 
 const preloads = [
   serviceWorker(),
-  effects,
+  keywords,
+  loadStatus(),
+  images,
+  loadStorage(),
 ];
 
 function ready() {
   document.querySelectorAll('[legacy], #loading').forEach((el) => el.remove());
-  document.querySelector('#draggable-live-region').remove();
+  document.querySelector('#draggable-live-region')?.remove(); // This is from draggable
 
-  newGroup();
+  document.querySelectorAll('[data-template]').forEach((el) => {
+    const template = el.dataset.template;
+    el.innerHTML = document.getElementById(template)?.innerHTML ?? `Failed to load '${template}'`;
+  });
+
+  loadCustomImages({ type: ImageType.Effect, section: 'effects', noun: 'effect' });
+  loadCustomImages({ type: ImageType.Tribe, section: 'tribes', noun: 'tribe', dataKey: 'tribe' });
+  loadCustomImages({ type: ImageType.Rarity, section: 'rarity', noun: 'rarity', dataKey: 'rarity' });
+
+  document.querySelector('#changelog-toggle').addEventListener('click', () => app.versionToast(true));
+
+  app.init();
 }
 
-Promise.all(preloads)
-  .then(ready)
-  // eslint-disable-next-line no-console
-  .catch(console.error);
+function failed(...errors) {
+  errors.forEach((error) => console.error(error));
+  errorToast({ body: 'Failed to load Editor' });
+}
+
+Promise.allSettled(preloads)
+  .then((results) => {
+    const errors = results
+      .filter(({ status }) => status === 'rejected')
+      .map(({ reason }) => reason);
+    if (errors.length) return failed(...errors);
+    return ready();
+  })
+  .catch(failed);

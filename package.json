@@ -1,16 +1,26 @@
 {
     "scripts": {
         "deploy": "firebase deploy --only hosting -m",
-        "test": "firebase deploy --only hosting --project test -m",
-        "start": "firebase serve --host 0.0.0.0 --only hosting"
+        "deploy:test": "firebase deploy --only hosting --project test -m",
+        "lint": "eslint .",
+        "start": "firebase serve --host 0.0.0.0 --only hosting",
+        "test": "vitest run"
     },
     "private": true,
     "dependencies": {
         "node-fetch": "^2.6.7",
-        "socks-proxy-agent": "^8.0.5"
+        "socks-proxy-agent": "^10.1.0"
+    },
+    "engines": {
+        "node": "^24"
     },
     "devDependencies": {
+        "@eslint/css": "^0.14.1",
+        "@happy-dom/global-registrator": "^20.14.5",
         "@underscript/eslint-config": "^1.0.1",
-        "eslint": "^8.49.0"
+        "eslint": "^9.39.3",
+        "eslint-plugin-import": "^2.32.0",
+        "happy-dom": "^20.14.5",
+        "vitest": "^5.0.0"
     }
 }

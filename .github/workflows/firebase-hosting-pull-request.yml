@@ -4,10 +4,13 @@ on:
     paths:
       - 'public/**'
 jobs:
+  check:
+    uses: ./.github/workflows/ci.yml
   build_and_preview:
+    needs: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
