@@ -16,6 +16,16 @@ adoptStyle(style, style2);
 
 const menuHTML = document.querySelector('template#menu').innerHTML;
 
+const pointer = document.getElementById('pointer-anchor');
+
+const canHover = matchMedia('(hover: hover)').matches;
+
+/** @param {MouseEvent} e */
+function movePointer({ clientX, clientY }) {
+  pointer.style.left = `${clientX}px`;
+  pointer.style.top = `${clientY}px`;
+}
+
 /**
  * @param {BaseRenderer} renderer
  * @param {HTMLDivElement} menu
@@ -42,15 +52,24 @@ function bindMenu(renderer, menu) {
 
   // Open menu
   const source = type === Elements.Group ? renderer.query('header') : renderer.container;
-  source.addEventListener('mouseenter', (e) => {
-    if (isArchiveOpen()) return;
+
+  let closing;
+  const keepOpen = () => clearTimeout(closing);
+  function closeSoon() {
+    keepOpen();
+    closing = setTimeout(() => menu.hidePopover(), 200);
+  }
+
+  function open(e) {
+    keepOpen();
+    movePointer(e);
     menu.classList.toggle('shift', e.shiftKey);
     menu.showPopover({ source });
-  });
+  }
+
   source.addEventListener('click', (e) => {
     if (isArchiveOpen() || menu.contains(e.target)) return;
-    menu.classList.toggle('shift', e.shiftKey);
-    menu.showPopover({ source });
+    open(e);
   });
 
   // Remove mismatched buttons
@@ -76,6 +95,22 @@ function bindMenu(renderer, menu) {
 
   // Trash
   menu.querySelector('[data-tip="Trash"]').addEventListener('click', () => renderer.emit('archive', true));
+
+  if (!canHover) return;
+
+  source.addEventListener('mouseenter', (e) => {
+    if (isArchiveOpen()) return;
+    open(e);
+  });
+  function left(e, into) {
+    if (into.contains(e.relatedTarget)) keepOpen();
+    else closeSoon();
+  }
+
+  source.addEventListener('mouseleave', (e) => left(e, menu));
+  menu.addEventListener('mouseenter', keepOpen);
+  menu.addEventListener('mouseleave', (e) => left(e, source));
+  menu.addEventListener('toggle', keepOpen);
 }
 
 export default class BaseRenderer extends EventEmitter {

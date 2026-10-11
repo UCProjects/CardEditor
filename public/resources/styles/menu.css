@@ -6,24 +6,22 @@
     drop-shadow(-1px -1px 1px var(--hover-color));
 }
 
-@position-try --menu-viewport {
-  position-area: start span-all;
-  right: auto;
-  left: 0;
+#pointer-anchor {
+  position: fixed;
+  width: 0;
+  height: 0;
+  anchor-name: --pointer;
+  pointer-events: none;
 }
 
-@position-try --group-menu-viewport {
-  position-area: end span-all;
-  right: auto;
-  left: 0;
+@position-try --menu-flip {
+  position-area: inline-start span-block-end;
 }
 
 .menu {
-  position-area: start;
+  position-area: inline-end span-block-end;
   inset: unset;
-  bottom: anchor(top);
-  right: anchor(right);
-  position-try-fallbacks: --menu-viewport;
+  position-try-fallbacks: --menu-flip;
   max-width: 100dvw;
   max-height: 100dvh;
   overflow: auto;
@@ -32,18 +30,21 @@
   color: var(--text);
   background-color: var(--background);
   border: 1px solid var(--border);
-  border-bottom: 0;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-radius: 8px;
 }
 
 .menu:popover-open {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
 }
 
-/* :first-of-type */
+@position-try --group-menu-viewport {
+  position-area: end span-all;
+  right: auto;
+  left: 0;
+}
+
+/* A group is as wide as the page, so its menu stays a row under the header */
 .group > .menu {
   position-area: end start;
   inset: unset;
@@ -51,10 +52,22 @@
   right: anchor(right);
   position-try-fallbacks: --group-menu-viewport;
   border-top: 0;
-  border-bottom: 1px solid var(--border);
   border-radius: 0;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+}
+
+.group > .menu:popover-open {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (hover: none) {
+  .element:not(.group) > .menu {
+    position-anchor: --pointer;
+    margin: 12px;
+  }
 }
 
 .menu button {
@@ -62,6 +75,27 @@
   background-color: transparent;
   height: 35px;
   padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+/* The icon is a ligature in the button's own text, so the label sets its own font */
+.menu button::after {
+  content: attr(data-tip);
+  font-family: 'DTM-Mono';
+  font-size: 0.85rem;
+}
+
+.group > .menu button {
+  width: auto;
+  justify-content: center;
+}
+
+.group > .menu button::after {
+  content: none;
 }
 
 .menu button:hover {
@@ -80,12 +114,12 @@
 
 @media only screen and (max-width: 640px) {
   .menu [data-shift] {
-    display: block;
+    display: flex;
   }
 }
 
 .menu.shift [data-shift] {
-  display: block;
+  display: flex;
 }
 
 .menu.shift [data-no-shift] {
