@@ -1,11 +1,24 @@
 import { contains } from './array.js';
 
-export function adoptStyle(...sheets) {
+const pending = [];
+
+export function loadStyle(...hrefs) {
   if (import.meta.env) return;
-  const styles = document.adoptedStyleSheets;
-  sheets.forEach((sheet) => {
-    if (!styles.includes(sheet)) styles.push(sheet);
+  hrefs.forEach((href) => {
+    if (document.head.querySelector(`link[href="${href}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    pending.push(new Promise((resolve) => {
+      link.onload = resolve;
+      link.onerror = resolve;
+    }));
+    document.head.append(link);
   });
+}
+
+export function stylesReady() {
+  return Promise.all(pending);
 }
 
 export function removeClass(...classes) {

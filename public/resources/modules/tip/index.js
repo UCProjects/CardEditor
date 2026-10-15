@@ -1,8 +1,7 @@
-import style from '../../styles/tip.css' with { type: 'css' };
 import editor from '../editor/editor.js';
-import { adoptStyle, hasKey } from '../utils/funcs.js';
+import { loadStyle, hasKey } from '../utils/funcs.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/tip.css');
 
 const tip = document.createElement('div');
 tip.popover = 'hint';

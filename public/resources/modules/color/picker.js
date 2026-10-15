@@ -1,10 +1,9 @@
-import style from '../../styles/picker.css' with { type: 'css' };
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 import { getHex, isFullHex, isHashHex } from '../utils/color.js';
 import { getColors, setColors } from '../utils/storage.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/picker.css');
 
 /** @param {InputEvent} e  */
 export function hexInputListener(e) {

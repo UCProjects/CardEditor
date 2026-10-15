@@ -1,15 +1,14 @@
-import style from '../../styles/card.css' with { type: 'css' };
 import Renderer from './ImageRenderer.js';
 import { asArray } from '../utils/array.js';
 import resize from '../utils/resize.js';
 import { getName, getURL, ImageType, isUserImage } from '../imageBank.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 import { frameLayout, frameURL, parseFrame } from '../frames.js';
 import { isHashHex } from '../utils/color.js';
 import { Souls } from '../elements/types.js';
 import settings, { Settings } from '../settings.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/card.css');
 
 /** @type {HTMLTemplateElement} */
 const tribeTemplate = document.querySelector('template#selectTribe');

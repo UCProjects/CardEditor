@@ -1,12 +1,11 @@
-import style from '../../styles/settings.css' with { type: 'css' };
 import settings from '../settings.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 import confirm from '../confirm/index.js';
 import { tryOrError } from '../toast/index.js';
 import { clear as clearImages } from '../utils/imageDB.js';
 import { clear, clearCorrupt, getCorrupt } from '../utils/storage.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/settings.css');
 
 /** @type {HTMLTemplateElement} */
 const template = document.querySelector('template#setting');

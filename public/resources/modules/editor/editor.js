@@ -1,12 +1,11 @@
-import style from '../../styles/editor.css' with { type: 'css' };
 import EventEmitter from '../utils/EventEmitter.js';
 import CardModule from './modules/CardModule.js';
 import TextModule from './modules/TextModule.js';
 import GroupModule from './modules/GroupModule.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 import settings, { Settings } from '../settings.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/editor.css');
 
 /** @typedef {import('../render/BaseRenderer.js').default} Renderer */
 

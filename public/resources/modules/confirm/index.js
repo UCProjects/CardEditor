@@ -1,7 +1,6 @@
-import style from '../../styles/confirm.css' with { type: 'css' };
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/confirm.css');
 
 /** @type {HTMLDialogElement} */
 const dialog = document.querySelector('#confirm');

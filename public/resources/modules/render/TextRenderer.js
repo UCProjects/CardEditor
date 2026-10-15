@@ -1,11 +1,10 @@
-import style from '../../styles/text.css' with { type: 'css' };
 import { save as saveElement } from '../elements/registry.js';
 import { Rarities, TextSizes } from '../elements/types.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 import { isHashHex } from '../utils/color.js';
 import Renderer from './ImageRenderer.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/text.css');
 
 const NextSize = {
   [TextSizes.Normal]: TextSizes.Stretch,

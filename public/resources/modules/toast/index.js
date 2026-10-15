@@ -1,7 +1,6 @@
-import style from '../../styles/toast.css' with { type: 'css' };
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/toast.css');
 
 export function toast({
   body = '',

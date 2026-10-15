@@ -3,16 +3,14 @@ import { Elements } from '../elements/types.js';
 import EventEmitter from '../utils/EventEmitter.js';
 import { getHTMLDescription } from './util.js';
 import { track } from './renderers.js';
-import style from '../../styles/menu.css' with { type: 'css' };
-import style2 from '../../styles/description.css' with { type: 'css' };
 import saveImage from '../3rdparty/saveImage.js';
 import { register, save } from '../elements/registry.js';
 import { isOpen as isArchiveOpen } from '../archive/index.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 
 /** @typedef {import('../elements/BaseElement.js').default} BaseElement */
 
-adoptStyle(style, style2);
+loadStyle('/resources/styles/menu.css', '/resources/styles/description.css');
 
 const menuHTML = document.querySelector('template#menu').innerHTML;
 

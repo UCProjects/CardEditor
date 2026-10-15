@@ -10,7 +10,9 @@ const db = new Promise((resolve, reject) => {
   request.onupgradeneeded = (e) => {
     e.target.result.createObjectStore(STORE, { keyPath: 'id' });
   };
+  const timer = setTimeout(() => reject(new Error('Timed out opening the image database')), 5000);
   request.onsuccess = (e) => {
+    clearTimeout(timer);
     const conn = e.target.result;
     conn.onversionchange = () => {
       conn.close();
@@ -21,7 +23,10 @@ const db = new Promise((resolve, reject) => {
     };
     resolve(conn);
   };
-  request.onerror = (e) => reject(e.target.error);
+  request.onerror = (e) => {
+    clearTimeout(timer);
+    reject(e.target.error);
+  };
   request.onblocked = () => reject(new Error('Image database upgrade blocked by another tab'));
 });
 

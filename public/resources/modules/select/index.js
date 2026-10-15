@@ -1,8 +1,7 @@
-import style from '../../styles/select.css' with { type: 'css' };
 import EventEmitter from '../utils/EventEmitter.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/select.css');
 
 /** @type {HTMLTemplateElement} */
 const template = document.getElementById('select');

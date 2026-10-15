@@ -5,6 +5,7 @@ import { ImageType, ready as images } from './imageBank.js';
 import { error as errorToast } from './toast/index.js';
 import { load as loadStatus } from './status.js';
 import { load as loadCustomImages } from './customImages.js';
+import { stylesReady } from './utils/funcs.js';
 
 const preloads = [
   serviceWorker(),
@@ -12,6 +13,7 @@ const preloads = [
   loadStatus(),
   images,
   loadStorage(),
+  stylesReady(),
 ];
 
 function ready() {

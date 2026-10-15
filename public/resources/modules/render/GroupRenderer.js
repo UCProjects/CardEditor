@@ -1,12 +1,11 @@
-import style from '../../styles/group.css' with { type: 'css' };
 import Renderer from './BaseRenderer.js';
 import { events, get, init } from '../elements/registry.js';
 import { Elements } from '../elements/types.js';
 import editor from '../editor/editor.js';
 import { tryOrErrorSync } from '../toast/index.js';
-import { adoptStyle } from '../utils/funcs.js';
+import { loadStyle } from '../utils/funcs.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/group.css');
 
 const buttonHTML = document.querySelector('#groupButtons').innerHTML;
 

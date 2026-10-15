@@ -2,18 +2,17 @@ import { events, get as getElement, init, load as loadElement } from './elements
 import './editor/editor.js';
 import './tip/index.js';
 import { load as loadArchive } from './archive/index.js';
-import style from '../styles/index.css' with { type: 'css' };
-import { toast, tryOrErrorSync } from './toast/index.js';
+import { toast, tryOrError, tryOrErrorSync } from './toast/index.js';
 import { Elements } from './elements/types.js';
 import setup, { sortGroup } from './draggable.js';
 import { swap } from './utils/array.js';
-import { adoptStyle } from './utils/funcs.js';
+import { loadStyle } from './utils/funcs.js';
 import settings from './settings.js';
 import { getGroups, getVersion, setGroups, setVersion, getKeys } from './utils/storage.js';
 import { getAll as getAllImages } from './utils/imageDB.js';
 import { add as addImage } from './imageBank.js';
 
-adoptStyle(style);
+loadStyle('/resources/styles/index.css');
 
 const app = document.getElementById('app');
 const version = document.querySelector('template#version').innerHTML;
@@ -134,7 +133,7 @@ export async function loadStorage() {
       );
     }
   }
-  const images = await getAllImages();
+  const images = await tryOrError(getAllImages, 'Failed to load stored images') ?? [];
   images.forEach((image) => {
     tryOrErrorSync(() => {
       addImage(image);
