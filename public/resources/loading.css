@@ -61,6 +61,10 @@ body > footer img {
   display: inline-flex;
 }
 
+#loading ~ .archive-button {
+  display: none;
+}
+
 .template {
   display: none;
 }
