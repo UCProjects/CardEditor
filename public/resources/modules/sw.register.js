@@ -8,17 +8,20 @@ async function unregister() {
   await Promise.all(keys.map((key) => caches.delete(key)));
 }
 
+async function setup() {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol === 'https:') {
+    await tryOrError(() => navigator.serviceWorker.register('/service-worker.js'));
+  } else {
+    await tryOrError(unregister, 'Failed to remove the service worker');
+  }
+}
+
 export default function register() {
-  return new Promise((res) => {
-    window.addEventListener('load', async () => {
-      if ('serviceWorker' in navigator) {
-        if (location.protocol === 'https:') {
-          await tryOrError(() => navigator.serviceWorker.register('/service-worker.js'));
-        } else {
-          await tryOrError(unregister, 'Failed to remove the service worker');
-        }
-      }
-      res();
-    });
-  });
+  if (document.readyState === 'complete') {
+    setup();
+  } else {
+    window.addEventListener('load', setup, { once: true });
+  }
+  return Promise.resolve();
 }
