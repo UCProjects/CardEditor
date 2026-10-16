@@ -85,6 +85,57 @@ function buildSwatches(presets = PRESETS) {
 export const PICKER_WIDTH = 224;
 export const PICKER_GAP = 8;
 
+let anchor = null;
+
+function place() {
+  if (!anchor || !picker.matches(':popover-open')) return;
+  picker.style.top = '';
+  picker.style.bottom = '';
+  const own = picker.getBoundingClientRect();
+  const target = anchor.getBoundingClientRect();
+  const { offsetTop = 0, height = window.innerHeight } = window.visualViewport || {};
+  const reach = PICKER_GAP + 2;
+  const attached = Math.abs(own.bottom - target.top) <= reach || Math.abs(own.top - target.bottom) <= reach;
+  const visible = own.top >= offsetTop && own.bottom <= offsetTop + height;
+  if (attached && visible) return;
+
+  picker.style.bottom = 'auto';
+  const frame = anchor.closest('dialog');
+  if (frame) {
+    const area = frame.getBoundingClientRect();
+    const origin = Number.parseFloat(getComputedStyle(frame).marginTop) || 0;
+    const room = Math.max(area.height - own.height, 0);
+    const above = target.top - area.top - own.height - PICKER_GAP;
+    const below = target.bottom - area.top + PICKER_GAP;
+    const offset = above >= 0 ? above : Math.min(below, room);
+    picker.style.top = `${origin + Math.min(offset, room)}px`;
+    return;
+  }
+
+  const min = offsetTop + PICKER_GAP;
+  const max = offsetTop + height - own.height - PICKER_GAP;
+  const over = target.top - own.height - PICKER_GAP;
+  const under = target.bottom + PICKER_GAP;
+  let y = Math.max(min, Math.min(over, max));
+  if (over < min && under <= max) y = under;
+  picker.style.top = `${y}px`;
+}
+
+function replace() {
+  requestAnimationFrame(place);
+}
+
+window.addEventListener('resize', replace);
+window.addEventListener('scroll', replace, true);
+window.visualViewport?.addEventListener('resize', replace);
+window.visualViewport?.addEventListener('scroll', replace);
+
+function show(source) {
+  anchor = source;
+  picker.showPopover({ source });
+  place();
+}
+
 export default class Picker extends EventEmitter {
   #controller = new AbortController();
 
@@ -209,12 +260,12 @@ export default class Picker extends EventEmitter {
     const { left } = this.source.getBoundingClientRect();
     const x = Math.min(left, window.innerWidth - PICKER_WIDTH);
     picker.style.left = Math.max(x, PICKER_GAP) + 'px';
-    picker.showPopover({ source: this.source });
+    show(this.source);
   }
 
   setLeft(x) {
     picker.style.left = Math.max(x, PICKER_GAP) + 'px';
-    picker.showPopover({ source: this.source });
+    show(this.source);
   }
 
   /** @param {HTMLButtonElement} button */

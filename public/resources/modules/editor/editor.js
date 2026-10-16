@@ -19,6 +19,20 @@ swap.addEventListener('click', () => {
   editor.dataset.panel = editor.dataset.panel === 'helper' ? 'preview' : 'helper';
 });
 
+function syncViewport() {
+  const { height, offsetTop } = window.visualViewport;
+  editor.style.setProperty('--viewport-height', `${height}px`);
+  editor.style.setProperty('--viewport-top', `${offsetTop}px`);
+}
+
+if (window.visualViewport) {
+  ['resize', 'scroll'].forEach((type) => {
+    window.visualViewport.addEventListener(type, () => {
+      if (editor.open) syncViewport();
+    });
+  });
+}
+
 function setActive(key) {
   editor.dataset.panel = 'preview';
   if (key === 'none') {
@@ -53,6 +67,21 @@ class Editor extends EventEmitter {
 
   constructor() {
     super();
+
+    if (!('command' in HTMLButtonElement.prototype)) {
+      editor.querySelectorAll('button[command="close"]').forEach((button) => {
+        button.addEventListener('click', () => editor.close(button.value));
+      });
+    }
+
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      editor.addEventListener('click', (event) => {
+        if (event.target !== editor) return;
+        const { left, right, top, bottom } = editor.getBoundingClientRect();
+        const { clientX: x, clientY: y } = event;
+        if (x < left || x > right || y < top || y > bottom) editor.close();
+      });
+    }
 
     editor.addEventListener('close', () => {
       const reason = editor.returnValue;
@@ -115,6 +144,7 @@ class Editor extends EventEmitter {
     this.emit('init');
 
     editor.returnValue = undefined;
+    if (window.visualViewport) syncViewport();
     editor.showModal();
 
     this.#renderer.render();

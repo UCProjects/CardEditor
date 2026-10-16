@@ -24,6 +24,44 @@ function movePointer({ clientX, clientY }) {
   pointer.style.top = `${clientY}px`;
 }
 
+const MENU_REACH = 40;
+
+/**
+ * @param {HTMLDivElement} menu
+ * @param {HTMLElement} source
+ * @param {{ clientX: number; clientY: number; }} point
+ * @param {boolean} isGroup
+ */
+function placeMenu(menu, source, { clientX, clientY }, isGroup) {
+  menu.style.left = '';
+  menu.style.top = '';
+  const own = menu.getBoundingClientRect();
+  const target = source.getBoundingClientRect();
+  const attached = isGroup ?
+    Math.abs(own.top - target.bottom) <= 2 :
+    Math.abs(own.left - clientX) <= MENU_REACH + 12 && Math.abs(own.top - clientY) <= MENU_REACH + 12;
+  if (attached) return;
+
+  const { width, height } = own;
+  const { marginLeft, marginTop } = getComputedStyle(menu);
+  const margin = { x: Number.parseFloat(marginLeft) || 0, y: Number.parseFloat(marginTop) || 0 };
+  let x;
+  let y;
+  if (isGroup) {
+    x = target.right - width;
+    y = target.bottom;
+  } else {
+    x = clientX;
+    y = clientY;
+    if (x + margin.x + width > window.innerWidth) x = clientX - width - 2 * margin.x;
+    if (y + margin.y + height > window.innerHeight) y = clientY - height - 2 * margin.y;
+  }
+  menu.style.left = `${Math.max(x, 0)}px`;
+  menu.style.top = `${Math.max(y, 0)}px`;
+  menu.style.right = 'auto';
+  menu.style.bottom = 'auto';
+}
+
 /**
  * @param {BaseRenderer} renderer
  * @param {HTMLDivElement} menu
@@ -63,6 +101,7 @@ function bindMenu(renderer, menu) {
     movePointer(e);
     menu.classList.toggle('shift', e.shiftKey);
     menu.showPopover({ source });
+    placeMenu(menu, source, e, type === Elements.Group);
   }
 
   source.addEventListener('click', (e) => {
