@@ -36,6 +36,10 @@ a, a:visited {
   color: var(--text);
 }
 
+button {
+  color: var(--text);
+}
+
 .hidden,
 img[src=""] {
     display: none;

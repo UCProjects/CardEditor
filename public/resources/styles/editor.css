@@ -15,8 +15,8 @@ input, textarea {
   border-radius: 15px;
   padding: 0;
   color: var(--text);
-  margin-block: 5dvh auto;
-  max-height: 90dvh;
+  margin-block: calc(var(--viewport-top, 0px) + var(--viewport-height, 100dvh) * 0.05) auto;
+  max-height: calc(var(--viewport-height, 100dvh) * 0.9);
   width: 800px;
   max-width: 95dvw;
 }
@@ -30,6 +30,7 @@ input, textarea {
 #editor select,
 #editor textarea {
   width: -moz-available;
+  width: -webkit-fill-available;
   width: stretch;
 }
 
@@ -250,6 +251,7 @@ fieldset.rarity {
 #editor .element.group,
 #editor .element.text {
   max-width: -moz-available;
+  max-width: -webkit-fill-available;
   max-width: stretch;
 }
 
@@ -377,17 +379,23 @@ fieldset.rarity {
   }
 
   .helper .smallIcon {
-    max-height: 32px;
-    max-width: 32px;
+    width: 24px;
+    height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    object-fit: contain;
   }
 
   .helper .smallerIcon {
-    max-height: 28px;
-    max-width: 28px;
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+    object-fit: contain;
   }
 
   .helper [data-rarity] {
-    width: 48px;
+    width: 24px;
   }
 
   .helper .add-button {
@@ -412,11 +420,11 @@ fieldset.rarity {
 
 @media (hover: none) {
   #editor [data-editing="rarity"] fieldset[name="custom"] .grid {
-    grid-template-columns: repeat(auto-fit, 48px);
+    grid-template-columns: repeat(auto-fit, 32px);
   }
 
   #editor [data-editing="rarity"] fieldset[name="custom"] img {
-    max-width: 48px;
-    max-height: 48px;
+    max-width: 24px;
+    max-height: 24px;
   }
 }

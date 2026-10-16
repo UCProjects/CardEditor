@@ -46,6 +46,7 @@
 
 .element.text .artifact {
   border: 2px solid var(--ARTIFACT);
+  height: -webkit-fill-available;
   height: stretch;
 }
 
