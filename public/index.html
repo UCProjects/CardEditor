@@ -19,6 +19,19 @@
 
     <script src="./resources/vendor/simpletoast.core.js"></script>
     <script>
+      var editorErrors = [];
+      function recordError(message, file, line) {
+        if (editorErrors.length >= 5) return;
+        var where = file ? ' (' + String(file).split('/').pop() + ':' + (line || 0) + ')' : '';
+        editorErrors.push(String(message) + where);
+      }
+      window.addEventListener('error', function (e) {
+        recordError(e.message, e.filename, e.lineno);
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        var reason = e.reason;
+        recordError(reason && reason.message ? reason.message : reason);
+      });
       window.editorFailed = function (reason) {
         var loading = document.getElementById('loading');
         var failed = document.querySelector('[failed]');
@@ -27,6 +40,7 @@
         failed.hidden = false;
         if (typeof reason === 'string') failed.querySelector('[data-reason]').textContent = reason;
         failed.querySelector('code').textContent = navigator.userAgent;
+        failed.querySelector('[data-errors]').textContent = editorErrors.join('\n');
         document.documentElement.className = 'broken';
       };
       setTimeout(window.editorFailed, 20000);
@@ -58,6 +72,7 @@
       <p data-reason>This browser could not start the editor.</p>
       <p>Please include the details below when reporting it.</p>
       <p><code></code></p>
+      <p><code data-errors></code></p>
     </div>
     <noscript>
       <div class="unsupported">
