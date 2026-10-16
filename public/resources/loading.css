@@ -69,6 +69,15 @@ body > footer img {
   display: none;
 }
 
+dialog:not([open]),
+template {
+  display: none;
+}
+
+.broken body > :not([legacy]):not([failed]):not(footer) {
+  display: none;
+}
+
 @keyframes loading {
   0% {
     height: 1px;

@@ -18,7 +18,24 @@
     <!--<script defer src="/__/firebase/init.js"></script>-->
 
     <script src="./resources/vendor/simpletoast.core.js"></script>
-    <script type="module" src="./resources/modules/index.js"></script>
+    <script>
+      window.editorFailed = function (reason) {
+        var loading = document.getElementById('loading');
+        var failed = document.querySelector('[failed]');
+        if (!loading || loading.hidden || !failed) return;
+        loading.hidden = true;
+        failed.hidden = false;
+        if (typeof reason === 'string') failed.querySelector('[data-reason]').textContent = reason;
+        failed.querySelector('code').textContent = navigator.userAgent;
+        document.documentElement.className = 'broken';
+      };
+      setTimeout(window.editorFailed, 20000);
+      document.addEventListener('DOMContentLoaded', function () {
+        if (typeof HTMLElement.prototype.showPopover === 'function') return;
+        window.editorFailed('This editor needs popover support: Safari 17 / iPadOS 17 or newer, or a current Chrome, Firefox or Edge.');
+      });
+    </script>
+    <script type="module" src="./resources/modules/index.js" onerror="editorFailed()"></script>
   </head>
   <body>
     <div id="loading">
@@ -35,6 +52,12 @@
       <h2>Unsupported browser</h2>
       <p>This editor is built with JavaScript modules, which this browser does not support.</p>
       <p>Updating to a current version of Chrome, Firefox, Edge or Safari will get you going.</p>
+    </div>
+    <div failed hidden class="unsupported">
+      <h2>The editor failed to load</h2>
+      <p data-reason>This browser could not start the editor.</p>
+      <p>Please include the details below when reporting it.</p>
+      <p><code></code></p>
     </div>
     <noscript>
       <div class="unsupported">
@@ -462,6 +485,7 @@
     <script nomodule>
       document.getElementById('loading').hidden = true;
       document.querySelector('[legacy]').hidden = false;
+      document.documentElement.className = 'broken';
     </script>
   </body>
 </html>

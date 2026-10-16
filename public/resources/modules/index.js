@@ -17,7 +17,9 @@ const preloads = [
 ];
 
 function ready() {
-  document.querySelectorAll('[legacy], #loading').forEach((el) => el.remove());
+  if (typeof HTMLElement.prototype.showPopover !== 'function') return;
+  document.documentElement.classList.remove('broken');
+  document.querySelectorAll('[legacy], [failed], #loading').forEach((el) => el.remove());
   document.querySelector('#draggable-live-region')?.remove(); // This is from draggable
 
   document.querySelectorAll('[data-template]').forEach((el) => {
