@@ -26,6 +26,8 @@ function movePointer({ clientX, clientY }) {
 
 const MENU_REACH = 40;
 
+const anchored = CSS.supports('position-area', 'end');
+
 /**
  * @param {HTMLDivElement} menu
  * @param {HTMLElement} source
@@ -33,6 +35,7 @@ const MENU_REACH = 40;
  * @param {boolean} isGroup
  */
 function placeMenu(menu, source, { clientX, clientY }, isGroup) {
+  if (anchored) return;
   menu.style.left = '';
   menu.style.top = '';
   const own = menu.getBoundingClientRect();
