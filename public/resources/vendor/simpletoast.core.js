@@ -128,7 +128,7 @@ function createStructure() {
   return fromTemplate() ?? fromDefault();
 }
 
-const version = "3.0.0";
+const version = "3.0.1";
 
 function parse(string) {
   const [one = 0, two = 0, three = 0] = String(string).split('.').map((part) => Number(part) || 0);
@@ -301,12 +301,14 @@ Toast.count = () => Array.from(open).filter((stillExists) => stillExists()).leng
 Object.freeze(Toast);
 
 function install(root, setup) {
-  if (window !== window.top) return;
   const bound = window.SimpleToast;
   initRoot();
-  if (root !== window) root.SimpleToast = Toast;
+  root.SimpleToast = Toast;
   console.log(`SimpleToast(v${versionString}): Loaded`);
-  if (!bound?.versionString || isNewer(versionString, bound.versionString)) {
+  if (
+    window === window.top &&
+    (!bound?.versionString || isNewer(versionString, bound.versionString))
+  ) {
     window.SimpleToast = Toast;
     console.log(`SimpleToast(v${versionString}): Publicized`);
   }
