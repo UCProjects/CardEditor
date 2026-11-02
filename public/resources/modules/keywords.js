@@ -40,7 +40,7 @@ const resources = ['keywords', 'extra'];
 export const ready = Promise.all(resources.map(loadResource))
   .then((res) => {
     // Populate effects array
-    res.forEach((data) => keywords.push(...data));
+    res.forEach((data) => keywords.push(...data.filter((entry) => typeof entry === 'string' && entry)));
 
     keywords.forEach(addType);
     specials.forEach(addType);
