@@ -33,8 +33,8 @@ fetch('https://undercards.net/translation/en.json')
         tribeKeys.push(key.substring(6));
       } else if (key.startsWith('enchant-')) {
         if (key.endsWith('-desc')) return;
-        const [, text] = val.split('|');
-        keywords.push(text);
+        const [first, second = first] = val.split('|');
+        keywords.push(second);
       }
     });
   })
