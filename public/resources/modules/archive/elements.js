@@ -9,6 +9,7 @@ import { openExport } from '../exportDialog/index.js';
 import { bindFilePicker, importFiles, initFileDrop } from '../importer/index.js';
 import { bindFilter, filterRows } from './filter.js';
 import Item from './Item.js';
+import initTouchDrag from './touchDrag.js';
 import App from '../UndercardEditor.js';
 import editor from '../editor/editor.js';
 
@@ -72,6 +73,9 @@ class TrashItem extends Item {
 }
 
 const trashRef = new TrashItem();
+
+/** @type {WeakMap<Element, { accepted: () => Item | undefined; receive: () => boolean; }>} */
+const dropTargets = new WeakMap();
 
 let dragSrc;
 let ready = false;
@@ -192,6 +196,15 @@ export function load() {
       item.emit('dropped');
       renderer.emit('loaded');
     },
+  });
+
+  initTouchDrag(page, {
+    draggable: 'li[draggable="true"]',
+    handle: '.info',
+    mirrorParent: archive,
+    start: beginDrag,
+    move: touchMove,
+    stop: touchStop,
   });
 
   initFileDrop(archive, (files) => dropFiles(files));
@@ -418,23 +431,53 @@ function initButtons(container, item) {
   });
 }
 
+/** @param {HTMLElement} source */
+function beginDrag(source) {
+  dragSrc = source;
+  closeTip();
+  requestAnimationFrame(refreshDropOut);
+}
+
+function endDrag() {
+  removeClass('drag-over');
+  dragSrc = undefined;
+  refreshDropOut();
+}
+
 /** @param {HTMLElement} container */
 function initDrag(container) {
   container.addEventListener('dragstart', (e) => {
-    dragSrc = container;
     container.classList.add('dragging');
     e.stopPropagation();
     e.dataTransfer.effectAllowed = 'move';
-    closeTip();
-    requestAnimationFrame(refreshDropOut);
+    beginDrag(container);
   });
 
   container.addEventListener('dragend', () => {
     container.classList.remove('dragging');
-    removeClass('drag-over');
-    dragSrc = undefined;
-    refreshDropOut();
+    endDrag();
   });
+}
+
+/** @param {Element | null} element */
+function dropTargetAt(element) {
+  for (let node = element; node; node = node.parentElement) {
+    if (dropTargets.get(node)?.accepted()) return node;
+  }
+  return undefined;
+}
+
+/** @param {Element | null} element */
+function touchMove(element) {
+  removeClass('drag-over');
+  dropTargetAt(element)?.classList.add('drag-over');
+}
+
+/** @param {Element | null} element */
+function touchStop(element) {
+  const target = element && dropTargetAt(element);
+  if (target) dropTargets.get(target).receive();
+  endDrag();
 }
 
 function dragged() {
@@ -466,6 +509,16 @@ function initDrop(container, { accepts, drop }) {
     return item && accepts(item) ? item : undefined;
   }
 
+  function receive() {
+    const item = accepted();
+    if (!item) return false;
+    if (item.trashed) cascade(item, 'restore');
+    drop(item);
+    return true;
+  }
+
+  dropTargets.set(container, { accepted, receive });
+
   container.addEventListener('dragover', (e) => {
     if (!accepted()) return;
     e.preventDefault();
@@ -477,11 +530,8 @@ function initDrop(container, { accepts, drop }) {
     container.classList.remove('drag-over');
   });
   container.addEventListener('drop', (e) => {
-    const item = accepted();
-    if (!item) return;
-    e.stopPropagation();
-    if (item.trashed) cascade(item, 'restore');
-    drop(item);
+    if (accepted()) e.stopPropagation();
+    receive();
   });
 }
 

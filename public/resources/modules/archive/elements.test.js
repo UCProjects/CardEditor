@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import registryEvents from '../elements/registryEvents.js';
 import settings, { Settings } from '../settings.js';
 import EventEmitter from '../utils/EventEmitter.js';
+import initTouchDrag from './touchDrag.js';
 
 const { store } = vi.hoisted(() => ({ store: new Map() }));
 
@@ -10,6 +11,7 @@ vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn(), save: vi
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
 vi.mock('../exportDialog/index.js', () => ({ openExport: vi.fn() }));
 vi.mock('../importer/index.js', () => ({ bindFilePicker: vi.fn(), importFiles: vi.fn(), initFileDrop: vi.fn() }));
+vi.mock('./touchDrag.js', () => ({ default: vi.fn() }));
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => element(props),
@@ -24,6 +26,7 @@ vi.mock('../elements/registry.js', () => ({
 }));
 
 let copies = 0;
+let touchArgs;
 
 function element({ id, type, content }) {
   const el = new EventEmitter();
@@ -97,6 +100,7 @@ beforeAll(async () => {
   store.set('other', element({ id: 'other', type: 'group', content: [] }));
   const { load } = await import('./elements.js');
   load();
+  [touchArgs] = vi.mocked(initTouchDrag).mock.calls;
 });
 
 describe('load', () => {
@@ -250,6 +254,54 @@ describe('leaving a group', () => {
     const li = await dragStart('card');
     expect(hidden(dropOut())).toBe(true);
     fire(li, 'dragend');
+  });
+});
+
+describe('touch drag', () => {
+  const touch = () => touchArgs[1];
+  const label = (id) => row(id).querySelector('.name');
+  const highlighted = () => document.querySelectorAll('.drag-over').length;
+
+  it('hands the elements page to the touch sensor', () => {
+    expect(touchArgs[0]).toBe(document.querySelector('.archive [data-page="elements"]'));
+  });
+
+  it('drops on the row under the finger', () => {
+    touch().start(row('card'));
+    touch().move(label('group'));
+    expect(row('group').classList.contains('drag-over')).toBe(true);
+    touch().stop(label('group'));
+    expect(row('card').parentElement).toBe(extraOf('group'));
+    expect(store.get('group').content).toContain('card');
+    expect(highlighted()).toBe(0);
+  });
+
+  it('offers the drop-out target for a grouped item, and leaves through it', async () => {
+    touch().start(row('card'));
+    await frame();
+    expect(hidden(dropOut())).toBe(false);
+    touch().move(dropOut());
+    expect(dropOut().classList.contains('drag-over')).toBe(true);
+    touch().stop(dropOut());
+    expect(row('card').parentElement).toBe(root());
+    expect(hidden(dropOut())).toBe(true);
+  });
+
+  it('ignores a target that rejects the item', () => {
+    touch().start(row('group'));
+    touch().move(label('other'));
+    expect(highlighted()).toBe(0);
+    touch().stop(label('other'));
+    expect(row('group').parentElement).toBe(root());
+    expect(store.get('other').content).not.toContain('group');
+  });
+
+  it('drops nothing when the touch is cancelled', () => {
+    touch().start(row('card'));
+    touch().move(label('group'));
+    touch().stop(null);
+    expect(row('card').parentElement).toBe(root());
+    expect(highlighted()).toBe(0);
   });
 });
 

@@ -33,6 +33,7 @@ vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn(), save: vi
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
 vi.mock('../exportDialog/index.js', () => ({ openExport: vi.fn() }));
 vi.mock('../importer/index.js', () => ({ bindFilePicker: vi.fn(), importFiles: vi.fn(), initFileDrop: vi.fn() }));
+vi.mock('./touchDrag.js', () => ({ default: vi.fn() }));
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => makeElement(props),
