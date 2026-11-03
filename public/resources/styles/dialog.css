@@ -1,0 +1,39 @@
+dialog.modal {
+  font-family: 'DTM-Mono';
+  background-color: var(--background);
+  border: 2px solid var(--border);
+  border-radius: 15px;
+  color: var(--text);
+  padding: 20px;
+}
+
+dialog.modal::backdrop {
+  backdrop-filter: blur(3px);
+}
+
+dialog.modal h2 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+}
+
+dialog.modal menu {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 0;
+}
+
+dialog.modal button {
+  cursor: pointer;
+  padding: 6px 14px;
+  font: inherit;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+}
+
+dialog.modal button:hover {
+  background-color: var(--surface-hi);
+}

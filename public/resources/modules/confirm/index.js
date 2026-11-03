@@ -1,6 +1,6 @@
 import { loadStyle } from '../utils/funcs.js';
 
-loadStyle('/resources/styles/confirm.css');
+loadStyle('/resources/styles/dialog.css', '/resources/styles/confirm.css');
 
 /** @type {HTMLDialogElement} */
 const dialog = document.querySelector('#confirm');

@@ -26,6 +26,12 @@ function groupsLast(a, b) {
   return Number(a.type === Elements.Group) - Number(b.type === Elements.Group);
 }
 
+/** @param {string} src */
+function portable(src) {
+  const prefix = `${location.origin}/`;
+  return src.startsWith(prefix) ? src.slice(prefix.length - 1) : src;
+}
+
 /** @param {import('./elements/BaseElement.js').default} element */
 function assetIds(element) {
   return imageRefs(element).filter((id) => id && isUserImage(id));
@@ -51,7 +57,7 @@ export async function pack(element, { withAssets = true } = {}) {
     const { file, name, src, type } = store;
     const source = file instanceof File ? await read(file) : src;
     if (!source || source.startsWith('blob:')) return;
-    assets[id] = { src: source };
+    assets[id] = { src: portable(source) };
     const label = name || file?.name;
     if (label) assets[id].name = label;
     if (type) assets[id].type = type;

@@ -72,6 +72,15 @@ describe('pack', () => {
     });
   });
 
+  it('exports links to this site as relative paths', async () => {
+    images['img-1'] = { src: `${location.origin}/resources/tribes/A.png`, type: 'tribe' };
+    images['img-2'] = { src: `${location.origin}.example.com/b.png` };
+    const bundle = await pack(card('c1', { tribes: ['img-1'], rarity: 'img-2' }));
+
+    expect(bundle.assets['img-1'].src).toBe('/resources/tribes/A.png');
+    expect(bundle.assets['img-2'].src).toBe(`${location.origin}.example.com/b.png`);
+  });
+
   it('ignores built-in references', async () => {
     const bundle = await pack(card('c1', { image: 'Sans', rarity: 'LEGENDARY', tribes: ['MONSTER'] }));
     expect(bundle.assets).toEqual({});

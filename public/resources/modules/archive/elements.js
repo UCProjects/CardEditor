@@ -5,7 +5,7 @@ import events from '../elements/registryEvents.js';
 import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
 import { removeClass } from '../utils/funcs.js';
-import { exportElement } from '../transfer.js';
+import { openExport } from '../exportDialog/index.js';
 import { bindFilter, filterRows } from './filter.js';
 import Item from './Item.js';
 import App from '../UndercardEditor.js';
@@ -354,7 +354,7 @@ const actions = {
     }
     place(created);
   },
-  export: (item) => exportElement(item.element),
+  export: (item) => openExport(item.element),
   trash: (item) => item.emit('trash'),
   restore: (item) => cascade(item, 'restore'),
   destroy: (item) => cascade(item, 'destroy'),
