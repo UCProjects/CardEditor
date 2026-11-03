@@ -29,7 +29,7 @@
   top: 0;
   bottom: 0;
   right: 0; /* Maybe anchor to app? */
-  width: 300px;
+  width: clamp(300px, 28vw, 380px);
   z-index: 100;
   color: var(--text);
   background-color: var(--background);
