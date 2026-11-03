@@ -1,3 +1,5 @@
+const REVOKE_DELAY_MS = 10_000;
+
 /**
  * @param {string} data
  * @param {string} filename
@@ -9,7 +11,7 @@ export function download(data, filename, type = 'application/json') {
   link.download = filename;
   link.href = url;
   link.click();
-  setTimeout(() => URL.revokeObjectURL(url));
+  setTimeout(() => URL.revokeObjectURL(url), REVOKE_DELAY_MS);
 }
 
 /**

@@ -112,17 +112,18 @@ function add(el) {
   });
 
   if (isGroup) {
+    const renderer = item.element.renderer();
     item.on('drop', (i) => {
-      item.element.renderer().emit('drop', i.element);
-      item.element.renderer().emit('save');
+      renderer.emit('drop', i.element);
+      renderer.emit('save');
       i.emit('dropped');
       i.group = item.id;
     });
-    initDrop(item.element.renderer().container, {
+    initDrop(renderer.container, {
       accepts: (i) => i.type !== Elements.Group,
       drop: (i) => item.emit('drop', i),
     });
-    initFileDrop(item.element.renderer().container, (files) => dropFiles(files, item));
+    initFileDrop(renderer.container, (files) => dropFiles(files, { target: item, quick: true }));
   }
 
   return item;
@@ -194,6 +195,7 @@ export function load() {
   });
 
   initFileDrop(archive, (files) => dropFiles(files));
+  initFileDrop(document.querySelector('.archive-button'), (files) => dropFiles(files, { reveal: false }));
   bindFilePicker(page.querySelector('button.import'), page.querySelector('input[type="file"]'));
 
   bindFilter(filterInput, applyFilter);
@@ -204,10 +206,10 @@ export function load() {
 
 /**
  * @param {File[]} files
- * @param {Item} [target]
+ * @param {{ target?: Item; quick?: boolean; reveal?: boolean; }} [options]
  */
-async function dropFiles(files, target) {
-  const roots = await importFiles(files);
+async function dropFiles(files, { target, quick = false, reveal = !quick } = {}) {
+  const roots = await importFiles(files, { quick, reveal });
   if (target) roots.forEach((element) => placeImported(element, target));
 }
 
@@ -330,7 +332,7 @@ function render(item) {
       accepts: (i) => i.type !== Elements.Group && i.group !== item.id && !item.trashed,
       drop: (i) => move(i, item),
     });
-    initFileDrop(li, (files) => dropFiles(files, item));
+    initFileDrop(li, (files) => dropFiles(files, { target: item }));
   }
   item.emit('refresh');
   return { li, extra, setCollapsed };

@@ -18,8 +18,19 @@
   z-index: -1;
 }
 
-.archive-button:hover {
+.archive-button:hover,
+.archive-button.drag-over {
   color: var(--hover-color);
+}
+
+.archive-button.drag-over {
+  background-image: none;
+  outline: none;
+}
+
+.archive-button.drag-over::before {
+  background-image: var(--drag-pattern);
+  background-size: .8rem .8rem;
 }
 
 .archive {

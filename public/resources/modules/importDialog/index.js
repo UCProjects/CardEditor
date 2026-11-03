@@ -79,14 +79,18 @@ function buildRow(item, nested, onChange) {
   return { li, select };
 }
 
-/** @param {import('../transfer.js').Bundle} bundle */
-export function openImport(bundle) {
+/**
+ * @param {import('../transfer.js').Bundle} bundle
+ * @param {{ reveal?: boolean; }} [options]
+ * @returns {Promise<import('../elements/BaseElement.js').default[]>} the new roots, once the dialog closes
+ */
+export async function openImport(bundle, { reveal = true } = {}) {
   let info;
   try {
     info = inspect(bundle);
   } catch (err) {
     error({ body: err.message });
-    return;
+    return [];
   }
 
   /** @type {HTMLInputElement} */
@@ -161,16 +165,19 @@ export function openImport(bundle) {
     render();
   }, options);
 
+  const imported = [];
+
   accept.addEventListener('click', async () => {
-    const imported = await tryOrError(async () => {
-      await unpack(bundle, { assets: !ignore.checked, actions });
-      return true;
-    }, 'Failed to import');
-    if (!imported) return;
+    const roots = await tryOrError(() => unpack(bundle, { assets: !ignore.checked, actions }), 'Failed to import');
+    if (!roots) return;
+    imported.push(...roots);
     toast({ body: `Imported ${elements(importing().length)}`, signal: AbortSignal.timeout(AUTO_HIDE_MS) });
     dialog.close();
-    showArchive();
+    if (reveal) showArchive();
   }, options);
 
-  dialog.showModal();
+  return new Promise((resolve) => {
+    dialog.addEventListener('close', () => resolve(imported), { once: true });
+    dialog.showModal();
+  });
 }

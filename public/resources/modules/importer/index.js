@@ -54,9 +54,10 @@ export function bindFilePicker(button, input) {
 
 /**
  * @param {File[]} files
+ * @param {{ quick?: boolean; reveal?: boolean; }} [options] quick skips the dialog unless something is a duplicate
  * @returns {Promise<import('../elements/BaseElement.js').default[]>} the new roots
  */
-export async function importFiles(files) {
+export async function importFiles(files, { quick = false, reveal = !quick } = {}) {
   const roots = [];
   for (const file of files) {
     const bundle = parseBundle(await file.text());
@@ -66,11 +67,13 @@ export async function importFiles(files) {
     }
     try {
       const { elements, items } = inspect(bundle);
+      if (!quick || items.some(({ exists, trashed }) => exists || trashed)) {
+        roots.push(...await openImport(bundle, { reveal }));
+        continue;
+      }
       roots.push(...await unpack(bundle));
-      const existing = items.filter(({ exists }) => exists);
-      const copies = existing.length ? `, ${existing.length} as copies` : '';
       toast({
-        body: `Imported ${file.name} (${elements} elements${copies})`,
+        body: `Imported ${file.name} (${elements} elements)`,
         signal: AbortSignal.timeout(AUTO_HIDE_MS),
       });
     } catch (err) {
