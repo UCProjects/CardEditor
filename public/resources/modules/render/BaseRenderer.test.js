@@ -6,6 +6,7 @@ const { register, save } = vi.hoisted(() => ({ register: vi.fn(), save: vi.fn() 
 vi.mock('../editor/editor.js', () => ({ default: {} }));
 vi.mock('../3rdparty/saveImage.js', () => ({ default: vi.fn() }));
 vi.mock('../archive/index.js', () => ({ isOpen: () => false }));
+vi.mock('../transfer.js', () => ({ copyElement: vi.fn(), exportElement: vi.fn() }));
 vi.mock('./util.js', () => ({ getHTMLDescription: (text) => text }));
 vi.mock('../elements/registry.js', () => ({ register, save }));
 

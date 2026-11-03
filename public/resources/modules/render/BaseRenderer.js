@@ -7,6 +7,7 @@ import saveImage from '../3rdparty/saveImage.js';
 import { register, save } from '../elements/registry.js';
 import { isOpen as isArchiveOpen } from '../archive/index.js';
 import { loadStyle } from '../utils/funcs.js';
+import { copyElement, exportElement } from '../transfer.js';
 
 /** @typedef {import('../elements/BaseElement.js').default} BaseElement */
 
@@ -129,6 +130,10 @@ function bindMenu(renderer, menu) {
   menu.querySelector('[data-tip="Download"]').addEventListener('click', () => {
     saveImage(renderer.container, renderer.element.name || type);
   });
+
+  menu.querySelector('[data-tip="Export"]').addEventListener('click', () => exportElement(renderer.element));
+
+  menu.querySelector('[data-tip="Copy Data"]').addEventListener('click', () => copyElement(renderer.element));
 
   // Archive
   menu.querySelector('[data-tip="Archive"]').addEventListener('click', () => renderer.emit('archive'));

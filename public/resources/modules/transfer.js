@@ -1,7 +1,8 @@
 import { add as addImage, getAll as getImages, isUserImage, save as saveImage } from './imageBank.js';
 import { get, init, register, save } from './elements/registry.js';
 import { Elements } from './elements/types.js';
-import { read } from './utils/file.js';
+import { download, read } from './utils/file.js';
+import { toast, tryOrError } from './toast/index.js';
 import { imageRefs } from './utils/imageRefs.js';
 import { stripEmpty } from './utils/funcs.js';
 
@@ -68,6 +69,24 @@ export async function pack(element, { withAssets = true } = {}) {
   await addElement(element);
 
   return { version: VERSION, assets, elements };
+}
+
+/** @param {import('./elements/BaseElement.js').default} element */
+export async function exportElement(element) {
+  const bundle = await tryOrError(() => pack(element), 'Failed to export');
+  if (!bundle) return;
+  download(JSON.stringify(bundle), `${element.name || element.type}.json`);
+}
+
+/** @param {import('./elements/BaseElement.js').default} element */
+export async function copyElement(element) {
+  const text = pack(element, { withAssets: false })
+    .then((bundle) => new Blob([JSON.stringify(bundle)], { type: 'text/plain' }));
+  const copied = await tryOrError(async () => {
+    await navigator.clipboard.write([new ClipboardItem({ 'text/plain': text })]);
+    return true;
+  }, 'Failed to copy');
+  if (copied) toast({ body: 'Copied to clipboard' });
 }
 
 /** @param {Bundle} bundle */

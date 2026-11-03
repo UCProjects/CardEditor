@@ -8,6 +8,7 @@ const { store } = vi.hoisted(() => ({ store: new Map() }));
 vi.mock('../tip/index.js', () => ({ close: vi.fn() }));
 vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn(), save: vi.fn() } }));
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
+vi.mock('../transfer.js', () => ({ exportElement: vi.fn() }));
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => element(props),

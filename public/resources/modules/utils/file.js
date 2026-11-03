@@ -1,4 +1,18 @@
 /**
+ * @param {string} data
+ * @param {string} filename
+ * @param {string} [type]
+ */
+export function download(data, filename, type = 'application/json') {
+  const url = URL.createObjectURL(new Blob([data], { type }));
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = url;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url));
+}
+
+/**
  * @param {File} file
  * @returns {Promise<string | undefined>}
  */
