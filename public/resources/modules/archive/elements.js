@@ -1,4 +1,4 @@
-import { getAll, init, register, remove, save } from '../elements/registry.js';
+import { getAll, init, register, release, remove, reserve, save } from '../elements/registry.js';
 import settings, { Settings } from '../settings.js';
 import { clearTrashed, getTrashed, removeTrashed, setTrashed } from '../utils/storage.js';
 import events from '../elements/registryEvents.js';
@@ -6,6 +6,7 @@ import { Elements } from '../elements/types.js';
 import { close as closeTip } from '../tip/index.js';
 import { removeClass } from '../utils/funcs.js';
 import { openExport } from '../exportDialog/index.js';
+import { bindFilePicker, importFiles, initFileDrop } from '../importer/index.js';
 import { bindFilter, filterRows } from './filter.js';
 import Item from './Item.js';
 import App from '../UndercardEditor.js';
@@ -13,6 +14,8 @@ import editor from '../editor/editor.js';
 
 const Trash = 'trashFolder';
 
+/** @type {HTMLDivElement} */
+const archive = document.querySelector('.archive');
 /** @type {HTMLDivElement} */
 const page = document.querySelector('.archive div[data-page="elements"]');
 const empty = page.querySelector('div');
@@ -71,6 +74,7 @@ class TrashItem extends Item {
 const trashRef = new TrashItem();
 
 let dragSrc;
+let ready = false;
 
 function add(el) {
   const item = new Item(el);
@@ -86,6 +90,7 @@ function add(el) {
   });
   item.on('restore', () => {
     if (!item.trashed) return;
+    release(item.id);
     register(item.element);
     save(item.element);
     removeTrashed(item.id);
@@ -99,6 +104,7 @@ function add(el) {
     if (isGroup) forEach(item, (child) => child.emit('trash'));
     if (settings.enabled(Settings.KeepTrash)) setTrashed(record(item));
     remove(item.element);
+    reserve(item.id);
     item.trashed = true;
     trashed.add(item);
     place(item);
@@ -116,6 +122,7 @@ function add(el) {
       accepts: (i) => i.type !== Elements.Group,
       drop: (i) => item.emit('drop', i),
     });
+    initFileDrop(item.element.renderer().container, (files) => dropFiles(files, item));
   }
 
   return item;
@@ -127,6 +134,7 @@ events.on('add', (element) => {
   if (item.type !== Elements.Group) {
     item.group = element.renderer().container.closest('.element.group')?.dataset.id;
   }
+  if (ready) place(item);
 });
 
 /**
@@ -144,6 +152,7 @@ function loadTrash() {
     const item = add(init({ ...element, id }));
     item.group = group;
     item.trashed = true;
+    reserve(item.id);
     trashed.add(item);
   });
   if (!settings.enabled(Settings.KeepTrash)) clearTrashed();
@@ -184,9 +193,42 @@ export function load() {
     },
   });
 
+  initFileDrop(archive, (files) => dropFiles(files));
+  bindFilePicker(page.querySelector('button.import'), page.querySelector('input[type="file"]'));
+
   bindFilter(filterInput, applyFilter);
 
+  ready = true;
   refreshEmptyMessage();
+}
+
+/**
+ * @param {File[]} files
+ * @param {Item} [target]
+ */
+async function dropFiles(files, target) {
+  const roots = await importFiles(files);
+  if (target) roots.forEach((element) => placeImported(element, target));
+}
+
+/**
+ * @param {import('../elements/BaseElement.js').default} element
+ * @param {Item} target
+ */
+function placeImported(element, target) {
+  const item = (element.type === Elements.Group ? groups : items).get(element.id);
+  if (!item) return;
+  if (element.type !== Elements.Group) {
+    if (target.isActive()) target.emit('drop', item);
+    else move(item, target);
+    return;
+  }
+  if (!target.isActive()) return;
+  const renderer = element.renderer();
+  App.addGroupAfter(target.element.renderer(), renderer);
+  App.save();
+  item.emit('dropped');
+  renderer.emit('loaded');
 }
 
 /**
@@ -266,6 +308,7 @@ function render(item) {
     item.on('destroy', () => {
       (item.type === Elements.Group ? groups : items).delete(item.id);
       removeTrashed(item.id);
+      release(item.id);
       trashed.delete(item);
       discard();
       trashRef.emit('refresh');
@@ -287,6 +330,7 @@ function render(item) {
       accepts: (i) => i.type !== Elements.Group && i.group !== item.id && !item.trashed,
       drop: (i) => move(i, item),
     });
+    initFileDrop(li, (files) => dropFiles(files, item));
   }
   item.emit('refresh');
   return { li, extra, setCollapsed };

@@ -3,7 +3,7 @@ import registryEvents from '../elements/registryEvents.js';
 import settings, { Settings } from '../settings.js';
 import EventEmitter from '../utils/EventEmitter.js';
 
-const { store } = vi.hoisted(() => ({ store: new Map() }));
+const { reserved, store } = vi.hoisted(() => ({ reserved: new Set(), store: new Map() }));
 
 function makeElement({ id, type, name = id, content }) {
   const renderer = new EventEmitter();
@@ -32,6 +32,7 @@ vi.mock('../tip/index.js', () => ({ close: vi.fn() }));
 vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn(), save: vi.fn() } }));
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
 vi.mock('../exportDialog/index.js', () => ({ openExport: vi.fn() }));
+vi.mock('../importer/index.js', () => ({ bindFilePicker: vi.fn(), importFiles: vi.fn(), initFileDrop: vi.fn() }));
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => makeElement(props),
@@ -40,6 +41,8 @@ vi.mock('../elements/registry.js', () => ({
     registryEvents.emit('add', el);
   },
   remove: (el) => store.delete(el.id),
+  reserve: (id) => reserved.add(id),
+  release: (id) => reserved.delete(id),
   save: vi.fn(),
 }));
 
@@ -81,6 +84,10 @@ describe('persisted trash', () => {
     expect(row('kept').parentElement).toBe(row('box').querySelector('ul.extra'));
   });
 
+  it('reserves the ids of trashed elements', () => {
+    expect([...reserved].sort()).toEqual(['box', 'kept', 'lost']);
+  });
+
   it('leaves live elements out of the trash', () => {
     expect(row('live').parentElement).toBe(root());
     expect(row('live').classList.contains('trashed')).toBe(false);
@@ -91,6 +98,7 @@ describe('persisted trash', () => {
     expect(row('lost').parentElement).toBe(root());
     expect(localStorage.getItem(key('lost'))).toBe(null);
     expect(store.has('lost')).toBe(true);
+    expect(reserved.has('lost')).toBe(false);
   });
 
   it('restores a group with its children', () => {
@@ -107,10 +115,12 @@ describe('persisted trash', () => {
     expect(record.id).toBe('kept');
     expect(record.group).toBe('box');
     expect(store.has('kept')).toBe(false);
+    expect(reserved.has('kept')).toBe(true);
   });
 
   it('clears the record when destroyed', () => {
     click('kept', 'destroy');
+    expect(reserved.has('kept')).toBe(false);
     expect(localStorage.getItem(key('kept'))).toBe(null);
     expect(row('kept')).toBe(null);
   });

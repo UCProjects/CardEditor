@@ -14,8 +14,23 @@ export { events };
  */
 const data = new Map();
 
+/** @type {Set<string>} */
+const reserved = new Set();
+
 export function get(id) {
   return data.get(id);
+}
+
+export function reserve(id) {
+  reserved.add(id);
+}
+
+export function release(id) {
+  reserved.delete(id);
+}
+
+export function isTaken(id) {
+  return data.has(id) || reserved.has(id);
 }
 
 export function getAll() {

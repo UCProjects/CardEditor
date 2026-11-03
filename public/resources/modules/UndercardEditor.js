@@ -69,6 +69,15 @@ class UndercardEditor {
     events.emit('add', group);
   }
 
+  /**
+   * @param {GroupRenderer} target
+   * @param {GroupRenderer} renderer
+   */
+  addGroupAfter(target, renderer) {
+    const index = this.#groups.indexOf(target);
+    this.addGroup(renderer, ~index ? index + 1 : 0);
+  }
+
   /** @param {GroupRenderer} renderer  */
   addGroup(renderer, after = 0) {
     groupBindings.get(renderer)?.abort();

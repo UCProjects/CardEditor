@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { pack, unpack, VERSION } from './transfer.js';
+import { Action, inspect, pack, parseBundle, unpack, VERSION } from './transfer.js';
 
-const { elements, images, makeElement, registered } = vi.hoisted(() => {
+const { elements, images, makeElement, registered, reservedIds } = vi.hoisted(() => {
   let minted = 0;
 
   function makeElement({ id, type, content, ...rest }) {
@@ -9,6 +9,8 @@ const { elements, images, makeElement, registered } = vi.hoisted(() => {
       id: id ?? `new-${minted += 1}`,
       type,
       ...rest,
+      emit: vi.fn(),
+      isActive: () => false,
       toJSON: () => ({
         id: element.id,
         type,
@@ -20,11 +22,12 @@ const { elements, images, makeElement, registered } = vi.hoisted(() => {
     return element;
   }
 
-  return { elements: new Map(), images: {}, makeElement, registered: [] };
+  return { elements: new Map(), images: {}, makeElement, registered: [], reservedIds: new Set() };
 });
 
 vi.mock('./elements/registry.js', () => ({
   get: (id) => elements.get(id),
+  isTaken: (id) => elements.has(id) || reservedIds.has(id),
   init: (props) => makeElement(props),
   register: (el) => {
     registered.push(el.id);
@@ -57,6 +60,7 @@ beforeEach(() => {
   elements.clear();
   Object.keys(images).forEach((key) => delete images[key]);
   registered.length = 0;
+  reservedIds.clear();
 });
 
 describe('pack', () => {
@@ -141,6 +145,58 @@ describe('pack', () => {
   });
 });
 
+describe('parseBundle', () => {
+  it('accepts editor data', () => {
+    const data = { version: VERSION, assets: {}, elements: [] };
+    expect(parseBundle(JSON.stringify(data))).toEqual(data);
+  });
+
+  it('ignores anything else', () => {
+    expect(parseBundle('hello')).toBeUndefined();
+    expect(parseBundle('{ nope')).toBeUndefined();
+    expect(parseBundle('{"a":1}')).toBeUndefined();
+    expect(parseBundle('[1,2]')).toBeUndefined();
+    expect(parseBundle(undefined)).toBeUndefined();
+  });
+});
+
+describe('inspect', () => {
+  it('lists each element, noting which exist and which group holds it', () => {
+    card('c1', {});
+    const info = inspect({
+      version: VERSION,
+      assets: { 'img-1': { src: 'x' } },
+      elements: [
+        { id: 'g1', type: 'group', name: 'Box', content: ['c1', 'c2'] },
+        { id: 'c1', type: 'card', name: 'Old' },
+        { id: 'c2', type: 'card' },
+      ],
+    });
+
+    expect(info).toEqual({
+      elements: 3,
+      assets: 1,
+      items: [
+        { id: 'g1', type: 'group', name: 'Box', exists: false, trashed: false, parent: undefined },
+        { id: 'c1', type: 'card', name: 'Old', exists: true, trashed: false, parent: 'g1' },
+        { id: 'c2', type: 'card', name: 'card', exists: false, trashed: false, parent: 'g1' },
+      ],
+    });
+  });
+
+  it('marks elements whose id is held by the trash', () => {
+    reservedIds.add('t1');
+    const { items } = inspect({ version: VERSION, assets: {}, elements: [{ id: 't1', type: 'card' }] });
+    expect(items[0]).toMatchObject({ exists: false, trashed: true });
+  });
+
+  it('does not count a different type as existing', () => {
+    card('x1', {});
+    const { items } = inspect({ version: VERSION, assets: {}, elements: [{ id: 'x1', type: 'text' }] });
+    expect(items[0].exists).toBe(false);
+  });
+});
+
 describe('unpack', () => {
   const bundle = (over = {}) => ({ version: VERSION, assets: {}, elements: [], ...over });
 
@@ -216,6 +272,106 @@ describe('unpack', () => {
 
     expect(images['img-1'].src).toBe('https://example.com/a.png');
     expect(images['img-1'].file).toBeUndefined();
+  });
+
+  it('leaves out elements marked to skip', async () => {
+    const roots = await unpack(bundle({
+      elements: [{ id: 'c1', type: 'card' }, { id: 'c2', type: 'card' }],
+    }), { actions: { c1: Action.Skip } });
+
+    expect(roots.map((e) => e.id)).toEqual(['c2']);
+    expect(elements.has('c1')).toBe(false);
+  });
+
+  it('drops a skipped child from its group', async () => {
+    const [root] = await unpack(bundle({
+      elements: [
+        { id: 'g1', type: 'group', content: ['c1', 'c2'] },
+        { id: 'c1', type: 'card' },
+        { id: 'c2', type: 'card' },
+      ],
+    }), { actions: { c1: Action.Skip } });
+
+    expect(root.content).toEqual(['c2']);
+    expect(elements.has('c1')).toBe(false);
+  });
+
+  it('imports the children of a skipped group on their own', async () => {
+    const roots = await unpack(bundle({
+      elements: [{ id: 'g1', type: 'group', content: ['c1'] }, { id: 'c1', type: 'card' }],
+    }), { actions: { g1: Action.Skip } });
+
+    expect(roots.map((e) => e.id)).toEqual(['c1']);
+    expect(elements.has('g1')).toBe(false);
+  });
+
+  it('chooses an action per element', async () => {
+    const one = card('c1', { name: 'One' });
+    const two = card('c2', { name: 'Two' });
+    const roots = await unpack(bundle({
+      elements: [{ id: 'c1', type: 'card', name: 'New' }, { id: 'c2', type: 'card', name: 'New' }],
+    }), { actions: { c1: Action.Replace, c2: Action.Copy } });
+
+    expect(one.emit).toHaveBeenCalledWith('update', expect.objectContaining({ name: 'New' }));
+    expect(two.emit).not.toHaveBeenCalled();
+    expect(roots).toHaveLength(1);
+    expect(roots[0].id).not.toBe('c2');
+  });
+
+  it('skips assets when asked', async () => {
+    await unpack(bundle({
+      assets: { 'img-1': { src: 'https://example.com/a.png' } },
+      elements: [{ id: 'c1', type: 'card', rarity: 'img-1' }],
+    }), { assets: false });
+
+    expect(images['img-1']).toBeUndefined();
+  });
+
+  it('imports a copy of an existing element by default', async () => {
+    const existing = card('c1', { name: 'Old' });
+    const roots = await unpack(bundle({ elements: [{ id: 'c1', type: 'card', name: 'New' }] }));
+
+    expect(roots).toHaveLength(1);
+    expect(roots[0].id).not.toBe('c1');
+    expect(existing.emit).not.toHaveBeenCalled();
+  });
+
+  it('never reuses the id of a trashed element', async () => {
+    reservedIds.add('c1');
+    const roots = await unpack(bundle({ elements: [{ id: 'c1', type: 'card' }] }), { actions: { c1: Action.Replace } });
+
+    expect(roots).toHaveLength(1);
+    expect(roots[0].id).not.toBe('c1');
+  });
+
+  it('overwrites an existing element when replacing', async () => {
+    const existing = card('c1', { name: 'Old' });
+    const roots = await unpack(bundle({ elements: [{ id: 'c1', type: 'card', name: 'New' }] }), { actions: { c1: Action.Replace } });
+
+    expect(roots).toEqual([]);
+    expect(registered).toEqual([]);
+    expect(existing.emit).toHaveBeenCalledWith('update', expect.objectContaining({ name: 'New' }));
+    expect(existing.emit.mock.calls[0][1]).not.toHaveProperty('id');
+  });
+
+  it('copies instead of replacing when the types differ', async () => {
+    const existing = card('x1', {});
+    const roots = await unpack(bundle({ elements: [{ id: 'x1', type: 'text' }] }), { actions: { x1: Action.Replace } });
+
+    expect(roots).toHaveLength(1);
+    expect(roots[0].id).not.toBe('x1');
+    expect(existing.emit).not.toHaveBeenCalled();
+  });
+
+  it('adds new children to a replaced group', async () => {
+    const existing = group('g1', []);
+    const roots = await unpack(bundle({
+      elements: [{ id: 'g1', type: 'group', content: ['c9'] }, { id: 'c9', type: 'card' }],
+    }), { actions: { g1: Action.Replace } });
+
+    expect(roots).toEqual([]);
+    expect(existing.content).toEqual(['c9']);
+    expect(elements.has('c9')).toBe(true);
   });
 
   it('leaves an already known asset alone', async () => {

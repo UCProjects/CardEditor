@@ -1,0 +1,47 @@
+#import textarea {
+  height: 25vh;
+}
+
+#import .rows {
+  list-style: none;
+  max-height: 25vh;
+  margin: 0 0 10px;
+  padding: 0;
+  overflow-y: auto;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+}
+
+#import .rows li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+}
+
+#import .rows li:nth-child(even) {
+  background-color: var(--surface);
+}
+
+#import .rows li.child {
+  padding-left: 24px;
+}
+
+#import .rows .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#import .rows .tag {
+  flex: 0 0 auto;
+  font-size: 0.8em;
+  color: var(--danger-text);
+}
+
+#import button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -9,6 +9,7 @@ vi.mock('../tip/index.js', () => ({ close: vi.fn() }));
 vi.mock('../UndercardEditor.js', () => ({ default: { addGroup: vi.fn(), save: vi.fn() } }));
 vi.mock('../editor/editor.js', () => ({ default: { on: () => {}, open: vi.fn() } }));
 vi.mock('../exportDialog/index.js', () => ({ openExport: vi.fn() }));
+vi.mock('../importer/index.js', () => ({ bindFilePicker: vi.fn(), importFiles: vi.fn(), initFileDrop: vi.fn() }));
 vi.mock('../elements/registry.js', () => ({
   getAll: () => [...store.values()],
   init: (props) => element(props),
@@ -17,6 +18,8 @@ vi.mock('../elements/registry.js', () => ({
     registryEvents.emit('add', el);
   },
   remove: (el) => store.delete(el.id),
+  reserve: vi.fn(),
+  release: vi.fn(),
   save: vi.fn(),
 }));
 

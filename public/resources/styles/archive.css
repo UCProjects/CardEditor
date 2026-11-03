@@ -204,7 +204,7 @@
   }
 }
 
-.archive [data-page] > input[name="filter"] {
+.archive [data-page] input[name="filter"] {
   width: 100%;
   margin-bottom: 10px;
   padding: 6px;
@@ -218,11 +218,38 @@
   -webkit-appearance: none;
 }
 
-.archive [data-page] > input[name="filter"]::-webkit-search-cancel-button {
+.archive [data-page] input[name="filter"]::-webkit-search-cancel-button {
   cursor: pointer;
   transform: scale(1.5);
   margin-left: 10px;
   -webkit-appearance: searchfield-cancel-button;
+}
+
+.archive .filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.archive .filter-row input[name="filter"] {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.archive .filter-row .import {
+  flex: 0 0 auto;
+  padding: 0 8px;
+  font-size: 1.5em;
+  color: var(--text);
+  background-color: var(--surface);
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.archive .filter-row .import:hover {
+  background-color: var(--surface-hi);
 }
 
 .archive .filtered {

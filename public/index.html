@@ -7,7 +7,7 @@
 
     <link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close,data_object,file_export,folder_delete,package_2,resize&display=block" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close,data_object,file_export,file_open,folder_delete,package_2,resize&display=block" />
     <link href="./resources/loading.css" rel="stylesheet"/>
 
     <!-- update the version number as needed -->
@@ -242,7 +242,11 @@
         <button type="button" class="archive-close material-icons" popovertarget="archive" popovertargetaction="hide" aria-label="Close" data-tip="Close">close</button>
       </header>
       <div data-page="elements" class="active">
-        <input name="filter" type="search" placeholder="Search..." />
+        <search class="filter-row">
+          <input name="filter" type="search" placeholder="Search..." />
+          <button type="button" class="import material-symbols-outlined" aria-label="Import" data-tip="Import">file_open</button>
+          <input type="file" accept=".json,application/json" class="hidden" autocomplete="off" />
+        </search>
         <div>Empty, archive something</div>
         <ul>
           <li class="hidden" data-insert="groups"></li>
@@ -271,7 +275,7 @@
         </menu>
       </form>
     </dialog>
-    <dialog id="export" class="modal" closedby="any">
+    <dialog id="export" class="modal wide" closedby="any">
       <form method="dialog">
         <header>
           <h2>Export</h2>
@@ -285,6 +289,25 @@
         <menu>
           <button type="button" class="copy">Copy</button>
           <button type="button" class="download">Download</button>
+        </menu>
+      </form>
+    </dialog>
+    <dialog id="import" class="modal wide" closedby="any">
+      <form method="dialog">
+        <header>
+          <h2>Import</h2>
+          <button value="close" class="close material-symbols-outlined" aria-label="Close" data-tip="Close">close</button>
+        </header>
+        <p class="notice hidden"></p>
+        <div class="options">
+          <label class="images hidden"><input type="checkbox" name="ignore" autocomplete="off" /> Ignore images</label>
+          <select name="all" class="bulk hidden" aria-label="Set every element" autocomplete="off"></select>
+          <span class="size"></span>
+        </div>
+        <ul class="rows hidden"></ul>
+        <textarea name="preview" readonly spellcheck="false" autocomplete="off"></textarea>
+        <menu>
+          <button type="button" class="accept">Import</button>
         </menu>
       </form>
     </dialog>

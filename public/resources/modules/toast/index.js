@@ -2,6 +2,8 @@ import { loadStyle } from '../utils/funcs.js';
 
 loadStyle('/resources/styles/toast.css');
 
+export const AUTO_HIDE_MS = 10_000;
+
 export function toast({
   body = '',
   classes = [],

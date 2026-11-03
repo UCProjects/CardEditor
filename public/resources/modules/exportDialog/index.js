@@ -1,30 +1,13 @@
 import { download } from '../utils/file.js';
 import { loadStyle } from '../utils/funcs.js';
-import { toast, tryOrError } from '../toast/index.js';
+import { formatSize, preview } from '../utils/bundlePreview.js';
+import { AUTO_HIDE_MS, toast, tryOrError } from '../toast/index.js';
 import { pack } from '../transfer.js';
 
-loadStyle('/resources/styles/dialog.css', '/resources/styles/exportDialog.css');
-
-const DATA_URL = /^data:([^;,]*)/;
+loadStyle('/resources/styles/dialog.css');
 
 /** @type {HTMLDialogElement} */
 const dialog = document.querySelector('#export');
-
-/** @param {import('../transfer.js').Bundle} bundle */
-function preview(bundle) {
-  return JSON.stringify(bundle, (_, value) => {
-    if (typeof value !== 'string') return value;
-    const [, type] = value.match(DATA_URL) ?? [];
-    return type === undefined ? value : `data:${type};(${value.length} characters)`;
-  }, 2);
-}
-
-/** @param {number} bytes */
-function formatSize(bytes) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
 
 /** @param {import('../elements/BaseElement.js').default} element */
 export async function openExport(element) {
@@ -68,7 +51,7 @@ export async function openExport(element) {
       return true;
     }, 'Failed to copy');
     if (!copied) return;
-    toast({ body: 'Copied to clipboard' });
+    toast({ body: 'Copied to clipboard', signal: AbortSignal.timeout(AUTO_HIDE_MS) });
     dialog.close();
   }, options);
 
