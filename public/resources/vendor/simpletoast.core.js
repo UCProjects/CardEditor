@@ -300,15 +300,16 @@ Toast.versionString = versionString;
 Toast.count = () => Array.from(open).filter((stillExists) => stillExists()).length;
 Object.freeze(Toast);
 
+function shouldReplace(current) {
+  return !current?.versionString || isNewer(versionString, current.versionString);
+}
+
 function install(root, setup) {
   const bound = window.SimpleToast;
   initRoot();
-  root.SimpleToast = Toast;
+  if (shouldReplace(root.SimpleToast)) root.SimpleToast = Toast;
   console.log(`SimpleToast(v${versionString}): Loaded`);
-  if (
-    window === window.top &&
-    (!bound?.versionString || isNewer(versionString, bound.versionString))
-  ) {
+  if (window === window.top && shouldReplace(bound)) {
     window.SimpleToast = Toast;
     console.log(`SimpleToast(v${versionString}): Publicized`);
   }
